@@ -1,0 +1,162 @@
+.Dash {
+    background-color: aliceblue;
+    color: rgb(38, 0, 255);
+}
+
+/* Catch heading styles */
+.catch {
+    margin-top: 10vh;
+    color: #fff;
+    /* Ensure heading is visible */
+}
+
+/* Option button styles */
+.Option {
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        margin: 10px 0;
+        height: 28px;
+    background-color: rgb(0, 8, 255);
+    padding: 10px;
+    margin: 5px;
+    border-radius: 5px;
+    color: #fff;
+    /* Make button text white for better contrast */
+    border: none;
+    /* Remove default border */
+    cursor: pointer;
+}
+
+/* Main dash container */
+.Dash {
+    position: fixed;
+    bottom: -250px;
+    /* Hidden below the screen */
+    left: 0;
+    right: 0;
+    height: 65vh;
+    /* Limit height to 50% of the viewport height */
+    background-color: #212121;
+    /* Change background to match other styles */
+    border-radius: 15px 15px 0 0;
+    transition: bottom 0.4s ease-in-out;
+    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.2);
+    z-index: 10;
+    overflow: hidden;
+    /* Hide content overflow when closed */
+}
+
+/* Open state for the dash */
+.Dash.open {
+    bottom: 0;
+    /* Slide up to the bottom of the viewport */
+    overflow-y: auto;
+    /* Allow vertical scrolling when dash is open */
+}
+
+/* Notch that users can pull */
+.notch {
+    width: 100%;
+    height: 40px;
+    position: absolute;
+    top: -10px;
+    left: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: none !important;
+    border-radius: 15px 15px 0 0;
+    cursor: pointer;
+    z-index: 1000;
+}
+
+/* The small indicator inside the notch */
+.notch-indicator {
+    width: 50px;
+    height: 5px;
+    background-color: grey;
+    border-radius: 10px;
+}
+
+/* Dash content */
+.dash-content {
+    padding: 20px;
+    display: grid;
+    /* Use grid layout */
+    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
+    /* Responsive grid */
+    gap: 10px;
+    /* Space between buttons */
+    max-height: calc(100% - 40px);
+    /* Allow content to scroll but keep the notch visible */
+    overflow-y: auto;
+    /* Enable scrolling for the dash content */
+}
+
+
+/* Option button styles for better visibility */
+button.Option {
+    display: flex;
+    /* Flex for centering text */
+    align-items: center;
+    /* Center text vertically */
+    justify-content: center;
+    /* Center text horizontally */
+    width: 80%;
+    /* Full width in grid */
+    padding: 10px;
+    background-color: #fff;
+    /* White background */
+    border: none;
+    color: #333;
+    /* Dark text color */
+    font-size: 16px;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    /* Smooth background transition */
+}
+
+/* Hover effect for buttons */
+button.Option:hover {
+    background-color: #ddd;
+    /* Light grey on hover */
+}
+
+.checkbox {
+  width: 40%; /* Adjust size */
+  height: 100%; /* Adjust size */
+  padding: 3px;
+border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-right: 10px; /* Spacing between checkbox and label */
+  transition: background 0.3s; /* Transition for hover effect */
+}
+
+.checkbox.selected {
+  background: #000; /* Background color when selected */
+  color: white; /* Icon color when selected */
+  
+}
+
+
+.checkbox.selected svg {
+  display: block; /* Show icon when selected */
+}
+
+.order-button {
+    
+    width: 35%;
+    padding: 20px 20px;
+    margin-top:4vh;
+  background-color: #fff; /* Adjust button color */
+  color: #000; /* Button text color */
+  font-family: sans-serif;
+  border: none;
+  padding: 10px 20px;
+  cursor: pointer;
+  border-radius: 36px; /* Rounded corners */
+}
