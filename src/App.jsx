@@ -21,7 +21,7 @@ function App() {
         <Navbar toggleTheme={toggleTheme} isLightMode={isLightMode} />
         <Map />
         <Dash />
-        <Navigation />
+        
       </div>
     </>
   );

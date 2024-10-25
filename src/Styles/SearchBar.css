@@ -1,110 +1,124 @@
 .Search-container {
     display: flex;
-    /* Enables Flexbox layout */
+    flex-direction: column;
     align-items: center;
-    /* Vertically center the items */
-    
     border-radius: 25px;
-    /* Rounded corners */
     padding: 8px 12px;
-    /* Padding around the content */
     background-color: #121212;
-    /* White background for the container */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
-    /* Subtle shadow for depth */
-    width: 100%;
-    /* Full width of the parent container */
+    width: 80%;
     max-width: 600px;
-    /* Maximum width to keep it reasonable */
     margin: 10px auto;
-    /* Center the container horizontally */
 }
 
-.Search {
+.UserInput,
+.SearchInput {
     background-color: #303030;
     border: none;
-    /* No border on input */
     outline: none;
-    /* Remove outline */
     flex-grow: 1;
-    /* Allow input to take available space */
     font-size: 16px;
-    /* Font size */
     padding: 8px;
-    /* Padding inside the input */
     border-radius: 25px;
-    /* Match the border-radius of the container */
     margin-right: 10px;
-    /* Space between input and button */
+    margin-top: 5px;
     text-align: center;
 }
 
-.Search::placeholder {
+.UserInput::placeholder,
+.SearchInput::placeholder {
     color: #999;
     font-family: sans-serif;
     text-align: center;
-    /* Placeholder color */
 }
 
 .search-Button {
     background-color: #0066ff;
-    /* Bolt-like button color */
+    width: 30px;;
+    height: 30px;
     color: #fff;
-    /* White text for button */
     border: none;
-    /* No border */
-    border-radius:45%;
-    /* Match border-radius */
+    border-radius: 45%;
     padding: 8px 11px;
-    /* Padding around button text */
     cursor: pointer;
-    /* Pointer cursor on hover */
     transition: background-color 0.3s;
-    /* Smooth background transition */
+    position: absolute;
+    top: 127px;
+    right: 60px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.search-Button svg{
+    width: 20px;
+    height: 20px;
 }
 
 .search-Button:hover {
     background-color: #515151;
-    /* Darker shade on hover */
+}
+
+.location-Button {
+    background-color: #0066ff;
+    color: #fff;
+    border: none;
+    border-radius: 45%;
+    padding: 8px 11px;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    margin-left: 10px;
+    position: absolute;
+    right: 70px;
+    top: 102px;
+}
+
+.location-Button:hover {
+    background-color: #515151;
 }
 
 .suggestions-list {
-    color: #515151;
+    color: #b7b7b7;
     position: absolute;
-    top: 10vh;
-    /* Positioning for dropdown */
-    background-color: #fff;
-    /* White background */
+    top: 14vh;
+    background-color: #393939;
     border: 1px solid #ccc;
-    /* Border for dropdown */
-    border-radius: 4px;
-    /* Rounded corners */
+    border-radius: 14px;
     list-style-type: none;
-    /* Remove bullets */
     padding: 0;
-    /* Remove padding */
     margin: 0;
-    /* Remove margin */
     z-index: 10;
-    /* Ensure it appears above other elements */
-    width: 100%;
-    /* Full width of the input */
+    width: 80%;
     max-height: 200px;
-    /* Max height for the dropdown */
     overflow-y: auto;
-    /* Scroll if too many items */
 }
 
 .suggestions-list li {
-    color: #515151;
     padding: 10px;
-    /* Padding for each suggestion */
     cursor: pointer;
-    /* Pointer on hover */
 }
 
 .suggestions-list li:hover {
     background-color: #f0f0f0;
-    /* Light grey on hover */
     color: #515151;
+}
+
+.location-input-container {
+    position: relative;
+    
+    width: 90%;
+}
+
+.Search.UserInput {
+    width: 100%;
+    padding-right: 30px;
+    /* Add padding to avoid overlap with loader */
+}
+
+.loader-overlay {
+    position: absolute;
+    right: 5px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    /* Prevent interaction with loader */
 }

@@ -1,162 +1,144 @@
-.Dash {
-    background-color: aliceblue;
-    color: rgb(38, 0, 255);
+/* General Styles */
+:root {
+    --primary-color: #1A1A1A;
+    /* Dark background color */
+    --secondary-color: #FFA500;
+    /* Accent color */
+    --text-color: #FFFFFF;
+    /* White text */
+    --input-background: #282828;
+    /* Light background for input fields */
+    --border-radius: 8px;
+    /* Border radius for buttons and inputs */
 }
 
-/* Catch heading styles */
-.catch {
-    margin-top: 10vh;
-    color: #fff;
-    /* Ensure heading is visible */
-}
-
-/* Option button styles */
-.Option {
-        display: flex;
-        align-items: center;
-        cursor: pointer;
-        margin: 10px 0;
-        height: 28px;
-    background-color: rgb(0, 8, 255);
-    padding: 10px;
-    margin: 5px;
-    border-radius: 5px;
-    color: #fff;
-    /* Make button text white for better contrast */
-    border: none;
-    /* Remove default border */
-    cursor: pointer;
-}
-
-/* Main dash container */
+/* Dashboard Container */
 .Dash {
     position: fixed;
-    bottom: -250px;
-    /* Hidden below the screen */
-    left: 0;
-    right: 0;
-    height: 65vh;
-    /* Limit height to 50% of the viewport height */
-    background-color: #212121;
-    /* Change background to match other styles */
-    border-radius: 15px 15px 0 0;
-    transition: bottom 0.4s ease-in-out;
-    box-shadow: 0 -5px 10px rgba(0, 0, 0, 0.2);
-    z-index: 10;
-    overflow: hidden;
-    /* Hide content overflow when closed */
-}
-
-/* Open state for the dash */
-.Dash.open {
+    /* Fixed position for the dash */
     bottom: 0;
-    /* Slide up to the bottom of the viewport */
-    overflow-y: auto;
-    /* Allow vertical scrolling when dash is open */
-}
-
-/* Notch that users can pull */
-.notch {
-    width: 100%;
-    height: 40px;
-    position: absolute;
-    top: -10px;
+    /* Align to the bottom */
     left: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    background-color: none !important;
-    border-radius: 15px 15px 0 0;
-    cursor: pointer;
-    z-index: 1000;
+    width: 100%;
+    max-height: 400px;
+    /* Set a max height */
+    background-color: var(--primary-color);
+    border-top-left-radius: var(--border-radius);
+    border-top-right-radius: var(--border-radius);
+    transition: transform 0.3s ease;
+    /* Smooth transition for open/close */
+    transform: translateY(50%);
+    /* Hide by default */
+    z-index: 3000;
+    overflow-y: auto;
+    /* Enable vertical scrolling */
+    padding-bottom: 20px;
+    /* Optional: Add some padding at the bottom */
 }
 
-/* The small indicator inside the notch */
-.notch-indicator {
+.Dash.open {
+    transform: translateY(0);
+    /* Show when open */
+}
+
+/* Notch */
+.notch {
     width: 50px;
     height: 5px;
-    background-color: grey;
-    border-radius: 10px;
-}
-
-/* Dash content */
-.dash-content {
-    padding: 20px;
-    display: grid;
-    /* Use grid layout */
-    grid-template-columns: repeat(auto-fit, minmax(100px, 1fr));
-    /* Responsive grid */
-    gap: 10px;
-    /* Space between buttons */
-    max-height: calc(100% - 40px);
-    /* Allow content to scroll but keep the notch visible */
-    overflow-y: auto;
-    /* Enable scrolling for the dash content */
-}
-
-
-/* Option button styles for better visibility */
-button.Option {
-    display: flex;
-    /* Flex for centering text */
-    align-items: center;
-    /* Center text vertically */
-    justify-content: center;
-    /* Center text horizontally */
-    width: 80%;
-    /* Full width in grid */
-    padding: 10px;
-    background-color: #fff;
-    /* White background */
-    border: none;
-    color: #333;
-    /* Dark text color */
-    font-size: 16px;
-    border-radius: 5px;
+    background-color: var(--secondary-color);
+    border-radius: var(--border-radius);
+    position: absolute;
+    top: 10px;
+    /* Positioning the notch */
+    left: 50%;
+    transform: translateX(-50%);
     cursor: pointer;
-    transition: background-color 0.3s;
-    /* Smooth background transition */
 }
 
-/* Hover effect for buttons */
-button.Option:hover {
-    background-color: #ddd;
-    /* Light grey on hover */
+/* Title */
+.catch {
+    color: var(--text-color);
+    text-align: center;
+    margin: 20px 0;
+}
+
+/* Dash Content */
+.dash-content {
+    display: flex;
+    flex-direction: column;
+    /* Stack options vertically */
+    padding: 0 20px;
+}
+
+/* Options */
+.Option {
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    /* Align items to start */
+    background: var(--input-background);
+    padding: 15px;
+    border-radius: var(--border-radius);
+    margin: 10px 0;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.Option:hover {
+    background: rgba(0, 0, 0, 0.1);
+    /* Change background on hover */
 }
 
 .checkbox {
-  width: 40%; /* Adjust size */
-  height: 100%; /* Adjust size */
-  padding: 3px;
-border-radius: 50%;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  margin-right: 10px; /* Spacing between checkbox and label */
-  transition: background 0.3s; /* Transition for hover effect */
+    width: 30px;
+    height: 30px;
+    border-radius: var(--border-radius);
+    border: 2px solid var(--secondary-color);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-right: 15px;
+    /* Spacing for icon */
 }
 
 .checkbox.selected {
-  background: #000; /* Background color when selected */
-  color: white; /* Icon color when selected */
-  
+    background: var(--secondary-color);
 }
 
-
-.checkbox.selected svg {
-  display: block; /* Show icon when selected */
-}
-
+/* Order Button */
 .order-button {
-    
-    width: 35%;
-    padding: 20px 20px;
-    margin-top:4vh;
-  background-color: #fff; /* Adjust button color */
-  color: #000; /* Button text color */
-  font-family: sans-serif;
-  border: none;
-  padding: 10px 20px;
-  cursor: pointer;
-  border-radius: 36px; /* Rounded corners */
+    background-color: var(--secondary-color);
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border: none;
+    border-radius: var(--border-radius);
+    font-size: 1em;
+    cursor: pointer;
+    transition: background 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 20px auto;
+    /* Center the button */
+}
+
+.order-button:hover {
+    background-color: #ff8c00;
+    /* Slightly darker on hover */
+}
+
+.check-icon {
+    color: #FFFFFF;
+    /* Check icon color */
+}
+
+
+.distance-input {
+    margin: 16px 0;
+    /* Space around input */
+}
+
+.distance-input label {
+    margin-right: 8px;
+    /* Space between label and input */
 }

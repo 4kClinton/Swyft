@@ -4,8 +4,10 @@ import {
   useLoadScript,
   DirectionsRenderer,
 } from "@react-google-maps/api";
+import CircularProgress from "@mui/material/CircularProgress"; // For loader
 import "../Styles/Map.css";
 import SearchBar from "./SearchBar";
+import Dash from "./Dash"; // Import the Dash component
 
 const Map = () => {
   const { isLoaded } = useLoadScript({
@@ -14,67 +16,100 @@ const Map = () => {
   });
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
-  const [distance, setDistance] = useState("");
+  const [distance, setDistance] = useState(0); // Initial state for distance
   const [duration, setDuration] = useState("");
-  const [destination, setDestination] = useState(null); // This state will store the destination
+  const [destination, setDestination] = useState(null);
+  const [currentLocation, setCurrentLocation] = useState(null);
 
   useEffect(() => {
-    if (isLoaded && destination) {
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition((position) => {
+        const userLocation = {
+          lat: position.coords.latitude,
+          lng: position.coords.longitude,
+        };
+        setCurrentLocation(userLocation);
+        setDestination(userLocation); // Optional: set as initial destination
+      });
+    } else {
+      alert("Geolocation is not supported by this browser.");
+    }
+  }, []);
+
+  useEffect(() => {
+    if (isLoaded && currentLocation && destination) {
       calculateRoute();
     }
-  }, [isLoaded, destination]);
+  }, [isLoaded, currentLocation, destination]);
 
   const calculateRoute = async () => {
-    if (!window.google) return;
+    if (!window.google || !currentLocation || !destination) return;
 
     const directionsService = new window.google.maps.DirectionsService();
     const distanceMatrixService =
       new window.google.maps.DistanceMatrixService();
 
-    const origin = { lat: -1.286389, lng: 36.817223 }; // Nairobi
-
     try {
-      // Directions API request
       const directionsResult = await directionsService.route({
-        origin: origin,
-        destination: destination, // Use destination from state
+        origin: currentLocation,
+        destination: destination,
         travelMode: window.google.maps.TravelMode.DRIVING,
       });
 
       setDirectionsResponse(directionsResult);
 
-      // Distance Matrix API request
       const distanceMatrixResult =
         await distanceMatrixService.getDistanceMatrix({
-          origins: [origin],
+          origins: [currentLocation],
           destinations: [destination],
           travelMode: window.google.maps.TravelMode.DRIVING,
         });
 
       const distanceElement = distanceMatrixResult.rows[0].elements[0];
-      setDistance(distanceElement.distance.text);
-      setDuration(distanceElement.duration.text);
+
+      if (distanceElement && distanceElement.status === "OK") {
+        const calculatedDistance = distanceElement.distance.value / 1000; // Convert to kilometers
+        setDistance(calculatedDistance); // Set the distance
+        console.log("Updated Distance State:", calculatedDistance);
+
+        console.log("Calculated Distance:", calculatedDistance); // Log the distance
+        setDuration(distanceElement.duration.text);
+      } else {
+        console.error("Distance calculation failed:", distanceElement);
+      }
     } catch (error) {
       console.error("Error fetching directions or distance matrix:", error);
     }
   };
-
-  if (!isLoaded) return <div>Loading...</div>;
+console.log(`Mainnnn${distance}`)
+  if (!isLoaded)
+    return (
+      <div>
+        <CircularProgress size={40} />
+      </div>
+    );
 
   return (
     <div className="map-container">
-      {/* Pass setDestination to SearchBar */}
       <SearchBar setDestination={setDestination} />
 
       <GoogleMap
         mapContainerClassName="google-map"
-        center={{ lat: -1.286389, lng: 36.817223 }} // Nairobi, Kenya
+        center={
+          destination || currentLocation || { lat: -1.286389, lng: 36.817223 }
+        }
         zoom={12}
       >
         {directionsResponse && (
           <DirectionsRenderer directions={directionsResponse} />
         )}
       </GoogleMap>
+
+      {/* Display distance */}
+      <div className="distance-info">{distance.toFixed(2)} km</div>
+
+      {/* Pass distance as a prop to the Dash component */}
+      <Dash distance={Number(distance)} />
     </div>
   );
 };
