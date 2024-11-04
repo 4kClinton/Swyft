@@ -1,0 +1,79 @@
+
+.login-container {
+    display:block;
+    align-items: center;
+  background-color: #1c1c1c;
+  border-radius: 16px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  width: 90%;
+  padding-top: 20px;
+}
+
+.forgot-password {
+  display: block;
+  text-align: center;
+  margin: 8px 0;
+  text-decoration: none;
+  font-style: normal;
+  font-family: 'Montserrat', sans-serif;
+}
+
+.login-button {
+  background-color: #FFA500; /* Twitter Blue */
+  color: white;
+}
+
+.login-button:hover {
+  background-color: #FFA500; /* Darker Blue */
+}
+
+.icon {
+  width: 30px;
+  height: 30px;
+}
+
+.login-header{
+    font-family: 'Montserrat', sans-serif;
+    font-size: 25px;
+    font-weight: 600;
+    color: white;
+}
+
+.login-input{
+    padding: 10px;
+    margin: 10px 0;
+    width: 80%;
+    border: none;
+    border-bottom: 1px solid #ccc;
+}
+.login-input::placeholder{
+    color: #ccc;
+}
+
+.login-button{
+    padding: 10px 20px;
+    background-color: #FFA500; /* Facebook Blue */
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: 'Montserrat', sans-serif;
+    width: 80%;
+}
+
+.socials-container{
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 20px;
+    padding: 20px 20px 20px 20px;
+    padding-top: 20px;
+}
+
+.login-component{
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+svg{
+    color: #ffffff;
+}

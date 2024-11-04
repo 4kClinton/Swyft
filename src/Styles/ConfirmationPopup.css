@@ -1,0 +1,40 @@
+/* ConfirmationPopup.css */
+
+.confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: rgb(21, 21, 21);
+    border: none !important;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(255, 149, 0, 0.1);
+    z-index: 10000;
+    animation: fadeIn 0.5s ease;
+}
+
+.check-icon {
+    color: #ffffff;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #fba421;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}

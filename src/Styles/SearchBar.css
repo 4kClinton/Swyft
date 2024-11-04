@@ -115,8 +115,11 @@
 }
 
 .loader-overlay {
+    display: flex;
+    align-items: center;
+    justify-content: center;
     position: absolute;
-    right: 5px;
+    right: 5vh;
     top: 50%;
     transform: translateY(-50%);
     pointer-events: none;

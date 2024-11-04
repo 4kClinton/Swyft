@@ -81,7 +81,7 @@ const Map = () => {
       console.error("Error fetching directions or distance matrix:", error);
     }
   };
-console.log(`Mainnnn${distance}`)
+
   if (!isLoaded)
     return (
       <div>
@@ -108,8 +108,12 @@ console.log(`Mainnnn${distance}`)
       {/* Display distance */}
       <div className="distance-info">{distance.toFixed(2)} km</div>
 
-      {/* Pass distance as a prop to the Dash component */}
-      <Dash distance={Number(distance)} />
+      {/* Pass distance, userLocation, and destination as props to the Dash component */}
+      <Dash
+        distance={Number(distance)}
+        userLocation={currentLocation}
+        destination={destination}
+      />
     </div>
   );
 };

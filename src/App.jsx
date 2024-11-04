@@ -1,29 +1,45 @@
-import { useState } from "react";
-import SearchBar from "./Components/SearchBar.jsx";
-import "./App.css";
-import Map from "./Components/Map.jsx";
-import Dash from "./Components/Dash.jsx";
+// src/App.jsx
+
+import { useState, useEffect } from "react";
+import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Import Router and Routes
 import Navbar from "./Components/Navbar.jsx";
-import Navigation from "./Components/Navigation.jsx";
+import Map from "./Components/Map.jsx";
+import LoadingScreen from "./Components/LoadingScreen.jsx";
+import Login from "./Components/Login.jsx";
+import SignUp from "./Components/SignUp.jsx";
+import "./App.css";
+import { UserProvider } from "./contexts/UserContext.jsx";
 
 function App() {
+  const [isLoading, setIsLoading] = useState(true);
   const [isLightMode, setIsLightMode] = useState(true);
 
-  const toggleTheme = () => {
-    setIsLightMode((prevMode) => !prevMode);
-    // Apply the theme class to the body element
-    document.body.className = isLightMode ? "dark-mode" : "light-mode";
-  };
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 2000);
+
+    return () => clearTimeout(timer);
+  }, []);
 
   return (
-    <>
-      <div>
-        <Navbar toggleTheme={toggleTheme} isLightMode={isLightMode} />
-        <Map />
-        <Dash />
-        
-      </div>
-    </>
+    <UserProvider>
+      <Router>
+        {isLoading ? (
+          <LoadingScreen />
+        ) : (
+          <div>
+            <Navbar />
+            <Routes>
+              <Route path="/" element={<Map />} />
+              <Route path="/login" element={<Login />} />
+              <Route path="/signup" element={<SignUp />} />
+              {/* You can add more routes here */}
+            </Routes>
+          </div>
+        )}
+      </Router>
+    </UserProvider>
   );
 }
 

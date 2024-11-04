@@ -1,6 +1,6 @@
 /* General Styles */
 :root {
-    --primary-color: #1A1A1A;
+    --primary-color: #212121;
     /* Dark background color */
     --secondary-color: #FFA500;
     /* Accent color */
@@ -8,12 +8,14 @@
     /* White text */
     --input-background: #282828;
     /* Light background for input fields */
-    --border-radius: 8px;
+    --border-radius: 5vh;
     /* Border radius for buttons and inputs */
 }
 
 /* Dashboard Container */
 .Dash {
+    font-family: 'Montserrat', sans-serif;
+    font-weight:500;
     position: fixed;
     /* Fixed position for the dash */
     bottom: 0;
@@ -23,6 +25,7 @@
     max-height: 400px;
     /* Set a max height */
     background-color: var(--primary-color);
+    /* border-radius: 5vh; */
     border-top-left-radius: var(--border-radius);
     border-top-right-radius: var(--border-radius);
     transition: transform 0.3s ease;
@@ -35,7 +38,16 @@
     padding-bottom: 20px;
     /* Optional: Add some padding at the bottom */
 }
-
+.confirm-dash {
+    max-height: 400px;
+    font-family: 'Montserrat', sans-serif;
+    /* Use 'Montserrat' instead of 'mons' */
+    /* min-height: 350px; */
+}
+.confirm-button{
+        background-color: #fba421;
+        margin-right: 10px;
+}
 .Dash.open {
     transform: translateY(0);
     /* Show when open */
@@ -141,4 +153,73 @@
 .distance-input label {
     margin-right: 8px;
     /* Space between label and input */
+}
+
+
+.round-checkbox{
+    border-radius:"50%"
+    width "20px";
+}
+
+/* ConfirmationPopup.css */
+
+.confirmation-popup {
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: white;
+    border: 2px solid #2191fb;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+    animation: fadeIn 0.5s ease;
+}
+
+.check-icon {
+    color: #2191fb;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #2191fb;
+    color: white;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+.loader-popup {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.8);
+    color: white;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 2rem;
+    z-index: 1000;
+    /* Ensure it appears above other content */
+}
+
+.loader-input{
+     margin-top: 5px;
+    border-radius: 15px;
+    text-align: center;
 }
