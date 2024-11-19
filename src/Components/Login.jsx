@@ -64,10 +64,10 @@ const Login = () => {
           </Link>
           <Button
             variant="contained"
-            color="primary"
+            color="#success"
             type="submit"
             className="login-button"
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, backgroundColor: "#18b700", fontWeight: "bold" }}
             disabled={loading}
           >
             {loading ? "Logging in..." : "Log In"}
@@ -76,10 +76,9 @@ const Login = () => {
         <Button
           onClick={() => navigate("/signup")}
           variant="text"
-          color="primary"
           className="create-account"
           align="center"
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, color: "#18b700", fontWeight: "bold" }}
         >
           Create account
         </Button>

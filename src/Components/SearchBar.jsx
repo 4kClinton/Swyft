@@ -4,17 +4,18 @@ import SearchIcon from "@mui/icons-material/Search";
 import CircularProgress from "@mui/material/CircularProgress"; // For loader
 
 const SearchBar = ({ setDestination }) => {
-  const [userInput, setUserInput] = useState("");
-  const [searchInput, setSearchInput] = useState("");
-  const [suggestions, setSuggestions] = useState([]);
-  const [selectedPlace, setSelectedPlace] = useState(null);
+  const [userInput, setUserInput] = useState(""); // State for user's input (initial location)
+  const [searchInput, setSearchInput] = useState(""); // State for search input (location search)
+  const [userSuggestions, setUserSuggestions] = useState([]); // State for user location suggestions
+  const [searchSuggestions, setSearchSuggestions] = useState([]); // State for search location suggestions
+  const [selectedPlace, setSelectedPlace] = useState(null); // State for selected place
   const [isLocationLoading, setIsLocationLoading] = useState(false); // Track location loading state
 
-  // Fetch location suggestions based on searchInput
+  // Fetch location suggestions based on searchInput (Search input)
   useEffect(() => {
-    const fetchSuggestions = async () => {
+    const fetchSearchSuggestions = async () => {
       if (searchInput === "") {
-        setSuggestions([]);
+        setSearchSuggestions([]);
         return;
       }
 
@@ -25,28 +26,61 @@ const SearchBar = ({ setDestination }) => {
         { input: searchInput },
         (predictions, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
-            setSuggestions(predictions);
+            setSearchSuggestions(predictions);
           } else {
-            setSuggestions([]);
+            setSearchSuggestions([]);
           }
         }
       );
     };
 
-    fetchSuggestions();
+    fetchSearchSuggestions();
   }, [searchInput]);
+
+  // Fetch location suggestions for user's location input (userInput)
+  useEffect(() => {
+    const fetchUserSuggestions = async () => {
+      if (userInput === "") {
+        setUserSuggestions([]);
+        return;
+      }
+
+      if (!window.google) return;
+
+      const service = new window.google.maps.places.AutocompleteService();
+      service.getPlacePredictions(
+        { input: userInput },
+        (predictions, status) => {
+          if (status === window.google.maps.places.PlacesServiceStatus.OK) {
+            setUserSuggestions(predictions);
+          } else {
+            setUserSuggestions([]);
+          }
+        }
+      );
+    };
+
+    fetchUserSuggestions();
+  }, [userInput]);
 
   // Fetch current location when the component mounts
   useEffect(() => {
     handleGetCurrentLocation();
   }, []);
 
+  // Update the userInput (User's location) when the user types in the first input
+  const handleUserInputChange = (e) => {
+    setUserInput(e.target.value);
+  };
+
+  // Update the searchInput (Search location) when the user types in the second input
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value);
   };
 
+  // Handle clicking on a suggestion to select a location for search input
   const handleSuggestionClick = (place) => {
-    setSearchInput(place.description);
+    setSearchInput(place.description); // Set the selected place as the input
     setSelectedPlace(place);
 
     const geocoder = new window.google.maps.Geocoder();
@@ -54,24 +88,35 @@ const SearchBar = ({ setDestination }) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
         const location = results[0].geometry.location;
         const newDestination = { lat: location.lat(), lng: location.lng() };
-        setDestination(newDestination); // Update the destination using the selected suggestion
+        setDestination(newDestination); // Set the destination based on the selected suggestion
       } else {
         console.error("Geocoding failed with status:", status);
       }
     });
 
-    setSuggestions([]); // Clear suggestions after selection
+    setSearchSuggestions([]); // Clear suggestions after selection
   };
 
-  const handleSearch = () => {
-    if (searchInput) {
-      // Logic for using the search term from searchInput if needed
-    }
+  // Handle selecting a suggestion for user location (first input)
+  const handleUserLocationSuggestionClick = (place) => {
+    setUserInput(place.description); // Set the selected place for user location
+    const geocoder = new window.google.maps.Geocoder();
+    geocoder.geocode({ placeId: place.place_id }, (results, status) => {
+      if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
+        const location = results[0].geometry.location;
+        const newDestination = { lat: location.lat(), lng: location.lng() };
+        setDestination(newDestination); // Set the destination for user location
+      } else {
+        console.error("Geocoding failed with status:", status);
+      }
+    });
+
+    setUserSuggestions([]); // Clear suggestions after selection
   };
 
-  // Function to get the user's current location
+  // Handle fetching the current location
   const handleGetCurrentLocation = () => {
-    setIsLocationLoading(true); // Start the loading state
+    setIsLocationLoading(true);
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -80,7 +125,6 @@ const SearchBar = ({ setDestination }) => {
             lng: position.coords.longitude,
           };
 
-          // Reverse geocode to get the address of the current location
           const geocoder = new window.google.maps.Geocoder();
           const latlng = {
             lat: position.coords.latitude,
@@ -89,13 +133,12 @@ const SearchBar = ({ setDestination }) => {
 
           geocoder.geocode({ location: latlng }, (results, status) => {
             if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
-              setUserInput(results[0].formatted_address); // Set the user's location in the input
-              setDestination(newDestination); // Set the destination to the current location
+              setUserInput(results[0].formatted_address); // Set the user's location in the input field
+              setDestination(newDestination); // Set the destination to the user's location
             } else {
               console.error("Error retrieving address:", status);
             }
-            // Ensure that the loading state is stopped after geocoding is done
-            setIsLocationLoading(false); // Stop loading state after location is fetched
+            setIsLocationLoading(false); // Stop loading state after geocoding
           });
         },
         (error) => {
@@ -112,25 +155,39 @@ const SearchBar = ({ setDestination }) => {
 
   return (
     <div className="Search-container">
-      {/* Input field with loader */}
+      <h2 className="whereTo">Where to?</h2>
+
+      {/* User location input */}
       <div className="location-input-container">
         <input
           className="Search UserInput"
           type="text"
           value={userInput}
-          readOnly // Prevents user from typing in this field
+          onChange={handleUserInputChange}
           placeholder="Your location"
-          disabled={isLocationLoading} // Disable the input when location is loading
+          disabled={isLocationLoading} // Disable when location is loading
         />
-        {/* Show loader only while loading location */}
         {isLocationLoading && (
           <div className="loader-overlay">
-            <CircularProgress size={20} /> {/* Smaller size loader */}
+            <CircularProgress size={20} />
           </div>
+        )}
+        {/* Suggestions list for userInput */}
+        {userInput.length > 0 && userSuggestions.length > 0 && (
+          <ul className="suggestions-list">
+            {userSuggestions.map((place) => (
+              <li
+                key={place.place_id}
+                onClick={() => handleUserLocationSuggestionClick(place)}
+              >
+                {place.description}
+              </li>
+            ))}
+          </ul>
         )}
       </div>
 
-      {/* Input for searching locations with suggestions */}
+      {/* Search input for location search */}
       <input
         className="Search SearchInput"
         type="text"
@@ -138,14 +195,11 @@ const SearchBar = ({ setDestination }) => {
         onChange={handleSearchInputChange}
         placeholder="Search for a location"
       />
-      <button className="search-Button" onClick={handleSearch}>
-        <SearchIcon />
-      </button>
 
-      {/* Show suggestions for search input */}
-      {searchInput.length > 0 && suggestions.length > 0 && (
+      {/* Suggestions list for searchInput */}
+      {searchInput.length > 0 && searchSuggestions.length > 0 && (
         <ul className="suggestions-list">
-          {suggestions.map((place) => (
+          {searchSuggestions.map((place) => (
             <li
               key={place.place_id}
               onClick={() => handleSuggestionClick(place)}

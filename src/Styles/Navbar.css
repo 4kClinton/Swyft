@@ -1,106 +1,101 @@
+
+
 .icon-button {
-        position: absolute;
-            width: 4vh;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            height: 4vh;
-            border-radius: 50%;
-            background-color: #424242;
-            top: 20px;
-            left: 20px;
-            cursor: pointer;
-            z-index: 10000;
+    position: absolute;
+    width: 4vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 4vh;
+    border-radius: 50%;
+    background-color: var(--primary-color);
+    /* Dark background for icons */
+    top: 20px;
+    left: 20px;
+    cursor: pointer;
+    z-index: 12000;
+    box-shadow: 0px 1px 20px 1px var(--primary-color);
 }
 
 .sidebar {
+    font-size: large;
     width: 300px;
-    /* Consistent width */
-    height: 100vh;
-    background-color: #1e1e1e;
+    height: 98vh;
+    background-color: var(--primary-color);
+    /* Main dark background */
     position: fixed;
     top: 0;
     left: -350px;
-    /* Hidden position */
     transition: left 0.3s ease-in-out;
-    /* Smooth transition */
     padding: 20px;
     z-index: 4000;
     box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-    /* Optional shadow for depth */
+    overflow-y: scroll;
 }
 
 .show-sidebar {
     left: 0;
-    /* Show sidebar */
 }
 
 .sidebar ul {
     list-style-type: none;
-    /* No bullets */
     padding: 0;
-    /* Remove padding */
     margin: 0;
-    /* Remove margin for full left alignment */
+    background-color: var(--primary-color);
 }
 
 .sidebar ul li {
     padding: 10px 0;
-    /* Vertical spacing */
-    color: #fff;
+    color: var(--text-color);
     /* Text color */
     cursor: pointer;
-    /* Pointer cursor */
     display: flex;
-    /* Flex for icon alignment */
     align-items: center;
-    /* Center icons vertically */
+    background-color: var(--primary-color);
 }
 
 .card {
-    background-color: #313131;
+    background-color: var(--primary-color);
     /* Card background */
     padding: 15px;
     margin: 10px 0;
-    /* Vertical margin */
     border-radius: 8px;
-    /* Rounded corners */
     box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    /* Shadow for depth */
     display: flex;
-    /* Flex for alignment */
     flex-direction: column;
-    /* Stack contents vertically */
 }
 
 .card h3 {
-    margin-top: 0;
-    /* Remove top margin */
-    margin-bottom: 10px;
-    /* Add bottom margin for spacing */
+    color: var(--text-color);
+    /* Text color for card headers */
+    margin-left: 5px;
+    margin: 0;
 }
 
 .theme-toggle {
     display: flex;
-    /* Flex layout for toggle */
     align-items: center;
-    /* Center items vertically */
     margin-top: 10px;
-    /* Space above */
 }
 
 .theme-toggle label {
     display: flex;
-    /* Flex for label */
     align-items: center;
-    /* Center vertically */
+    color: var(--text-color);
+    /* Label color */
 }
 
 .theme-toggle input {
     margin-left: 10px;
-    /* Space between label and checkbox */
 }
 
-.cards{
+.cards {
     margin-top: 7vh;
+    background-color: var(--primary-color);
+}
+
+.menu-options {
+    display: flex;
+    flex-direction: column;
+    gap: 3vh;
 }

@@ -1,13 +1,18 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../Styles/Dash.css";
 import ConfirmationPopup from "./ConfirmationPopup";
+import DateTimePopup from "./DateTimePopup";
 import LoaderPopup from "./LoaderPopup";
+import ErrorPopup from "./ErrorPopup"; // New ErrorPopup
+import SuccessPopup from "./SuccessPopup"; // New SuccessPopup
+import CircularProgress from "@mui/material/CircularProgress"; 
 import {
   FaTruckPickup,
   FaTruck,
   FaTruckMoving,
+  FaCarCrash,
   FaCheckCircle,
-  FaMotorcycle,
+  FaRegClock,
 } from "react-icons/fa";
 
 const Dash = ({ distance = 0, userLocation, destination }) => {
@@ -15,24 +20,37 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [selectedOption, setSelectedOption] = useState("");
   const [calculatedCosts, setCalculatedCosts] = useState({});
   const [includeLoader, setIncludeLoader] = useState(false);
-  const [showConfirmDash, setShowConfirmDash] = useState(false);
   const [numLoaders, setNumLoaders] = useState(1);
+  const [showDateTimePopup, setShowDateTimePopup] = useState(false);
   const [showLoaderPopup, setShowLoaderPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState("");
+  const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
+
   const dashRef = useRef(null);
 
-  const rates = { motorcycle: 100, pickup: 160, miniTruck: 260, lorry: 310 };
+  // Rate and distance calculations
+  const rates = {
+    pickup: 160,
+    miniTruck: 230,
+    lorry: 310,
+    flatbed: 500,
+  };
 
   useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
       (acc, [vehicle, rate]) => {
-        let calculatedCost = rate * distance;
-        if (vehicle !== "motorcycle") {
+        let calculatedCost;
+        if (vehicle === "flatbed") {
+          calculatedCost = Math.max(rate * distance, 5500);
+        } else {
+          calculatedCost = rate * distance;
           calculatedCost = calculatedCost < 700 ? 1000 : calculatedCost;
         }
-        acc[vehicle] = (
+        acc[vehicle] = Math.round(
           calculatedCost + (includeLoader ? 300 * numLoaders : 0)
-        ).toFixed(2);
+        );
         return acc;
       },
       {}
@@ -57,60 +75,106 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
 
-  const handleOrder = () => {
-    if (!destination) {
-      setErrorMessage("Please enter a destination location.");
-      setShowLoaderPopup(false);
+  const handleSelectDateTime = () => {
+    if (!selectedOption) {
+      setErrorMessage("Please select a vehicle first.");
       return;
     }
-    if (selectedOption) {
-      setIsOpen(false);
-      setShowConfirmDash(true);
+    setShowDateTimePopup(true); // Show Date/Time Popup after selecting vehicle
+  };
+
+  const handleScheduleOrder = () => {
+    if (!scheduleDateTime) {
+      setErrorMessage("Please select a date and time for scheduling.");
+      return;
+    }
+
+    const alertTime = new Date(scheduleDateTime).getTime();
+    const currentTime = Date.now();
+    const delay = alertTime - currentTime;
+
+    if (delay > 0) {
+      setTimeout(() => setShowSuccessPopup(true), delay); // Show success popup
+      setShowSuccessPopup(true);
     } else {
-      setErrorMessage("Please select a vehicle option.");
+      setErrorMessage("Please select a future date and time.");
     }
+    setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
   };
 
-  const confirmOrder = async () => {
-    const orderData = {
-      vehicle: selectedOption,
-      distance,
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
-      totalCost: calculatedCosts[selectedOption],
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
+const confirmOrder = async () => {
+  if (!destination) {
+    setErrorMessage("Please enter a destination location.");
+    return;
+  }
+  if (!selectedOption) {
+    setErrorMessage("Please select a vehicle.");
+    return;
+  }
 
-    setShowLoaderPopup(true);
+  const orderData = {
+    vehicle: selectedOption,
+    distance,
+    loaders: includeLoader ? numLoaders : 0,
+    loaderCost: includeLoader ? numLoaders * 300 : 0,
+    totalCost: calculatedCosts[selectedOption],
+    userLocation,
+    destination,
+    time: new Date().toLocaleString(),
+  };
 
-    try {
-      const response = await fetch("http://localhost:3001/drivers");
-      const drivers = await response.json();
+  setShowLoaderPopup(true);
 
-      const nearbyDrivers = drivers.filter((driver) => {
+  try {
+    const response = await fetch("http://localhost:3001/drivers");
+    const drivers = await response.json();
+
+    // Ensure driver locations have latitude and longitude
+    const nearbyDrivers = drivers.filter((driver) => {
+      if (
+        driver.location &&
+        driver.location.latitude &&
+        driver.location.longitude
+      ) {
         return calculateDistance(userLocation, driver.location) <= 2;
-      });
-
-      if (nearbyDrivers.length > 0) {
-        await sendOrderToDriver(nearbyDrivers[0].id, orderData);
-        alert(`Order details sent to driver ${nearbyDrivers[0].name}.`);
-      } else {
-        alert("No drivers available within 2km.");
       }
+      return false;
+    });
 
-      setShowLoaderPopup(false);
-      resetDash();
-    } catch (error) {
-      setErrorMessage("Failed to place order. Please try again.");
-      setShowLoaderPopup(false);
+    if (nearbyDrivers.length > 0) {
+      await sendOrderToDriver(nearbyDrivers[0].id, orderData);
+      setShowSuccessPopup(true); // Show success popup on successful order
+    } else {
+      setErrorMessage("No drivers available within 2km.");
     }
-  };
 
-  const calculateDistance = (userLocation, driverLocation) => {
-    return Math.random() * 5;
-  };
+    setShowLoaderPopup(false);
+    resetDash();
+  } catch (error) {
+    setErrorMessage("Failed to place order. Please try again.");
+    setShowLoaderPopup(false);
+  }
+};
+
+ const calculateDistance = (userLocation, driverLocation) => {
+   const toRadians = (degrees) => (degrees * Math.PI) / 180;
+
+   const R = 6371; // Radius of the Earth in km
+   const lat1 = toRadians(userLocation.latitude);
+   const lon1 = toRadians(userLocation.longitude);
+   const lat2 = toRadians(driverLocation.latitude);
+   const lon2 = toRadians(driverLocation.longitude);
+
+   const dLat = lat2 - lat1;
+   const dLon = lon2 - lon1;
+
+   const a =
+     Math.sin(dLat / 2) ** 2 +
+     Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+   return R * c; // Distance in km
+ };
 
   const sendOrderToDriver = async (driverId, orderData) => {
     await fetch(`http://localhost:3000/orders`, {
@@ -126,11 +190,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setNumLoaders(1);
     setCalculatedCosts({});
     setErrorMessage("");
+    setScheduleDateTime("");
   };
 
   const goBackToDash = () => {
-    resetDash(); // Clear all order details
-    setShowConfirmDash(false); // Hide the confirmation dash
+    resetDash();
+    setShowDateTimePopup(false);
+    setShowConfirmationPopup(false);
   };
 
   const handlePopupClose = () => {
@@ -148,88 +214,106 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       <div className="notch" onClick={toggleDash}>
         <div className="notch-indicator"></div>
       </div>
-      {!showConfirmDash ? (
-        <>
-          <h2 className="catch">Which means do you prefer?</h2>
-          <div className="dash-content">
-            {Object.entries(calculatedCosts).map(([vehicle, cost]) => {
-              const Icon = {
-                motorcycle: FaMotorcycle,
-                pickup: FaTruckPickup,
-                miniTruck: FaTruck,
-                lorry: FaTruckMoving,
-              }[vehicle];
-              return (
-                <label
-                  key={vehicle}
-                  className="Option"
-                  onClick={() => handleOptionChange(vehicle)}
-                >
-                  <div
-                    className={`checkbox ${
-                      selectedOption === vehicle ? "selected" : ""
-                    }`}
-                  >
-                    <Icon size={24} />
-                  </div>
-                  {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{" "}
-                  {cost}
-                </label>
-              );
-            })}
-          </div>
 
-          <div className="loader-option">
-            <label>
-              <input
-                className="round-checkbox"
-                type="checkbox"
-                checked={includeLoader}
-                onChange={handleLoaderChange}
-              />
-              Need a loader for unloading? (Ksh 300 per loader)
+      {/* Vehicle Selection */}
+      <h2 className="catch" onClick={toggleDash}>
+        Which means do you prefer?
+      </h2>
+      <div className="dash-content">
+        {Object.entries(calculatedCosts).map(([vehicle, cost]) => {
+          const Icon = {
+            pickup: FaTruckPickup,
+            miniTruck: FaTruck,
+            lorry: FaTruckMoving,
+            flatbed: FaCarCrash,
+          }[vehicle];
+          return (
+            <label
+              key={vehicle}
+              className="Option"
+              onClick={() => handleOptionChange(vehicle)}
+            >
+              <div
+                className={`checkbox ${
+                  selectedOption === vehicle ? "selected" : ""
+                }`}
+              >
+                <Icon size={24} />
+              </div>
+              {vehicle === "flatbed"
+                ? "Car Rescue (Flatbed)"
+                : vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}{" "}
+              - Ksh {cost}
             </label>
-            {includeLoader && (
-              <input
-                className="loader-input"
-                type="number"
-                value={numLoaders}
-                onChange={handleNumLoadersChange}
-                style={{ marginLeft: "10px", width: "50px" }}
-              />
-            )}
-          </div>
+          );
+        })}
+      </div>
 
-          <div className="total-cost">
-            <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "1000"}</h3>
-          </div>
-          <button className="order-button" onClick={handleOrder}>
-            Order
-            <FaCheckCircle
-              size={14}
-              className="check-icon"
-              style={{ marginLeft: "5px" }}
-            />
-          </button>
-        </>
-      ) : (
-        <div className="confirm-dash">
-          <h2>Confirm Your Order</h2>
-          <p>Vehicle: {selectedOption}</p>
-          <p>Loaders: {includeLoader ? numLoaders : 0}</p>
-          <p>Loader Cost: Ksh {includeLoader ? numLoaders * 300 : 0}</p>
-          <p>Total Cost: Ksh {calculatedCosts[selectedOption]}</p>
-          <button className="confirm-button" onClick={confirmOrder}>
-            Confirm Order
-          </button>
-          <button className="back-button" onClick={goBackToDash}>
-            Go Back
-          </button>
-        </div>
+      {/* Loader Option */}
+      <div className="loader-option">
+        <label>
+          <input
+            className="round-checkbox"
+            type="checkbox"
+            checked={includeLoader}
+            onChange={handleLoaderChange}
+          />
+          Need a loader for unloading? (Ksh 300 per loader)
+        </label>
+        {includeLoader && (
+          <input
+            className="loader-input"
+            type="number"
+            value={numLoaders}
+            onChange={handleNumLoadersChange}
+            style={{ marginLeft: "10px", width: "50px" }}
+          />
+        )}
+      </div>
+
+      <div className="total-cost">
+        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "1000"}</h3>
+      </div>
+
+      <div className="order-group">
+        {/* Confirm and Schedule */}
+        <button className="order-button" onClick={confirmOrder}>
+          Confirm Order
+          <FaCheckCircle
+            size={14}
+            className="check-icon"
+            style={{ marginLeft: "5px" }}
+          />
+        </button>
+
+        {/* Schedule Button with FaRegClock */}
+        <button className="order-button" onClick={handleSelectDateTime}>
+          Schedule Ride
+          <FaRegClock
+            size={14}
+            className="check-icon"
+            style={{ marginLeft: "5px" }}
+          />
+        </button>
+        
+      </div>
+
+      {/* Popups */}
+      {errorMessage && (
+        <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
       )}
-      {showLoaderPopup && <LoaderPopup message="Finding a driver..." />}
-      {errorMessage && <div className="error-message">{errorMessage}</div>}
+      {showConfirmationPopup && <ConfirmationPopup onClose={goBackToDash} />}
+      {showSuccessPopup && <SuccessPopup onClose={goBackToDash} />}
+      {showDateTimePopup && (
+        <DateTimePopup
+          scheduleDateTime={scheduleDateTime}
+          setScheduleDateTime={setScheduleDateTime}
+          onClose={() => setShowDateTimePopup(false)}
+        />
+      )}
+      {showLoaderPopup && <LoaderPopup />}
     </div>
+
   );
 };
 

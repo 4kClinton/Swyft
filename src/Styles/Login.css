@@ -1,8 +1,28 @@
+:root {
+  --primary-color: #121212;
+  /* Darker background color for main sections */
+  --secondary-color: #00D46A;
+  /* Softer green accent for dark mode */
+  --text-color: #E0E0E0;
+  /* Light gray text for readability */
+  --input-background: #1E1E1E;
+  /* Dark gray background for input fields */
+  --card-background: #252525;
+  /* Medium-dark gray for cards/containers */
+  --highlight-color: #FFD54F;
+  /* Warm yellow for highlights or alerts */
+  --border-color: #333333;
+  /* Subtle border color for dividing elements */
+  --border-radius: 5vh;
+  /* Same border radius for rounded effect */
+  font-family: 'Montserrat', sans-serif;
+}
 
 .login-container {
-    display:block;
-    align-items: center;
-  background-color: #1c1c1c;
+  display: block;
+  align-items: center;
+  background-color: var(--primary-color);
+  /* Uses card background color */
   border-radius: 16px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
   width: 90%;
@@ -15,65 +35,78 @@
   margin: 8px 0;
   text-decoration: none;
   font-style: normal;
-  font-family: 'Montserrat', sans-serif;
+  font-family: var(--font-family);
+  color: var(--text-color);
+  /* Uses text color */
 }
 
 .login-button {
-  background-color: #FFA500; /* Twitter Blue */
-  color: white;
+  background-color: var(--secondary-color);
+  /* Uses secondary color */
+  color: var(--text-color);
+  /* Uses text color */
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-weight: bold;
+  width: 80%;
 }
 
 .login-button:hover {
-  background-color: #FFA500; /* Darker Blue */
+  background-color: var(--secondary-color);
+  /* Consistent color on hover */
 }
 
 .icon {
   width: 30px;
   height: 30px;
+  color: var(--text-color);
+  /* Matches icon color with text color */
 }
 
-.login-header{
-    font-family: 'Montserrat', sans-serif;
-    font-size: 25px;
-    font-weight: 600;
-    color: white;
+.login-header {
+  font-family: var(--font-family);
+  font-size: 25px;
+  font-weight: 600;
+  color: var(--text-color);
+  /* Uses text color */
 }
 
-.login-input{
-    padding: 10px;
-    margin: 10px 0;
-    width: 80%;
-    border: none;
-    border-bottom: 1px solid #ccc;
-}
-.login-input::placeholder{
-    color: #ccc;
-}
-
-.login-button{
-    padding: 10px 20px;
-    background-color: #FFA500; /* Facebook Blue */
-    color: white;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-family: 'Montserrat', sans-serif;
-    width: 80%;
+.login-input {
+  padding: 10px;
+  margin: 10px 0;
+  width: 80%;
+  background-color: var(--input-background);
+  /* Uses input background color */
+  color: var(--text-color);
+  /* Uses text color */
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  /* Uses border color */
 }
 
-.socials-container{
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 20px;
-    padding: 20px 20px 20px 20px;
-    padding-top: 20px;
+.login-input::placeholder {
+  color: var(--border-color);
+  /* Matches placeholder color with border */
 }
 
-.login-component{
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.socials-container {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 20px;
+  padding: 20px 20px 20px 20px;
+  padding-top: 20px;
 }
-svg{
-    color: #ffffff;
+
+.login-component {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+svg {
+  color: var(--text-color);
+  /* SVG icon color */
 }

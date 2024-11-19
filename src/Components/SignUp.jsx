@@ -100,16 +100,19 @@ const SignUp = () => {
           />
           <Button
             variant="contained"
-            color="primary"
             type="submit"
             className="login-button"
-            sx={{ mt: 2 }}
+            sx={{ mt: 2, backgroundColor: "#18b700", fontWeight: "bold" }}
             disabled={loading}
           >
             {loading ? "Signing up..." : "Sign Up"}
           </Button>
         </form>
-        <Typography variant="body2" align="center" sx={{ mt: 2 }}>
+        <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 4, fontWeight: "bold" }}
+        >
           Or sign up with
         </Typography>
         <Box
@@ -148,7 +151,7 @@ const SignUp = () => {
           variant="body2"
           className="existing-account"
           align="center"
-          sx={{ mt: 2 }}
+          sx={{ mt: 2, marginBottom : "2vh"}}
         >
           Already have an account? Log in
         </Link>
