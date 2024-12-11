@@ -28,7 +28,7 @@ const SignUp = () => {
 
     try {
       // Make a POST request to your Express server
-      const response = await fetch("http://localhost:5000/customers", {
+      const response = await fetch("http://localhost:3000/customers", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

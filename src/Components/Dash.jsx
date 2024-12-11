@@ -5,7 +5,8 @@ import DateTimePopup from "./DateTimePopup";
 import LoaderPopup from "./LoaderPopup";
 import ErrorPopup from "./ErrorPopup"; // New ErrorPopup
 import SuccessPopup from "./SuccessPopup"; // New SuccessPopup
-import CircularProgress from "@mui/material/CircularProgress"; 
+import CircularProgress from "@mui/material/CircularProgress";
+import FindDriverComponent from "./FindDriverComponent";
 import {
   FaTruckPickup,
   FaTruck,
@@ -27,6 +28,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
+  const [showFindDriverComponent, setFindDriverComponent ] = useState(false);
+  const [showPopup, setShowPopup] = useState(true);
 
   const dashRef = useRef(null);
 
@@ -123,66 +126,73 @@ const confirmOrder = async () => {
     time: new Date().toLocaleString(),
   };
 
-  setShowLoaderPopup(true);
+  setFindDriverComponent(true); // Show loader popup while processing
 
   try {
-    const response = await fetch("http://localhost:3001/drivers");
-    const drivers = await response.json();
-
-    // Ensure driver locations have latitude and longitude
-    const nearbyDrivers = drivers.filter((driver) => {
-      if (
-        driver.location &&
-        driver.location.latitude &&
-        driver.location.longitude
-      ) {
-        return calculateDistance(userLocation, driver.location) <= 2;
-      }
-      return false;
-    });
-
-    if (nearbyDrivers.length > 0) {
-      await sendOrderToDriver(nearbyDrivers[0].id, orderData);
-      setShowSuccessPopup(true); // Show success popup on successful order
-    } else {
-      setErrorMessage("No drivers available within 2km.");
-    }
-
-    setShowLoaderPopup(false);
-    resetDash();
-  } catch (error) {
-    setErrorMessage("Failed to place order. Please try again.");
-    setShowLoaderPopup(false);
-  }
-};
-
- const calculateDistance = (userLocation, driverLocation) => {
-   const toRadians = (degrees) => (degrees * Math.PI) / 180;
-
-   const R = 6371; // Radius of the Earth in km
-   const lat1 = toRadians(userLocation.latitude);
-   const lon1 = toRadians(userLocation.longitude);
-   const lat2 = toRadians(driverLocation.latitude);
-   const lon2 = toRadians(driverLocation.longitude);
-
-   const dLat = lat2 - lat1;
-   const dLon = lon2 - lon1;
-
-   const a =
-     Math.sin(dLat / 2) ** 2 +
-     Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-   return R * c; // Distance in km
- };
-
-  const sendOrderToDriver = async (driverId, orderData) => {
-    await fetch(`http://localhost:3000/orders`, {
+    const response = await fetch("http://localhost:3000/orders", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(orderData),
     });
+
+    if (!response.ok) {
+      throw new Error("Failed to place order, server error");
+    }
+
+    const result = await response.json();
+    console.log("Order placed successfully:", result);
+
+    setShowLoaderPopup(false); // Close loader popup
+    setShowSuccessPopup(true); // Show success popup
+    resetDash(); // Reset the dashboard after a successful order
+  } catch (error) {
+    console.error("Error while placing order:", error);
+    setShowLoaderPopup(false); // Close loader popup
+    setErrorMessage("Failed to place order. Please try again."); // Show error popup
+  }
+};
+
+
+  const calculateDistance = (userLocation, driverLocation) => {
+    const toRadians = (degrees) => (degrees * Math.PI) / 180;
+
+    const R = 6371; // Radius of the Earth in km
+    const lat1 = toRadians(userLocation.latitude);
+    const lon1 = toRadians(userLocation.longitude);
+    const lat2 = toRadians(driverLocation.latitude);
+    const lon2 = toRadians(driverLocation.longitude);
+
+    const dLat = lat2 - lat1;
+    const dLon = lon2 - lon1;
+
+    const a =
+      Math.sin(dLat / 2) ** 2 +
+      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
+    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+    return R * c; // Distance in km
   };
+
+const sendOrderToDriver = async (driverId, orderData) => {
+  try {
+    const response = await fetch(`http://localhost:3000/vehicles`, {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
+    });
+
+    if (!response.ok) {
+      throw new Error("Failed to place order, server error");
+    }
+
+    const result = await response.json();
+    console.log("Order sent successfully:", result);
+  } catch (error) {
+    console.error("Error while sending order:", error);
+    setErrorMessage("Failed to place order. Please try again.");
+  }
+};
+
 
   const resetDash = () => {
     setSelectedOption("");
@@ -295,10 +305,10 @@ const confirmOrder = async () => {
             style={{ marginLeft: "5px" }}
           />
         </button>
-        
       </div>
 
       {/* Popups */}
+      
       {errorMessage && (
         <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
       )}
@@ -313,7 +323,6 @@ const confirmOrder = async () => {
       )}
       {showLoaderPopup && <LoaderPopup />}
     </div>
-
   );
 };
 

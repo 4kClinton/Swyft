@@ -12,7 +12,9 @@ import "./App.css";
 import { UserProvider } from "./contexts/UserContext.jsx";
 import Account from "./Components/Account.jsx";
 import RidesHistory from "./Components/MyRides.jsx"
+import DriverDetails from "./Components/driverDetails.jsx"
 import Settings from "./Components/Settings.jsx"
+import FindDriver from "./Components/FindDriver.jsx";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -42,6 +44,7 @@ function App() {
               <Route path="/acc" element={<Account />} />
               <Route path="/ridesHistory" element={<RidesHistory />} />
               <Route path="/settings" element={<Settings />} />
+              <Route path="/driverDetails" element={<DriverDetails />} />
               {/* You can add more routes here */}
             </Routes>
           </div>

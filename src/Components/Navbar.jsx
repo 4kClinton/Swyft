@@ -12,6 +12,7 @@ import HelpIcon from "@mui/icons-material/Help";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
 import { useUser } from "../contexts/UserContext"; // Import the useUser hook
+
 import "../Styles/Navbar.css";
 
 const Navbar = () => {
@@ -40,6 +41,7 @@ const Navbar = () => {
           {/* Account Info */}
           <div className="card">
             <Link
+              onClick={toggleSidebar}
               to="/acc"
               style={{
                 backgroundColor: "var(--primary-color)",
@@ -66,7 +68,7 @@ const Navbar = () => {
 
             {/* Login Button */}
             {!user && (
-              <Link to="/login">
+              <Link onClick={toggleSidebar} to="/login">
                 <button className="login-button">Log In</button>
               </Link>
             )}
@@ -78,6 +80,7 @@ const Navbar = () => {
             <ul className="menu-options">
               {/* Ride History */}
               <Link
+                onClick={toggleSidebar}
                 to="/ridesHistory"
                 style={{
                   backgroundColor: "var(--primary-color)",
@@ -95,6 +98,7 @@ const Navbar = () => {
 
               {/* Scheduled Rides */}
               <Link
+                onClick={toggleSidebar}
                 to="/scheduled-rides"
                 style={{
                   backgroundColor: "var(--primary-color)",
@@ -112,6 +116,7 @@ const Navbar = () => {
 
               {/* Settings */}
               <Link
+                onClick={toggleSidebar}
                 to="/settings"
                 style={{
                   backgroundColor: "var(--primary-color)",
@@ -133,13 +138,38 @@ const Navbar = () => {
 
           {/* Help Section */}
           <div className="card">
-            <h3>
-              <HelpIcon
-                style={{ color: "#18b700", marginRight: "8px", margin: "0" }}
-              />
-              Help
-            </h3>
-            <p>If you need assistance, please contact us!</p>
+            <h3>Additional Services</h3>
+            <ul>
+              <li>
+                <i
+                  className="fas fa-clipboard-check"
+                  style={{ color: "#18b700", marginRight: "8px" }}
+                ></i>
+                Event Setup Package
+              </li>
+              <li>
+                <i
+                  className="fas fa-utensils"
+                  style={{
+                    color: "#18b700",
+                    marginRight: "8px",
+                    marginBottom: "8px",
+                  }}
+                ></i>
+                Catering Services
+              </li>
+              <li>
+                <i
+                  className="fas fa-building"
+                  style={{
+                    color: "#18b700",
+                    marginRight: "8px",
+                    marginBottom: "8px",
+                  }}
+                ></i>
+                Find a House
+              </li>
+            </ul>
           </div>
         </div>
       </div>

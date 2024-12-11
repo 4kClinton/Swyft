@@ -5,7 +5,7 @@
     align-items: center;
     height: 100vh;
     width: 100vw;
-    background-color: #1e1e1e;
+    background-color:#00D46A;
     /* Adjust as per your theme */
     position: fixed;
     top: 0;
@@ -16,15 +16,34 @@
 #second-logo{
     position: absolute;
     top: 50%;
-    left: 30%;
+    left: 38%;
     width: 150px;
         /* Adjust size as needed */
         animation: breathe 2s ease-in-out infinite
             /* Combine breathing and spinning animations */
 }
 
+.loader-wrapper {
+    position: relative;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.circular-loader  {
+    color: #ffff;
+    
+    position: absolute;
+    /* Keeps the loader centered over the logo */
+}
+
+.MuiCircularProgress-root {
+    color: #00D46A !important;
+    /* Ensure high specificity */
+}
 .loading-logo {
-    width: 150px;
+    width: 250px;
+    
     /* Adjust size as needed */
     animation: breathe 2s ease-in-out infinite
     /* Combine breathing and spinning animations */
