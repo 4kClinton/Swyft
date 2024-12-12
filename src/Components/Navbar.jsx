@@ -41,6 +41,7 @@ const Navbar = () => {
               style={{
                 backgroundColor: "var(--primary-color)",
                 padding: "1vh",
+                width : "50%",
                 borderRadius: "10px",
                 textDecoration: "none",
                 color: "inherit",

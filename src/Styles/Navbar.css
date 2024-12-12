@@ -66,6 +66,7 @@
 }
 
 .card h3 {
+    font-size: small;
     color: var(--text-color);
     /* Text color for card headers */
     margin-left: 5px;
@@ -90,6 +91,7 @@
 }
 
 .cards {
+    font-size: small;
     margin-top: 7vh;
     background-color: var(--primary-color);
 }

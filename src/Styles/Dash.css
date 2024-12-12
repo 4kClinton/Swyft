@@ -29,7 +29,7 @@
 .Dash {
     font-family: 'Montserrat', sans-serif;
     font-weight:500;
-    font-size: medium;
+    font-size: small;
     position: fixed;
     /* Fixed position for the dash */
     bottom: 0;
@@ -87,6 +87,7 @@
     color: var(--text-color);
     text-align: center;
     margin: 20px 0;
+    font-size: large;
 }
 
 /* Dash Content */

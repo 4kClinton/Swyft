@@ -129,11 +129,14 @@ const confirmOrder = async () => {
   setFindDriverComponent(true); // Show loader popup while processing
 
   try {
-    const response = await fetch("http://localhost:3000/orders", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData),
-    });
+    const response = await fetch(
+      "https://swyft-server-t7f5.onrender.com/orders",
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      }
+    );
 
     if (!response.ok) {
       throw new Error("Failed to place order, server error");
@@ -282,7 +285,7 @@ const sendOrderToDriver = async (driverId, orderData) => {
       </div>
 
       <div className="total-cost">
-        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "1000"}</h3>
+        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "0"}</h3>
       </div>
 
       <div className="order-group">

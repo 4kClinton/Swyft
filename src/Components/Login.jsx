@@ -18,13 +18,16 @@ const Login = () => {
     setError(null);
 
     try {
-      const response = await fetch("https://your-backend-api.com/login", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ email, password }),
-      });
+      const response = await fetch(
+        "https://swyft-server-t7f5.onrender.com/login",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({ email, password }),
+        }
+      );
 
       const data = await response.json();
 

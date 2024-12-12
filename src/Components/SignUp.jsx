@@ -28,18 +28,21 @@ const SignUp = () => {
 
     try {
       // Make a POST request to your Express server
-      const response = await fetch("http://localhost:3000/customers", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name,
-          phone: phoneNumber,
-          email,
-          password, // Make sure your server handles password storage properly (hashing, etc.)
-        }),
-      });
+      const response = await fetch(
+        "https://swyft-server-t7f5.onrender.com/signup",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            name,
+            phone: phoneNumber,
+            email,
+            password, // Make sure your server handles password storage properly (hashing, etc.)
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error("Sign-up failed. Please try again.");
