@@ -3,7 +3,6 @@ import { useNavigate } from "react-router-dom";
 import { Button, Typography, Box, Link } from "@mui/material";
 import { Google, Twitter, GitHub } from "@mui/icons-material";
 import "../Styles/Login.css";
-import { supabase } from "../Utils/supabaseClient";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -12,21 +11,28 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Log-In function using Supabase
+  // Log-In function using Backend API
   const logIn = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
 
     try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
+      const response = await fetch("https://your-backend-api.com/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
       });
 
-      if (error) {
-        setError("Login failed. Please try again.");
+      const data = await response.json();
+
+      if (!response.ok) {
+        setError(data.message || "Login failed. Please try again.");
       } else {
+        // Assuming the backend sends a token on successful login
+        localStorage.setItem("authToken", data.token);
         navigate("/"); // Redirect to the home route on successful login
       }
     } catch (err) {

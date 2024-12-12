@@ -3,22 +3,17 @@ import profile from "../assets/profile.jpeg";
 import React, { useState } from "react";
 import MenuIcon from "@mui/icons-material/Menu";
 import CloseIcon from "@mui/icons-material/Close";
-import LightModeIcon from "@mui/icons-material/LightMode";
-import DarkModeIcon from "@mui/icons-material/DarkMode";
-import PaymentIcon from "@mui/icons-material/Payment";
 import HistoryIcon from "@mui/icons-material/History";
 import SettingsIcon from "@mui/icons-material/Settings";
-import HelpIcon from "@mui/icons-material/Help";
-import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
-import { useUser } from "../contexts/UserContext"; // Import the useUser hook
-
 import "../Styles/Navbar.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
-  const { user } = useUser(); // Access user from context
   const navigate = useNavigate();
+
+  // Mock user data or retrieve it from localStorage/sessionStorage
+  const user = JSON.parse(localStorage.getItem("user")) || null;
 
   const handleGoBack = () => {
     navigate("/"); // Navigate to the home page
@@ -56,7 +51,7 @@ const Navbar = () => {
             >
               <img
                 src={profile}
-                alt="null"
+                alt="Profile"
                 style={{
                   width: "5vh",
                   borderRadius: "50%",
@@ -136,7 +131,7 @@ const Navbar = () => {
             </ul>
           </div>
 
-          {/* Help Section */}
+          {/* Additional Services */}
           <div className="card">
             <h3>Additional Services</h3>
             <ul>
