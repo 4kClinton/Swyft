@@ -6,11 +6,20 @@ import CloseIcon from "@mui/icons-material/Close";
 import HistoryIcon from "@mui/icons-material/History";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { Link, useNavigate } from "react-router-dom"; // Import Link for navigation
+import { ToastContainer, toast } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+
 import "../Styles/Navbar.css";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+
+  const notify = () => {
+    toast.info("This Feature is coming soon !", {
+      position: toast.POSITION.BOTTOM_RIGHT,
+    });
+  };
 
   // Mock user data or retrieve it from localStorage/sessionStorage
   const user = JSON.parse(localStorage.getItem("user")) || null;
@@ -25,6 +34,21 @@ const Navbar = () => {
 
   return (
     <div>
+      {/* ToastContainer should be rendered only once in the component */}
+      <ToastContainer
+        position="top-right"
+        autoClose={5000}
+        hideProgressBar={false}
+        newestOnTop={false}
+        closeOnClick
+        rtl={false}
+        pauseOnFocusLoss
+        draggable
+        pauseOnHover
+        theme="dark"
+        className="toast-container"
+      />
+
       {/* Sidebar toggle button */}
       <div className="icon-button" onClick={toggleSidebar}>
         {isOpen ? <CloseIcon /> : <MenuIcon />}
@@ -41,7 +65,7 @@ const Navbar = () => {
               style={{
                 backgroundColor: "var(--primary-color)",
                 padding: "1vh",
-                width : "50%",
+                width: "50%",
                 borderRadius: "10px",
                 textDecoration: "none",
                 color: "inherit",
@@ -140,6 +164,7 @@ const Navbar = () => {
                 <i
                   className="fas fa-clipboard-check"
                   style={{ color: "#18b700", marginRight: "8px" }}
+                  onClick={notify}
                 ></i>
                 Event Setup Package
               </li>

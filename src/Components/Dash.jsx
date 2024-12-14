@@ -1,5 +1,6 @@
 import React, { useState, useEffect, useRef } from "react";
 import "../Styles/Dash.css";
+import { useNavigate } from "react-router-dom";
 import ConfirmationPopup from "./ConfirmationPopup";
 import DateTimePopup from "./DateTimePopup";
 import LoaderPopup from "./LoaderPopup";
@@ -17,6 +18,7 @@ import {
 } from "react-icons/fa";
 
 const Dash = ({ distance = 0, userLocation, destination }) => {
+  const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
   const [selectedOption, setSelectedOption] = useState("");
   const [calculatedCosts, setCalculatedCosts] = useState({});
@@ -41,25 +43,33 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     flatbed: 500,
   };
 
-  useEffect(() => {
-    const newCalculatedCosts = Object.entries(rates).reduce(
-      (acc, [vehicle, rate]) => {
-        let calculatedCost;
-        if (vehicle === "flatbed") {
-          calculatedCost = Math.max(rate * distance, 5500);
-        } else {
-          calculatedCost = rate * distance;
-          calculatedCost = calculatedCost < 700 ? 1000 : calculatedCost;
-        }
-        acc[vehicle] = Math.round(
-          calculatedCost + (includeLoader ? 300 * numLoaders : 0)
-        );
-        return acc;
-      },
-      {}
-    );
-    setCalculatedCosts(newCalculatedCosts);
-  }, [distance, includeLoader, numLoaders]);
+useEffect(() => {
+  const newCalculatedCosts = Object.entries(rates).reduce(
+    (acc, [vehicle, rate]) => {
+      // Calculate base cost
+      let calculatedCost = rate * distance;
+
+      // Apply specific minimum logic for flatbed
+      if (vehicle === "flatbed") {
+        calculatedCost = Math.max(calculatedCost, 3500);
+      }
+
+      // Enforce minimum cost of 1000 for all vehicles
+      calculatedCost = Math.max(calculatedCost, 1000);
+
+      // Add loader costs if applicable
+      acc[vehicle] = Math.round(
+        calculatedCost + (includeLoader ? 300 * numLoaders : 0)
+      );
+
+      return acc;
+    },
+    {}
+  );
+
+  setCalculatedCosts(newCalculatedCosts);
+}, [distance, includeLoader, numLoaders]);
+
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -105,7 +115,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
   };
 
+
+  
 const confirmOrder = async () => {
+  
+
   if (!destination) {
     setErrorMessage("Please enter a destination location.");
     return;
@@ -115,7 +129,18 @@ const confirmOrder = async () => {
     return;
   }
 
+  // Check if the user is logged in
+  const user = JSON.parse(localStorage.getItem("user")); // Adjust this if your user data is stored elsewhere
+  if (!user || !user.id || !user.name) {
+   
+    navigate("/login"); // Redirect to the login route
+     setErrorMessage("You must be logged in to place an order.");
+    return;
+  }
+console.log(user);
+  // Construct the order data including user details
   const orderData = {
+    id: user.id, // User ID from localStorage or state
     vehicle: selectedOption,
     distance,
     loaders: includeLoader ? numLoaders : 0,
@@ -124,6 +149,7 @@ const confirmOrder = async () => {
     userLocation,
     destination,
     time: new Date().toLocaleString(),
+    userName: user.name, // Include user name
   };
 
   setFindDriverComponent(true); // Show loader popup while processing
@@ -154,7 +180,6 @@ const confirmOrder = async () => {
     setErrorMessage("Failed to place order. Please try again."); // Show error popup
   }
 };
-
 
   const calculateDistance = (userLocation, driverLocation) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;

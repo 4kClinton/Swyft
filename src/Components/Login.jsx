@@ -34,8 +34,11 @@ const Login = () => {
       if (!response.ok) {
         setError(data.message || "Login failed. Please try again.");
       } else {
-        // Assuming the backend sends a token on successful login
-        localStorage.setItem("authToken", data.token);
+        // Save the user data and token in localStorage
+        const { token, user } = data; // Assuming 'user' contains user details
+        localStorage.setItem("authToken", token);
+        localStorage.setItem("user", JSON.stringify(user));
+
         navigate("/"); // Redirect to the home route on successful login
       }
     } catch (err) {

@@ -5,7 +5,6 @@ function ScheduledRides() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  // Mock data or data passed via location.state (make sure to pass an array of rides)
   const scheduledRides = location.state?.rides || [
     {
       id: 1,
@@ -21,37 +20,125 @@ function ScheduledRides() {
       fromLocation: "Location C",
       toLocation: "Location D",
     },
-    // Add more mock rides if necessary
   ];
 
   const handleGoBack = () => {
-    navigate("/"); // Navigate to the home page
+    navigate("/");
+  };
+
+  const handleBookNow = (rideId) => {
+    alert(`Booking ride with ID: ${rideId}`);
+  };
+
+  // Inline styles
+  const containerStyle = {
+    padding: "20px",
+    textAlign: "center",
+  };
+
+  const headingStyle = {
+    fontSize: "2em",
+    marginBottom: "20px",
+  };
+
+  const listStyle = {
+    color: "white",
+    listStyleType: "none",
+    padding: "0",
+    margin: "0",
+  };
+
+  const listItemStyle = {
+    backgroundColor: "var(--card-background)",
+    margin: "10px 0",
+    padding: "15px",
+    borderRadius: "var(--border-radius)",
+    boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.1)",
+    color: "var(--text-color)",
+  };
+
+  const rideInfoStyle = {
+    color: "white",
+    marginBottom: "10px",
+    fontSize: "0.9em",
+  };
+
+  const bookNowButtonStyle = {
+    padding: "8px 16px",
+    fontSize: "0.85em",
+    backgroundColor: "var(--secondary-color)",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  };
+
+  const bookNowButtonHoverStyle = {
+    backgroundColor: "#00B257", // Slightly darker green
+  };
+
+  const goBackButtonStyle = {
+    marginTop: "20px",
+    padding: "10px 20px",
+    fontSize: "1em",
+    backgroundColor: "#212121",
+    color: "white",
+    border: "none",
+    borderRadius: "5px",
+    fontWeight: "bold",
+    cursor: "pointer",
+    transition: "background-color 0.3s ease",
+  };
+
+  const goBackButtonHoverStyle = {
+    backgroundColor: "#2563eb",
   };
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Scheduled Rides</h2>
-
-      <div style={styles.cardContainer}>
+    <div style={containerStyle}>
+      <h2 style={headingStyle}>Scheduled Rides</h2>
+      <ul style={listStyle}>
         {scheduledRides.map((ride) => (
-          <div key={ride.id} style={styles.card}>
-            <p style={styles.text}>
+          <li key={ride.id} style={listItemStyle}>
+            <p style={rideInfoStyle}>
               <strong>Date:</strong> {ride.date || "N/A"}
             </p>
-            <p style={styles.text}>
+            <p style={rideInfoStyle}>
               <strong>Time:</strong> {ride.time || "N/A"}
             </p>
-            <p style={styles.text}>
+            <p style={rideInfoStyle}>
               <strong>From:</strong> {ride.fromLocation || "N/A"}
             </p>
-            <p style={styles.text}>
+            <p style={rideInfoStyle}>
               <strong>To:</strong> {ride.toLocation || "N/A"}
             </p>
-          </div>
+            <button
+              style={bookNowButtonStyle}
+              onMouseOver={(e) =>
+                Object.assign(e.currentTarget.style, bookNowButtonHoverStyle)
+              }
+              onMouseOut={(e) =>
+                Object.assign(e.currentTarget.style, bookNowButtonStyle)
+              }
+              onClick={() => handleBookNow(ride.id)}
+            >
+              Book Now
+            </button>
+          </li>
         ))}
-      </div>
-
-      <button onClick={handleGoBack} style={styles.goBackButton}>
+      </ul>
+      <button
+        style={goBackButtonStyle}
+        onMouseOver={(e) =>
+          Object.assign(e.currentTarget.style, goBackButtonHoverStyle)
+        }
+        onMouseOut={(e) =>
+          Object.assign(e.currentTarget.style, goBackButtonStyle)
+        }
+        onClick={handleGoBack}
+      >
         Go Back
       </button>
     </div>
@@ -59,48 +146,3 @@ function ScheduledRides() {
 }
 
 export default ScheduledRides;
-
-const styles = {
-  container: {
-    padding: "20px",
-    fontFamily: "Arial, sans-serif",
-    backgroundColor: "#f9f9f9",
-    borderRadius: "8px",
-    maxWidth: "800px",
-    margin: "20px auto",
-  },
-  heading: {
-    textAlign: "center",
-    fontSize: "2em",
-    color: "#333",
-    marginBottom: "20px",
-  },
-  cardContainer: {
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fill, minmax(200px, 1fr))",
-    gap: "20px",
-  },
-  card: {
-    padding: "15px",
-    backgroundColor: "#ffffff",
-    border: "1px solid #ddd",
-    borderRadius: "8px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.1)",
-  },
-  text: {
-    fontSize: "1em",
-    margin: "8px 0",
-    color: "#555",
-  },
-  goBackButton: {
-    marginTop: "20px",
-    padding: "10px 20px",
-    fontSize: "1em",
-    backgroundColor: "#2191FB",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    width: "100%",
-  },
-};
