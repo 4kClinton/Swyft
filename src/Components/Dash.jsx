@@ -118,8 +118,6 @@ useEffect(() => {
 
   
 const confirmOrder = async () => {
-  
-
   if (!destination) {
     setErrorMessage("Please enter a destination location.");
     return;
@@ -130,17 +128,29 @@ const confirmOrder = async () => {
   }
 
   // Check if the user is logged in
-  const user = JSON.parse(localStorage.getItem("user")); // Adjust this if your user data is stored elsewhere
-  if (!user || !user.id || !user.name) {
-   
+  function isLoggedIn() {
+    const loginMessage = sessionStorage.getItem("loginMessage");
+    return loginMessage === "Login successful";
+  }
+
+  // Usage
+  if (!isLoggedIn()) {
     navigate("/login"); // Redirect to the login route
-     setErrorMessage("You must be logged in to place an order.");
+    setErrorMessage("You must be logged in to place an order.");
     return;
   }
-console.log(user);
+
+  // Assuming `user` is retrieved from sessionStorage or state
+  const user = JSON.parse(sessionStorage.getItem("user")); // Adjust according to how you store user data
+  if (!user || !user.id || !user.name) {
+    setErrorMessage("User details are missing. Please log in again.");
+    navigate("/login");
+    return;
+  }
+
   // Construct the order data including user details
   const orderData = {
-    id: user.id, // User ID from localStorage or state
+    id: user.id, // User ID
     vehicle: selectedOption,
     distance,
     loaders: includeLoader ? numLoaders : 0,
@@ -180,6 +190,7 @@ console.log(user);
     setErrorMessage("Failed to place order. Please try again."); // Show error popup
   }
 };
+
 
   const calculateDistance = (userLocation, driverLocation) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -226,7 +237,7 @@ const sendOrderToDriver = async (driverId, orderData) => {
     setSelectedOption("");
     setIncludeLoader(false);
     setNumLoaders(1);
-    setCalculatedCosts({});
+    setCalculatedCosts(0);
     setErrorMessage("");
     setScheduleDateTime("");
   };
