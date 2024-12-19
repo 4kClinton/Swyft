@@ -192,7 +192,7 @@ const SignUp = () => {
           ></Button>
         </Box>
         <Typography
-          onClick={toLogin}
+          to={"/login"}
           variant="body2"
           className="existing-account"
           sx={{
