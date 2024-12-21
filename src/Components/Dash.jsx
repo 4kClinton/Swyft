@@ -16,6 +16,8 @@ import {
   FaCheckCircle,
   FaRegClock,
 } from "react-icons/fa";
+import { useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const navigate = useNavigate();
@@ -32,6 +34,17 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
   const [showFindDriverComponent, setFindDriverComponent ] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
+   const [isLoggedIn, setIsLoggedIn] = useState(false);
+    const theUser=useSelector((state)=>state.user.value)
+
+    useEffect(() => {
+        const loginStatus = theUser.name;
+        console.log("Login status on mount:", loginStatus); // Debugging line
+        if (loginStatus) {
+          setIsLoggedIn(true); // User is logged in
+        }
+    
+      }, [theUser]);
 
   const dashRef = useRef(null);
 
@@ -128,13 +141,12 @@ const confirmOrder = async () => {
   }
 
   // Check if the user is logged in
-  function isLoggedIn() {
-    const loginMessage = sessionStorage.getItem("loginMessage");
-    return loginMessage === "Login successful";
+  function LoggedIn() {
+    return isLoggedIn
   }
 
   // Usage
-  if (!isLoggedIn()) {
+  if (!LoggedIn()) {
     navigate("/login"); // Redirect to the login route
     setErrorMessage("You must be logged in to place an order.");
     return;
@@ -150,7 +162,7 @@ const confirmOrder = async () => {
 
   // Construct the order data including user details
   const orderData = {
-    id: user.id, // User ID
+    id: theUser.id, // User ID
     vehicle: selectedOption,
     distance,
     loaders: includeLoader ? numLoaders : 0,
@@ -159,12 +171,13 @@ const confirmOrder = async () => {
     userLocation,
     destination,
     time: new Date().toLocaleString(),
-    userName: user.name, // Include user name
+   
   };
 
   setFindDriverComponent(true); // Show loader popup while processing
 
   try {
+    
     const response = await fetch(
       "https://swyft-server-t7f5.onrender.com/orders",
       {
@@ -292,7 +305,7 @@ const sendOrderToDriver = async (driverId, orderData) => {
               {vehicle === "flatbed"
                 ? "Car Rescue (Flatbed)"
                 : vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}{" "}
-              - Ksh {cost}
+              - Ksh {distance>0?cost:"0"}
             </label>
           );
         })}
@@ -324,7 +337,9 @@ const sendOrderToDriver = async (driverId, orderData) => {
         <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "0"}</h3>
       </div>
 
-      <div className="order-group">
+
+  
+  <div className="order-group">
         {/* Confirm and Schedule */}
         <button className="order-button" onClick={confirmOrder}>
           Confirm Order
@@ -345,6 +360,7 @@ const sendOrderToDriver = async (driverId, orderData) => {
           />
         </button>
       </div>
+      
 
       {/* Popups */}
       

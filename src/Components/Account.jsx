@@ -3,6 +3,8 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import * as jwtDecode from "jwt-decode";
 import "../Styles/Account.css";
+import { useSelector } from "react-redux";
+import userPic from "../assets/profile.jpeg"
 
 // Function to fetch user details using axios
 const fetchUserDetails = async (authToken, setUser, setError) => {
@@ -20,7 +22,7 @@ const fetchUserDetails = async (authToken, setUser, setError) => {
     setUser({
       name: response.data.name,
       email: response.data.email,
-      picture: response.data.picture,
+      phone: response.data.phone,
     });
   } catch (err) {
     setError(err.response?.data?.message || "Unable to fetch user details.");
@@ -30,63 +32,34 @@ const fetchUserDetails = async (authToken, setUser, setError) => {
 const Account = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
+  const theUser=useSelector((state)=>state.user.value)
 
-  useEffect(() => {
-    // Get the authToken from sessionStorage
-    const authToken = sessionStorage.getItem("authToken");
-
-    if (authToken) {
-      try {
-        // Decode the JWT token to extract additional information if needed
-        const decodedToken = jwtDecode(authToken);
-        console.log("Decoded Token:", decodedToken);
-
-        // Fetch the user details using the token
-        fetchUserDetails(authToken, setUser, setError);
-      } catch (decodeError) {
-        setError("Invalid authentication token. Please log in again.");
-      }
-    } else {
-      setError("No authentication token found. Please log in.");
-    }
-  }, []);
-
+  
   if (error) {
     return <div className="error">Error: {error}</div>;
   }
 
-  if (!user) {
+  if (!theUser?.name) {
     return <p>Loading...</p>;
   }
 
   return (
     <div className="account-container">
       <div className="user-card">
-        {user.picture && (
+       
           <img
-            src={user.picture}
-            alt={`${user.name}'s avatar`}
+            src={userPic}
+            alt={`${theUser.name}'s avatar`}
             className="user-avatar"
           />
-        )}
-        <h2>{user.name}</h2>
+       
+        <h2>{theUser.name}</h2>
         <p>
-          <strong>Email:</strong> {user.email}
+          <strong>Email:</strong> {theUser.email}
         </p>
-      </div>
-      <div className="account-options">
-        <h3>Account Options</h3>
-        <ul>
-          <li>
-            <Link to="/scheduled-rides">Scheduled Rides</Link>
-          </li>
-          <li>
-            <Link to="/rides-history">Ride History</Link>
-          </li>
-          <li>
-            <Link to="/settings">Settings</Link>
-          </li>
-        </ul>
+        <p>
+          <strong>Phone:</strong> {theUser.phone}
+        </p>
       </div>
     </div>
   );

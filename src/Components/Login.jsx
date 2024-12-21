@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { Button, Typography, Box, Link, CircularProgress } from "@mui/material";
 import { Google, Twitter, GitHub } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
-import addUser from "../Redux/Reducers/UserSlice"
+import {addUser} from "../Redux/Reducers/UserSlice"
 import axios from "axios";
 import "../Styles/Login.css";
 

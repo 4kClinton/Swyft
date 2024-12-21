@@ -11,6 +11,12 @@ const SearchBar = ({ setDestination }) => {
   const [selectedPlace, setSelectedPlace] = useState(null); // State for selected place
   const [isLocationLoading, setIsLocationLoading] = useState(false); // Track location loading state
 
+
+    useEffect(()=>{
+    console.log(userInput);
+    console.log(userSuggestions);
+    
+    },[userInput,userSuggestions])
   // Fetch location suggestions based on searchInput (Search input)
   useEffect(() => {
     const fetchSearchSuggestions = async () => {
@@ -80,7 +86,8 @@ const SearchBar = ({ setDestination }) => {
 
   // Handle clicking on a suggestion to select a location for search input
   const handleSuggestionClick = (place) => {
-    setSearchInput(place.description); // Set the selected place as the input
+    setSearchSuggestions([]); 
+    // setSearchInput(place.description); // Set the selected place as the input
     setSelectedPlace(place);
 
     const geocoder = new window.google.maps.Geocoder();
@@ -94,12 +101,12 @@ const SearchBar = ({ setDestination }) => {
       }
     });
 
-    setSearchSuggestions([]); // Clear suggestions after selection
+    // Clear suggestions after selection
   };
 
   // Handle selecting a suggestion for user location (first input)
   const handleUserLocationSuggestionClick = (place) => {
-    setUserInput(place.description); // Set the selected place for user location
+    // setUserInput(place.description); // Set the selected place for user location
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ placeId: place.place_id }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {

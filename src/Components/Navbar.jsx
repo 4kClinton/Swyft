@@ -6,24 +6,31 @@ import HomeIcon from "@mui/icons-material/Home";
 import HistoryIcon from "@mui/icons-material/History";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { ToastContainer, toast } from "react-toastify";
+import { useSelector } from "react-redux";
 import "react-toastify/dist/ReactToastify.css";
 import profile from "../assets/profile.jpeg";
 import "../Styles/Navbar.css";
 import { useUser } from "../contexts/UserContext.jsx"; // Import the useUser hook
+import { deleteUser } from "../Redux/Reducers/UserSlice.js";
+import { useDispatch } from "react-redux";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false); // State to track login status
   const { user, setUser } = useUser(); // Access the user and setUser from context
   const navigate = useNavigate();
+  const theUser=useSelector((state)=>state.user.value)
+   const dispatch = useDispatch();
 
+  // Check login status on mount
   useEffect(() => {
-    const loginStatus = sessionStorage.getItem("authToken");
+    const loginStatus = theUser.name;
     console.log("Login status on mount:", loginStatus); // Debugging line
     if (loginStatus) {
       setIsLoggedIn(true); // User is logged in
     }
-  }, []);
+
+  }, [theUser]);
 
   const notify = () => {
     toast.info("This Feature is coming soon!", {
@@ -37,16 +44,13 @@ const Navbar = () => {
     // Check session storage and log the login status
     const loginStatus = sessionStorage.getItem("Login successful");
     console.log("Login status on menu click:", loginStatus); // Log the login status
-    if (loginStatus) {
-      setIsLoggedIn(true); // User is logged in
-    } else {
-      setIsLoggedIn(false); // User is not logged in
-    }
+    
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem("Login successful"); // Correct storage removal
-    setUser(null); // Clear the user in the context
+    sessionStorage.removeItem("authToken"); // Correct storage removal
+    // setUser(null); // Clear the user in the context
+    dispatch(deleteUser())
     setIsLoggedIn(false); // Update the login status in state
     navigate("/login"); // Redirect to the login page
     toast.success("Logged out successfully!");
@@ -124,7 +128,7 @@ const Navbar = () => {
                   marginRight: "8px",
                 }}
               />
-              <h3>{isLoggedIn ? `Hi There` : "Account"}</h3>
+              <h3>{isLoggedIn ? `Hi There ${theUser?.name}` : "Account"}</h3>
             </Link>
 
             {/* Log In / Log Out Button */}
@@ -138,6 +142,7 @@ const Navbar = () => {
               </Link>
             )}
           </div>
+
 
           {/* Account Options */}
           {isLoggedIn && (

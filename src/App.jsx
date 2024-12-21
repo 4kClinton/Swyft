@@ -14,7 +14,7 @@ import RidesHistory from "./Components/MyRides.jsx";
 import DriverDetails from "./Components/driverDetails.jsx";
 import Settings from "./Components/Settings.jsx";
 import { useDispatch } from "react-redux";
-import addUser from "./Redux/Reducers/UserSlice";
+import {addUser} from "./Redux/Reducers/UserSlice";
 import FindDriver from "./Components/FindDriver.jsx";
 import { Phone } from "@mui/icons-material";
 
@@ -35,23 +35,14 @@ function App() {
           if (!response.ok) {
             throw new Error("Failed to verify token");
           }
-          return response.json().catch(() => {
-            throw new Error("Invalid JSON response from server");
-          });
+          return response.json()
         })
 
         .then((userData) => {
-          const userPayload = {
-            id: userData.id,
-            name: userData.name,
-            email: userData.email,
-            phone: userData.phone,
-            
-            // Add more user data as needed
-          };
+          
           console.log(userData);
-          // dispatch(addUser(userPayload)); // Dispatch correct data
-          // dispatch(addUser(userData)); 
+         
+          dispatch(addUser(userData)); 
           
         })
         .catch((error) => {
