@@ -1,30 +1,29 @@
 import React, { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
+import axios from "axios";
+import * as jwtDecode from "jwt-decode";
 import "../Styles/Account.css";
 
-// Function to fetch user details using authToken
+// Function to fetch user details using axios
 const fetchUserDetails = async (authToken, setUser, setError) => {
   try {
-    const response = await fetch("https://swyft-server-t7f5.onrender.com/me", {
-      method: "GET",
-      headers: {
-        Authorization: `Bearer ${authToken}`, // Pass the token in the Authorization header
-      },
-    });
+    const response = await axios.get(
+      "https://swyft-server-t7f5.onrender.com/me",
+      {
+        headers: {
+          Authorization: `Bearer ${authToken}`, // Pass the token in the Authorization header
+        },
+      }
+    );
 
-    const userData = await response.json();
-
-    if (!response.ok) {
-      throw new Error(userData.message || "Failed to fetch user details.");
-    }
-
+    // Set user data from the response
     setUser({
-      name: userData.name,
-      email: userData.email,
-      picture: userData.picture,
+      name: response.data.name,
+      email: response.data.email,
+      picture: response.data.picture,
     });
   } catch (err) {
-    setError("Unable to fetch user details.");
+    setError(err.response?.data?.message || "Unable to fetch user details.");
   }
 };
 
@@ -37,10 +36,17 @@ const Account = () => {
     const authToken = sessionStorage.getItem("authToken");
 
     if (authToken) {
-      // If authToken is available, fetch the user details using the token
-      fetchUserDetails(authToken, setUser, setError);
+      try {
+        // Decode the JWT token to extract additional information if needed
+        const decodedToken = jwtDecode(authToken);
+        console.log("Decoded Token:", decodedToken);
+
+        // Fetch the user details using the token
+        fetchUserDetails(authToken, setUser, setError);
+      } catch (decodeError) {
+        setError("Invalid authentication token. Please log in again.");
+      }
     } else {
-      // If there's no authToken, show an error or prompt the user to log in
       setError("No authentication token found. Please log in.");
     }
   }, []);

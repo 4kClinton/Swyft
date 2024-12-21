@@ -7,16 +7,61 @@ import Login from "./Components/Login.jsx";
 import SignUp from "./Components/SignUp.jsx";
 import ScheduledRides from "./Components/ScheduledRides.jsx";
 import "./App.css";
+import PrivateRoute from "./Components/PrivateRoute.jsx";
 import { UserProvider } from "./contexts/UserContext.jsx";
 import Account from "./Components/Account.jsx";
 import RidesHistory from "./Components/MyRides.jsx";
 import DriverDetails from "./Components/driverDetails.jsx";
 import Settings from "./Components/Settings.jsx";
+import { useDispatch } from "react-redux";
+import addUser from "./Redux/Reducers/UserSlice";
 import FindDriver from "./Components/FindDriver.jsx";
+import { Phone } from "@mui/icons-material";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLightMode, setIsLightMode] = useState(true);
+   const dispatch = useDispatch()
+ 
+  useEffect(() => {
+    const token = sessionStorage.getItem("authToken");
+    if (token) {
+      fetch("https://swyft-server-t7f5.onrender.com/check_session", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Failed to verify token");
+          }
+          return response.json().catch(() => {
+            throw new Error("Invalid JSON response from server");
+          });
+        })
+
+        .then((userData) => {
+          const userPayload = {
+            id: userData.id,
+            name: userData.name,
+            email: userData.email,
+            phone: userData.phone,
+            
+            // Add more user data as needed
+          };
+          console.log(userData);
+          // dispatch(addUser(userPayload)); // Dispatch correct data
+          // dispatch(addUser(userData)); 
+          
+        })
+        .catch((error) => {
+          console.error("Token verification failed:", error);
+        });
+    }
+  }, [dispatch]);
+
+
+
 
   useEffect(() => {
     const timer = setTimeout(() => {
