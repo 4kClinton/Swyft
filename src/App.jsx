@@ -7,9 +7,11 @@ import Login from "./Components/Login.jsx";
 import SignUp from "./Components/SignUp.jsx";
 import ScheduledRides from "./Components/ScheduledRides.jsx";
 import "./App.css";
+import TripTracker from "./Components/TripTracker.jsx";
 import PrivateRoute from "./Components/PrivateRoute.jsx";
 import { UserProvider } from "./contexts/UserContext.jsx";
 import Account from "./Components/Account.jsx";
+import FindHouse from "./Components/FindHouse.jsx";
 import RidesHistory from "./Components/MyRides.jsx";
 import DriverDetails from "./Components/driverDetails.jsx";
 import Settings from "./Components/Settings.jsx";
@@ -79,6 +81,8 @@ function App() {
               <Route path="/ridesHistory" element={<RidesHistory />} />
               <Route path="/settings" element={<Settings />} />
               <Route path="/driverDetails" element={<DriverDetails />} />
+              <Route path="/track" element={<TripTracker />} />
+              <Route path="/findhouse" element={<FindHouse />} />
               {/* You can add more routes here */}
             </Routes>
           </div>

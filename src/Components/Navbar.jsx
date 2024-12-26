@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import MenuIcon from "@mui/icons-material/Menu";
+import NearMeIcon from "@mui/icons-material/NearMe";
 import CloseIcon from "@mui/icons-material/Close";
 import HomeIcon from "@mui/icons-material/Home";
 import HistoryIcon from "@mui/icons-material/History";
+import ApartmentIcon from "@mui/icons-material/Apartment";
 import SettingsIcon from "@mui/icons-material/Settings";
 import { ToastContainer, toast } from "react-toastify";
 import { useSelector } from "react-redux";
@@ -143,7 +145,6 @@ const Navbar = () => {
             )}
           </div>
 
-
           {/* Account Options */}
           {isLoggedIn && (
             <div className="card">
@@ -208,6 +209,31 @@ const Navbar = () => {
                   />
                   Settings
                 </Link>
+               
+                  <Link
+                    to="/track"
+                    // onClick={notify}
+                    onClick={toggleSidebar}
+                    style={{
+                      backgroundColor: "var(--primary-color)",
+                      // padding: "10px",
+                      borderRadius: "10px",
+                      textDecoration: "none",
+                      color: "inherit",
+                      display: "flex",
+                      alignItems: "center",
+                    }}
+                  >
+                    <NearMeIcon
+                      style={{
+                        color: "#18b700",
+                        marginRight: "8px",
+                        marginBottom: "8px",
+                      }}
+                    />
+                    Track Your Cargo
+                  </Link>
+                
               </ul>
             </div>
           )}
@@ -216,14 +242,14 @@ const Navbar = () => {
           <div className="card">
             <h3>Additional Services</h3>
             <ul>
-              <li onClick={notify}>
+              {/* <li onClick={notify}>
                 <i
                   className="fas fa-clipboard-check"
                   style={{ color: "#18b700", marginRight: "8px" }}
                 ></i>
                 Event Setup Package
-              </li>
-              <li onClick={notify}>
+              </li> */}
+              {/* <li onClick={notify}>
                 <i
                   className="fas fa-utensils"
                   style={{
@@ -233,17 +259,30 @@ const Navbar = () => {
                   }}
                 ></i>
                 Catering Services
-              </li>
-              <li onClick={notify}>
-                <i
-                  className="fas fa-building"
+              </li> */}
+              <li>
+                <Link
+                  to="/findhouse"
+                  onClick={toggleSidebar}
                   style={{
-                    color: "#18b700",
-                    marginRight: "8px",
-                    marginBottom: "8px",
+                    backgroundColor: "var(--primary-color)", // Replace with your theme's primary color
+                    // padding: "10px",
+                    borderRadius: "10px",
+                    textDecoration: "none",
+                    color: "inherit",
+                    display: "flex",
+                    alignItems: "center",
                   }}
-                ></i>
-                Find a House
+                >
+                  <ApartmentIcon
+                    style={{
+                      color: "#18b700", // Custom icon color
+                      marginRight: "8px",
+                      // marginBottom: "8px",
+                    }}
+                  />
+                  Find a House
+                </Link>
               </li>
             </ul>
           </div>

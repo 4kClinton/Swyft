@@ -108,7 +108,7 @@ const Login = () => {
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <CircularProgress size={34} color="inherit" />
             ) : (
               "Log In"
             )}

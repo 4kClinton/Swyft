@@ -5,7 +5,7 @@ import * as jwtDecode from "jwt-decode";
 import "../Styles/Account.css";
 import { useSelector } from "react-redux";
 import userPic from "../assets/profile.jpeg"
-
+import CircularProgress from "@mui/material/CircularProgress";
 // Function to fetch user details using axios
 const fetchUserDetails = async (authToken, setUser, setError) => {
   try {
@@ -33,14 +33,14 @@ const Account = () => {
   const [user, setUser] = useState(null);
   const [error, setError] = useState(null);
   const theUser=useSelector((state)=>state.user.value)
-
+  
   
   if (error) {
     return <div className="error">Error: {error}</div>;
   }
 
   if (!theUser?.name) {
-    return <p>Loading...</p>;
+    return <CircularProgress/>;
   }
 
   return (

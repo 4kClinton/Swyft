@@ -53,7 +53,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     pickup: 160,
     miniTruck: 230,
     lorry: 310,
-    flatbed: 500,
+    flatbed: 350,
   };
 
 useEffect(() => {
@@ -146,17 +146,17 @@ const confirmOrder = async () => {
   }
 
   // Usage
-  if (!LoggedIn()) {
-    navigate("/login"); // Redirect to the login route
-    setErrorMessage("You must be logged in to place an order.");
-    return;
-  }
+  // if (!LoggedIn()) {
+  //   navigate("/login"); 
+  //   setErrorMessage("You must be logged in to place an order.");
+  //   return;
+  // }
 
   // Assuming `user` is retrieved from sessionStorage or state
-  const user = JSON.parse(sessionStorage.getItem("user")); // Adjust according to how you store user data
-  if (!user || !user.id || !user.name) {
+  const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
+  if (!theUser || !theUser.id || !theUser.name) {
     setErrorMessage("User details are missing. Please log in again.");
-    navigate("/login");
+    // navigate("/login");
     return;
   }
 
@@ -178,14 +178,11 @@ const confirmOrder = async () => {
 
   try {
     
-    const response = await fetch(
-      "https://swyft-server-t7f5.onrender.com/orders",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      }
-    );
+    const response = await fetch("http://localhost:5000/orders", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(orderData),
+    });
 
     if (!response.ok) {
       throw new Error("Failed to place order, server error");
