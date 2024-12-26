@@ -241,26 +241,7 @@ const Navbar = () => {
           {/* Additional Services */}
           <div className="card">
             <h3>Additional Services</h3>
-            <ul>
-              {/* <li onClick={notify}>
-                <i
-                  className="fas fa-clipboard-check"
-                  style={{ color: "#18b700", marginRight: "8px" }}
-                ></i>
-                Event Setup Package
-              </li> */}
-              {/* <li onClick={notify}>
-                <i
-                  className="fas fa-utensils"
-                  style={{
-                    color: "#18b700",
-                    marginRight: "8px",
-                    marginBottom: "8px",
-                  }}
-                ></i>
-                Catering Services
-              </li> */}
-              <li>
+            
                 <Link
                   to="/findhouse"
                   onClick={toggleSidebar}
@@ -283,8 +264,7 @@ const Navbar = () => {
                   />
                   Find a House
                 </Link>
-              </li>
-            </ul>
+             
           </div>
         </div>
       </div>
