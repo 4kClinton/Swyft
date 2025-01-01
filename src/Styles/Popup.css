@@ -1,22 +1,21 @@
-/* The overlay that covers the screen */
-
-
+/* Overlay styling */
 .overlay {
     position: fixed;
-    /* Makes the overlay fixed on screen */
+    /* Fixed to viewport */
     top: 0;
     left: 0;
     right: 0;
     bottom: 0;
     background-color: rgba(0, 0, 0, 0.6);
-    /* Semi-transparent overlay */
+    /* Semi-transparent background */
     display: flex;
     align-items: center;
     justify-content: center;
-    z-index: 10000;
-    /* Ensure overlay is on top of other elements */
+    z-index: 9999999;
+    /* Ensure it is higher than all other elements */
 }
 
+/* Popup styling */
 .popup {
     background-color: #fff;
     border-radius: 8px;
@@ -25,17 +24,35 @@
     padding: 20px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
     text-align: center;
-    z-index: 10002;
-    /* Ensure the popup content is on top of overlay */
-    position: relative;
+    position: fixed;
+    /* Ensures it stays above all content */
+    z-index: 9999999;
+    /* Higher than the overlay to ensure visibility */
+    animation: slideIn 0.3s ease-in-out;
+    /* Optional animation */
 }
 
+/* Add this animation for smooth entry */
+@keyframes slideIn {
+    from {
+        transform: translateY(-30%);
+        opacity: 0;
+    }
+
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+/* Heading styling */
 .heading {
     font-size: 1.5em;
     color: #333;
     margin-bottom: 20px;
 }
 
+/* Input field styling */
 .input {
     width: 100%;
     padding: 10px;
@@ -46,18 +63,20 @@
     outline: none;
 }
 
+/* Primary button styling */
 .button {
     width: 100%;
     padding: 12px;
     margin-top: 15px;
     font-size: 1em;
     color: #fff;
-    background-color: #2191FB;
+    background-color:#00D46A;
     border: none;
     border-radius: 4px;
     cursor: pointer;
 }
 
+/* Close button styling */
 .closeButton {
     margin-top: 10px;
     width: 100%;
@@ -70,22 +89,26 @@
     cursor: pointer;
 }
 
+/* Confirmation section styling */
 .confirmation {
     text-align: center;
 }
 
+/* Confirmation heading styling */
 .confirmHeading {
     font-size: 1.2em;
     color: #333;
     margin-bottom: 10px;
 }
 
+/* Text styling */
 .text {
     font-size: 1em;
     color: #666;
     margin: 5px 0;
 }
 
+/* Back button styling */
 .backButton {
     margin-top: 10px;
     width: 100%;

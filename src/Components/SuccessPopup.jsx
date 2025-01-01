@@ -55,7 +55,7 @@ const styles = {
     top: 0,
     left: 0,
     width: "100%",
-    height: "100%",
+    height: "10%",
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
@@ -86,9 +86,25 @@ const styles = {
     marginTop: "15px",
     fontSize: "1em",
     color: "#fff",
-    backgroundColor: "#18b700", // Green for success
+    backgroundColor: "#00D46A", // Green for success
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
   },
 };
+
+// Add the keyframes outside the object
+const slideIn = `
+  @keyframes slideIn {
+    from {
+      transform: translateY(-30%);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0);
+      opacity: 1;
+    }
+  }
+`;
+
+export { styles, slideIn };
