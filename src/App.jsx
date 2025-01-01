@@ -19,6 +19,9 @@ import { useDispatch } from "react-redux";
 import {addUser} from "./Redux/Reducers/UserSlice";
 import FindDriver from "./Components/FindDriver.jsx";
 import { Phone } from "@mui/icons-material";
+import { Analytics } from "@vercel/analytics/react";
+import { SpeedInsights } from "@vercel/speed-insights/react";
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -85,6 +88,8 @@ function App() {
               <Route path="/findhouse" element={<FindHouse />} />
               {/* You can add more routes here */}
             </Routes>
+            <Analytics />
+            <SpeedInsights />
           </div>
         )}
       </Router>
