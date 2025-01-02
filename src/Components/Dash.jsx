@@ -32,19 +32,18 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [scheduleDateTime, setScheduleDateTime] = useState("");
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
-  const [showFindDriverComponent, setFindDriverComponent ] = useState(false);
+  const [showFindDriverComponent, setFindDriverComponent] = useState(false);
   const [showPopup, setShowPopup] = useState(true);
-   const [isLoggedIn, setIsLoggedIn] = useState(false);
-    const theUser=useSelector((state)=>state.user.value)
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const theUser = useSelector((state) => state.user.value);
 
-    useEffect(() => {
-        const loginStatus = theUser.name;
-        console.log("Login status on mount:", loginStatus); // Debugging line
-        if (loginStatus) {
-          setIsLoggedIn(true); // User is logged in
-        }
-    
-      }, [theUser]);
+  useEffect(() => {
+    const loginStatus = theUser.name;
+    console.log("Login status on mount:", loginStatus); // Debugging line
+    if (loginStatus) {
+      setIsLoggedIn(true); // User is logged in
+    }
+  }, [theUser]);
 
   const dashRef = useRef(null);
 
@@ -56,33 +55,32 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     flatbed: 350,
   };
 
-useEffect(() => {
-  const newCalculatedCosts = Object.entries(rates).reduce(
-    (acc, [vehicle, rate]) => {
-      // Calculate base cost
-      let calculatedCost = rate * distance;
+  useEffect(() => {
+    const newCalculatedCosts = Object.entries(rates).reduce(
+      (acc, [vehicle, rate]) => {
+        // Calculate base cost
+        let calculatedCost = rate * distance;
 
-      // Apply specific minimum logic for flatbed
-      if (vehicle === "flatbed") {
-        calculatedCost = Math.max(calculatedCost, 3500);
-      }
+        // Apply specific minimum logic for flatbed
+        if (vehicle === "flatbed") {
+          calculatedCost = Math.max(calculatedCost, 3500);
+        }
 
-      // Enforce minimum cost of 1000 for all vehicles
-      calculatedCost = Math.max(calculatedCost, 1000);
+        // Enforce minimum cost of 1000 for all vehicles
+        calculatedCost = Math.max(calculatedCost, 1000);
 
-      // Add loader costs if applicable
-      acc[vehicle] = Math.round(
-        calculatedCost + (includeLoader ? 300 * numLoaders : 0)
-      );
+        // Add loader costs if applicable
+        acc[vehicle] = Math.round(
+          calculatedCost + (includeLoader ? 300 * numLoaders : 0)
+        );
 
-      return acc;
-    },
-    {}
-  );
+        return acc;
+      },
+      {}
+    );
 
-  setCalculatedCosts(newCalculatedCosts);
-}, [distance, includeLoader, numLoaders]);
-
+    setCalculatedCosts(newCalculatedCosts);
+  }, [distance, includeLoader, numLoaders]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -128,82 +126,77 @@ useEffect(() => {
     setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
   };
 
-
-  
-const confirmOrder = async () => {
-  if (!destination) {
-    setErrorMessage("Please enter a destination location.");
-    return;
-  }
-  if (!selectedOption) {
-    setErrorMessage("Please select a vehicle.");
-    return;
-  }
-
-  // Check if the user is logged in
-  function LoggedIn() {
-    return isLoggedIn
-  }
-
-  // Usage
-  // if (!LoggedIn()) {
-  //   navigate("/login"); 
-  //   setErrorMessage("You must be logged in to place an order.");
-  //   return;
-  // }
-
-  // Assuming `user` is retrieved from sessionStorage or state
-  const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
-  if (!theUser || !theUser.id || !theUser.name) {
-    setErrorMessage("User details are missing. Please log in again.");
-    // navigate("/login");
-    return;
-  }
-
-  // Construct the order data including user details
-  const orderData = {
-    id: theUser.id, // User ID
-    vehicle: selectedOption,
-    distance,
-    loaders: includeLoader ? numLoaders : 0,
-    loaderCost: includeLoader ? numLoaders * 300 : 0,
-    totalCost: calculatedCosts[selectedOption],
-    userLocation,
-    destination,
-    time: new Date().toLocaleString(),
-   
-  };
-
-  setFindDriverComponent(true); // Show loader popup while processing
-
-  try {
-    
-    const response = await fetch(
-      "https://swyft-server-t7f5.onrender.com/orders",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      }
-    );
-
-    if (!response.ok) {
-      throw new Error("Failed to place order, server error");
+  const confirmOrder = async () => {
+    if (!destination) {
+      setErrorMessage("Please enter a destination location.");
+      return;
+    }
+    if (!selectedOption) {
+      setErrorMessage("Please select a vehicle.");
+      return;
     }
 
-    const result = await response.json();
-    console.log("Order placed successfully:", result);
+    // Check if the user is logged in
+    function LoggedIn() {
+      return isLoggedIn;
+    }
 
-    setShowLoaderPopup(false); // Close loader popup
-    setShowSuccessPopup(true); // Show success popup
-    resetDash(); // Reset the dashboard after a successful order
-  } catch (error) {
-    console.error("Error while placing order:", error);
-    setShowLoaderPopup(false); // Close loader popup
-    setErrorMessage("Failed to place order. Please try again."); // Show error popup
-  }
-};
+    // Usage
+    // if (!LoggedIn()) {
+    //   navigate("/login");
+    //   setErrorMessage("You must be logged in to place an order.");
+    //   return;
+    // }
 
+    // Assuming `user` is retrieved from sessionStorage or state
+    const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
+    if (!theUser || !theUser.id || !theUser.name) {
+      setErrorMessage("User details are missing. Please log in again.");
+      // navigate("/login");
+      return;
+    }
+
+    // Construct the order data including user details
+    const orderData = {
+      id: theUser.id, // User ID
+      vehicle: selectedOption,
+      distance,
+      loaders: includeLoader ? numLoaders : 0,
+      loaderCost: includeLoader ? numLoaders * 300 : 0,
+      totalCost: calculatedCosts[selectedOption],
+      userLocation,
+      destination,
+      time: new Date().toLocaleString(),
+    };
+
+    setFindDriverComponent(true); // Show loader popup while processing
+
+    try {
+      const response = await fetch(
+        "https://swyft-backend-client-eta.vercel.app/orders",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(orderData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error("Failed to place order, server error");
+      }
+
+      const result = await response.json();
+      console.log("Order placed successfully:", result);
+
+      setShowLoaderPopup(false); // Close loader popup
+      setShowSuccessPopup(true); // Show success popup
+      resetDash(); // Reset the dashboard after a successful order
+    } catch (error) {
+      console.error("Error while placing order:", error);
+      setShowLoaderPopup(false); // Close loader popup
+      setErrorMessage("Failed to place order. Please try again."); // Show error popup
+    }
+  };
 
   const calculateDistance = (userLocation, driverLocation) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -225,26 +218,25 @@ const confirmOrder = async () => {
     return R * c; // Distance in km
   };
 
-const sendOrderToDriver = async (driverId, orderData) => {
-  try {
-    const response = await fetch(`http://localhost:3000/vehicles`, {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(orderData),
-    });
+  const sendOrderToDriver = async (driverId, orderData) => {
+    try {
+      const response = await fetch(`http://localhost:3000/vehicles`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(orderData),
+      });
 
-    if (!response.ok) {
-      throw new Error("Failed to place order, server error");
+      if (!response.ok) {
+        throw new Error("Failed to place order, server error");
+      }
+
+      const result = await response.json();
+      console.log("Order sent successfully:", result);
+    } catch (error) {
+      console.error("Error while sending order:", error);
+      setErrorMessage("Failed to place order. Please try again.");
     }
-
-    const result = await response.json();
-    console.log("Order sent successfully:", result);
-  } catch (error) {
-    console.error("Error while sending order:", error);
-    setErrorMessage("Failed to place order. Please try again.");
-  }
-};
-
+  };
 
   const resetDash = () => {
     setSelectedOption("");
@@ -305,7 +297,7 @@ const sendOrderToDriver = async (driverId, orderData) => {
               {vehicle === "flatbed"
                 ? "Car Rescue (Flatbed)"
                 : vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}{" "}
-              - Ksh {distance>0?cost:"0"}
+              - Ksh {distance > 0 ? cost : "0"}
             </label>
           );
         })}
@@ -337,9 +329,7 @@ const sendOrderToDriver = async (driverId, orderData) => {
         <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "0"}</h3>
       </div>
 
-
-  
-  <div className="order-group">
+      <div className="order-group">
         {/* Confirm and Schedule */}
         <button className="order-button" onClick={confirmOrder}>
           Confirm Order
@@ -360,10 +350,9 @@ const sendOrderToDriver = async (driverId, orderData) => {
           />
         </button>
       </div>
-      
 
       {/* Popups */}
-      
+
       {errorMessage && (
         <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
       )}

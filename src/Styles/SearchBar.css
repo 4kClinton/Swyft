@@ -89,11 +89,31 @@
 .location-Button:hover {
     background-color: #515151;
 }
-
+.client-suggestions-list{
+        color: #b7b7b7;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: absolute;
+            top: 5.5vh;
+            left: 0vh;
+            background-color: #393939;
+            border: 1px solid #ccc;
+            border-radius: 14px;
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+            z-index: 10;
+            width: 120%;
+            z-index: 100000;
+            max-height: 200px;
+            overflow-y: auto;
+}
 .suggestions-list {
     color: #b7b7b7;
     position: absolute;
-    top: 18vh;
+    top: 17vh;
     background-color: #393939;
     border: 1px solid #ccc;
     border-radius: 14px;
@@ -101,7 +121,7 @@
     padding: 0;
     margin: 0;
     z-index: 10;
-    width: 100%;
+    width: 120%;
     max-height: 200px;
     overflow-y: auto;
 }

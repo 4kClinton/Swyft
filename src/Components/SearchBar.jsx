@@ -181,7 +181,7 @@ const SearchBar = ({ setDestination }) => {
         )}
         {/* Suggestions list for userInput */}
         {userInput.length > 0 && userSuggestions.length > 0 && (
-          <ul className="suggestions-list">
+          <ul className="client-suggestions-list">
             {userSuggestions.map((place) => (
               <li
                 key={place.place_id}

@@ -47,7 +47,7 @@ const SignUp = () => {
     try {
       // Make a POST request to your Express server
       const response = await fetch(
-        "https://swyft-server-t7f5.onrender.com/signup",
+        "https://swyft-backend-client-eta.vercel.app/signup",
         {
           method: "POST",
           headers: {
@@ -139,21 +139,27 @@ const SignUp = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <Button
+          <button
             variant="contained"
             type="submit"
             className="login-button"
-            sx={{ mt: 2, backgroundColor: "#18b700", fontWeight: "bold" }}
+            sx={{
+              mt: 2,
+              backgroundColor: "#00D46A",
+              fontWeight: "bold",
+              color: "#ffff",
+            }}
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={24} color="inherit" />
+              <CircularProgress size={34} color="inherit" />
             ) : (
               "Sign Up"
             )}
-          </Button>
+          </button>
         </form>
-        <Typography
+
+        {/* <Typography
           variant="body2"
           align="center"
           sx={{ mt: 4, fontWeight: "bold" }}
@@ -190,7 +196,8 @@ const SignUp = () => {
             fullWidth
             sx={{ ml: 1 }}
           ></Button>
-        </Box>
+        </Box> */}
+
         <Typography
           to={"/login"}
           variant="body2"
@@ -198,7 +205,8 @@ const SignUp = () => {
           sx={{
             mt: 2,
             marginBottom: "2vh",
-            color: "#fff",
+            color: "#00D46A",
+            fontSize: "15px",
             display: "block",
             textAlign: "center",
             cursor: "pointer",

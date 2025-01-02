@@ -16,22 +16,21 @@ import RidesHistory from "./Components/MyRides.jsx";
 import DriverDetails from "./Components/driverDetails.jsx";
 import Settings from "./Components/Settings.jsx";
 import { useDispatch } from "react-redux";
-import {addUser} from "./Redux/Reducers/UserSlice";
+import { addUser } from "./Redux/Reducers/UserSlice";
 import FindDriver from "./Components/FindDriver.jsx";
 import { Phone } from "@mui/icons-material";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 
-
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLightMode, setIsLightMode] = useState(true);
-   const dispatch = useDispatch()
- 
+  const dispatch = useDispatch();
+
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
     if (token) {
-      fetch("https://swyft-server-t7f5.onrender.com/check_session", {
+      fetch("https://swyft-backend-client-eta.vercel.app/check_session", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -40,24 +39,19 @@ function App() {
           if (!response.ok) {
             throw new Error("Failed to verify token");
           }
-          return response.json()
+          return response.json();
         })
 
         .then((userData) => {
-          
           console.log(userData);
-         
-          dispatch(addUser(userData)); 
-          
+
+          dispatch(addUser(userData));
         })
         .catch((error) => {
           console.error("Token verification failed:", error);
         });
     }
   }, [dispatch]);
-
-
-
 
   useEffect(() => {
     const timer = setTimeout(() => {
