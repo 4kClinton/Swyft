@@ -1,5 +1,5 @@
 import React from "react";
-import { supabase } from "./SupabaseClient";
+import { supabase } from "./SupabaseClient"; // Import the configured Supabase client
 import { Button } from "@mui/material";
 import GoogleIcon from "@mui/icons-material/Google";
 
