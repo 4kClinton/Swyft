@@ -7,17 +7,11 @@ import {
   CircularProgress,
   IconButton,
 } from "@mui/material";
-import {
-  Google,
-  Twitter,
-  GitHub,
-  Visibility,
-  VisibilityOff,
-} from "@mui/icons-material";
+import { Visibility, VisibilityOff } from "@mui/icons-material";
 import { useDispatch } from "react-redux";
 import { addUser } from "../Redux/Reducers/UserSlice";
 import axios from "axios";
-import { supabase } from "../Components/SupabaseClient"; // Ensure you have this file for Supabase initialization
+import GoogleLogin from "./GoogleLogin"; // Make sure this import is correct
 import "../Styles/Login.css";
 
 const Login = () => {
@@ -43,7 +37,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://swyft-backend-client-git-nelson-orinas-projects.vercel.app/login",
+        "https://swyft-backend-client-eta.vercel.app/login",
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );
@@ -65,28 +59,6 @@ const Login = () => {
         err.response?.data?.message || "An error occurred. Please try again.";
       setError(errorMessage);
     } finally {
-      setLoading(false);
-    }
-  };
-
-  // Google SignIn with Supabase
-  const signInWithGoogle = async () => {
-    setLoading(true);
-    try {
-      const { user, session, error } = await supabase.auth.signInWithOAuth({
-        provider: "google",
-      });
-
-      if (error) throw error;
-      if (user) {
-        dispatch(addUser(user));
-        sessionStorage.setItem("authToken", session.access_token);
-        localStorage.setItem("user", JSON.stringify(user));
-        localStorage.setItem("status", "user logged in!");
-        navigate("/"); // Redirect to home after successful login
-      }
-    } catch (error) {
-      setError(error.message);
       setLoading(false);
     }
   };
@@ -138,31 +110,21 @@ const Login = () => {
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={34} color="inherit" />
+              <CircularProgress size={34} color="#fff" />
             ) : (
               "Log In"
             )}
           </button>
         </form>
 
-        {/* Google Login Button */}
-        {/* <Button
-          onClick={signInWithGoogle}
-          variant="contained"
-          color="primary"
-          sx={{
-            mt: 2,
-            backgroundColor: "#4285F4",
-            fontWeight: "bold",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
-            width: "80%",
-          }}
-        >
-          <Google sx={{ marginRight: "10px" }} />
-          Sign in with Google
-        </Button> */}
+        {/* Pass the necessary props to GoogleLogin */}
+        {/* <GoogleLogin
+          setLoading={setLoading}
+          setError={setError}
+          dispatch={dispatch}
+          addUser={addUser}
+          navigate={navigate}
+        /> */}
 
         <Button
           onClick={() => navigate("/signup")}
