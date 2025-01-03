@@ -46,7 +46,7 @@
     /* Smooth transition for open/close */
     transform: translateY(50%);
     /* Hide by default */
-    z-index: 3000;
+    z-index: 1000;
     overflow-y: auto;
     /* Enable vertical scrolling */
     padding-bottom: 20px;
