@@ -110,14 +110,18 @@ const Login = () => {
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress size={34} color="#fff" />
+              <CircularProgress
+                className="login-loader"
+                size={34}
+                color="#fff"
+              />
             ) : (
               "Log In"
             )}
           </button>
         </form>
 
-        {/* Pass the necessary props to GoogleLogin */}
+        {/* Pass the necessary props to GoogleLogin  */}
         {/* <GoogleLogin
           setLoading={setLoading}
           setError={setError}
@@ -129,7 +133,12 @@ const Login = () => {
         <Button
           onClick={() => navigate("/signup")}
           variant="text"
-          sx={{ mt: 2, color: "#18b700", fontWeight: "bold" }}
+          sx={{
+            mt: 2,
+            color: "#18b700",
+            fontWeight: "bold",
+            fontFamily: "Montserrat",
+          }}
         >
           Create account
         </Button>

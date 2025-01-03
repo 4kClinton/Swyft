@@ -75,7 +75,9 @@
   font-family: var(--font-family);
   color: var(--text-color);
 }
-
+.login-loader svg{
+  color:#fff
+}
 .login-button {
   background-color: var(--secondary-color);
   color: #ffff;
@@ -86,6 +88,7 @@
   cursor: pointer;
   font-family: var(--font-family);
   font-weight: bold;
+      font-size: large;
   width: 100%;
   transition: background-color 0.3s;
 }
@@ -116,10 +119,13 @@
 .password-toggle {
   position: absolute;
   top: 50%;
-  right: 10px;
+  margin-top: 2vh;
   transform: translateY(-50%);
   color: #888;
   border: none;
+}
+.css-aixiz9-MuiButtonBase-root-MuiIconButton-root{
+  margin-top: 2vh;
 }
 
 .input-container {

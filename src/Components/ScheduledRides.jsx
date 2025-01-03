@@ -5,28 +5,21 @@ function ScheduledRides() {
   const location = useLocation();
   const navigate = useNavigate();
 
-  const scheduledRides = location.state?.rides || [
-    {
-      id: 1,
-      date: "2024-11-12",
-      time: "10:00 AM",
-      fromLocation: "Location A",
-      toLocation: "Location B",
-    },
-    {
-      id: 2,
-      date: "2024-11-13",
-      time: "2:30 PM",
-      fromLocation: "Location C",
-      toLocation: "Location D",
-    },
-  ];
+  // Log location state to debug data flow
+  console.log("Location state:", location.state);
+
+  const scheduledRides = location.state?.rides || [];
+
+  // Log rides data to confirm it's correctly parsed
+  console.log("Scheduled rides data:", scheduledRides);
 
   const handleGoBack = () => {
+    console.log("Navigating back to home...");
     navigate("/");
   };
 
   const handleBookNow = (rideId) => {
+    console.log(`Booking ride with ID: ${rideId}`);
     alert(`Booking ride with ID: ${rideId}`);
   };
 
@@ -100,34 +93,38 @@ function ScheduledRides() {
     <div style={containerStyle}>
       <h2 style={headingStyle}>Scheduled Rides</h2>
       <ul style={listStyle}>
-        {scheduledRides.map((ride) => (
-          <li key={ride.id} style={listItemStyle}>
-            <p style={rideInfoStyle}>
-              <strong>Date:</strong> {ride.date || "N/A"}
-            </p>
-            <p style={rideInfoStyle}>
-              <strong>Time:</strong> {ride.time || "N/A"}
-            </p>
-            <p style={rideInfoStyle}>
-              <strong>From:</strong> {ride.fromLocation || "N/A"}
-            </p>
-            <p style={rideInfoStyle}>
-              <strong>To:</strong> {ride.toLocation || "N/A"}
-            </p>
-            <button
-              style={bookNowButtonStyle}
-              onMouseOver={(e) =>
-                Object.assign(e.currentTarget.style, bookNowButtonHoverStyle)
-              }
-              onMouseOut={(e) =>
-                Object.assign(e.currentTarget.style, bookNowButtonStyle)
-              }
-              onClick={() => handleBookNow(ride.id)}
-            >
-              Book Now
-            </button>
-          </li>
-        ))}
+        {scheduledRides.length > 0 ? (
+          scheduledRides.map((ride) => (
+            <li key={ride.id} style={listItemStyle}>
+              <p style={rideInfoStyle}>
+                <strong>Date:</strong> {ride.date || "N/A"}
+              </p>
+              <p style={rideInfoStyle}>
+                <strong>Time:</strong> {ride.time || "N/A"}
+              </p>
+              <p style={rideInfoStyle}>
+                <strong>From:</strong> {ride.fromLocation || "N/A"}
+              </p>
+              <p style={rideInfoStyle}>
+                <strong>To:</strong> {ride.toLocation || "N/A"}
+              </p>
+              <button
+                style={bookNowButtonStyle}
+                onMouseOver={(e) =>
+                  Object.assign(e.currentTarget.style, bookNowButtonHoverStyle)
+                }
+                onMouseOut={(e) =>
+                  Object.assign(e.currentTarget.style, bookNowButtonStyle)
+                }
+                onClick={() => handleBookNow(ride.id)}
+              >
+                Book Now
+              </button>
+            </li>
+          ))
+        ) : (
+          <p style={{ color: "black" }}>No scheduled rides available.</p>
+        )}
       </ul>
       <button
         style={goBackButtonStyle}

@@ -98,6 +98,7 @@ const Navbar = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 marginBottom: "2vh",
+                marginLeft:"7vh"
               }}
             >
               <HomeIcon style={{ color: "#18b700", marginRight: "8px" }} />
@@ -105,14 +106,15 @@ const Navbar = () => {
             </Link>
           </div>
           {/* Account Info */}
-          <div className="card">
+          <div className="card" id="Account-Card"  >
             <Link
               onClick={toggleSidebar}
               to={"/acc"}
               style={{
+                width:"80%",
+                fontSize:"20px",
                 backgroundColor: "var(--primary-color)",
                 padding: "1vh",
-                width: "50%",
                 borderRadius: "10px",
                 textDecoration: "none",
                 color: "inherit",
@@ -130,7 +132,7 @@ const Navbar = () => {
                   marginRight: "8px",
                 }}
               />
-              <h3>{isLoggedIn ? `Hi There ${theUser?.name}` : "Account"}</h3>
+              <h3>{isLoggedIn ? `Hi  ${theUser?.name}` : "Account"}</h3>
             </Link>
 
             {/* Log In / Log Out Button */}
@@ -221,6 +223,7 @@ const Navbar = () => {
                       textDecoration: "none",
                       color: "inherit",
                       display: "flex",
+                      marginLeft:"1vh",
                       alignItems: "center",
                     }}
                   >
@@ -228,7 +231,7 @@ const Navbar = () => {
                       style={{
                         color: "#18b700",
                         marginRight: "8px",
-                        marginBottom: "8px",
+                        
                       }}
                     />
                     Track Your Cargo
@@ -246,14 +249,16 @@ const Navbar = () => {
                   to="/findhouse"
                   onClick={toggleSidebar}
                   style={{
-                    backgroundColor: "var(--primary-color)", // Replace with your theme's primary color
-                    // padding: "10px",
-                    borderRadius: "10px",
+                    backgroundColor: "#fff",
+                    borderRadius:" 10px",
                     textDecoration: "none",
                     color: "inherit",
                     display: "flex",
+                    margin: "2vh",
                     alignItems: "center",
-                  }}
+                    justifyContent: "center",
+                    fontSize: "larger",
+                   }}
                 >
                   <ApartmentIcon
                     style={{

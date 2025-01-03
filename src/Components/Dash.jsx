@@ -8,6 +8,7 @@ import ErrorPopup from "./ErrorPopup"; // New ErrorPopup
 import SuccessPopup from "./SuccessPopup"; // New SuccessPopup
 import CircularProgress from "@mui/material/CircularProgress";
 import FindDriverComponent from "./FindDriverComponent";
+import PopupTutorial from "../Components/PopupTutorial.jsx";
 import {
   FaTruckPickup,
   FaTruck,
@@ -104,8 +105,30 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       setErrorMessage("Please select a vehicle first.");
       return;
     }
+
+    // Construct the order data
+    const orderData = {
+      id: theUser.id, // User ID
+      vehicle: selectedOption,
+      distance,
+      loaders: includeLoader ? numLoaders : 0,
+      loaderCost: includeLoader ? numLoaders * 300 : 0,
+      totalCost: calculatedCosts[selectedOption],
+      userLocation,
+      destination,
+      time: new Date().toLocaleString(),
+    };
+
+    // Save order data to localStorage
+    localStorage.setItem("orderDetails", JSON.stringify(orderData));
+
+    // Log the stored order details for debugging
+    console.log("Order details stored locally:", orderData);
+
     setShowDateTimePopup(true); // Show Date/Time Popup after selecting vehicle
   };
+
+
 
   const handleScheduleOrder = () => {
     if (!scheduleDateTime) {
@@ -152,7 +175,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
     if (!theUser || !theUser.id || !theUser.name) {
       setErrorMessage("User details are missing. Please log in again.");
-      // navigate("/login");
+      navigate("/login");
       return;
     }
 
@@ -270,6 +293,10 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       </div>
 
       {/* Vehicle Selection */}
+      {/* <PopupTutorial
+        message="Click to Open"
+        onDismiss={() => setShowPopup(true)}
+      /> */}
       <h2 className="catch" onClick={toggleDash}>
         Which means do you prefer?
       </h2>
@@ -342,7 +369,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
         {/* Schedule Button with FaRegClock */}
         <button className="order-button" onClick={handleSelectDateTime}>
-          Schedule Ride
+          Schedule Move
           <FaRegClock
             size={14}
             className="check-icon"

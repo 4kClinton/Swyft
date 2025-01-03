@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ReactDOM from "react-dom";
 import { useNavigate } from "react-router-dom";
+import "../Styles/Calendar.css"
 
 function DateTimePopup({ onClose }) {
   const [selectedDate, setSelectedDate] = useState("");
@@ -36,6 +37,11 @@ function DateTimePopup({ onClose }) {
     navigate("/scheduled-rides", {
       state: { date: selectedDate, time: selectedTime },
     });
+    // Save order data to localStorage
+    localStorage.setItem("orderDetails", JSON.stringify(orderData));
+
+    // Log the stored order details for debugging
+    console.log("Order details stored locally:", orderData);
     onClose();
   };
 
@@ -43,36 +49,32 @@ function DateTimePopup({ onClose }) {
   const popupContent = (
     <div style={styles.overlay}>
       <div className="Calendar" style={styles.popup}>
-        <h3 style={styles.heading}>Select Date and Time</h3>
+        <h3 className="Header">Select Date and Time</h3>
 
         {!showConfirmation ? (
           <>
             <input
+              className="dateAndTimesPicker"
               type="date"
               value={selectedDate}
               onChange={handleDateChange}
-              style={styles.input}
+              // style={styles.input}
             />
             <input
+              className="dateAndTimesPicker"
               type="time"
               value={selectedTime}
               onChange={handleTimeChange}
-              style={styles.input}
+              // style={styles.input}
             />
             <button
               onClick={handleConfirmSelection}
-              style={{
-                ...styles.button,
-                backgroundColor:
-                  !selectedDate || !selectedTime ? "#ccc" : "#2191FB",
-                cursor:
-                  !selectedDate || !selectedTime ? "not-allowed" : "pointer",
-              }}
+              className="ConfirmDate"
               disabled={!selectedDate || !selectedTime}
             >
               Confirm Date & Time
             </button>
-            <button onClick={onClose} style={styles.closeButton}>
+            <button onClick={onClose} className="CalendarCloseButton">
               Close
             </button>
           </>
@@ -125,11 +127,13 @@ const styles = {
     textAlign: "center",
     zIndex: 10002, // Ensure the popup content is on top of overlay
     position: "relative",
+    fontFamily: "Montserat",
   },
   heading: {
     fontSize: "1.5em",
     color: "#333",
     marginBottom: "20px",
+    fontFamily: "Montserat",
   },
   input: {
     width: "100%",
@@ -146,10 +150,11 @@ const styles = {
     marginTop: "15px",
     fontSize: "1em",
     color: "#fff",
-    backgroundColor: "#2191FB",
+    backgroundColor: "#00D46A",
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+    fontFamily: "Montserat",
   },
   closeButton: {
     marginTop: "10px",
@@ -161,19 +166,23 @@ const styles = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+    fontFamily: "Montserat",
   },
   confirmation: {
     textAlign: "center",
+    fontFamily: "Montserat",
   },
   confirmHeading: {
     fontSize: "1.2em",
     color: "#333",
     marginBottom: "10px",
+    fontFamily: "Montserat",
   },
   text: {
     fontSize: "1em",
     color: "#666",
     margin: "5px 0",
+    fontFamily: "Montserat",
   },
   backButton: {
     marginTop: "10px",
@@ -185,5 +194,6 @@ const styles = {
     border: "none",
     borderRadius: "4px",
     cursor: "pointer",
+    fontFamily: "Montserat",
   },
 };
