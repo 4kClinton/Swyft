@@ -142,7 +142,7 @@ const Navbar = () => {
               </button>
             ) : (
               <Link onClick={toggleSidebar} to="/login">
-                <button className="login-button" style={{width:"120%",height:"unset"}}>Log In</button>
+                <button className="login-button" style={{width:"120%",height:"unset",fontSize:"large",}}>Log In</button>
               </Link>
             )}
           </div>
