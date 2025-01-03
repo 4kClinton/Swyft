@@ -106,8 +106,9 @@
   cursor: pointer;
   font-family: var(--font-family);
   font-weight: bold;
-      font-size: large;
-  width: 100%;
+  font-size: 21px;
+    width: 90%;
+    height: 7vh;
   transition: background-color 0.3s;
 }
 
