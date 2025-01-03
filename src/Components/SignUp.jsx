@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate,Link } from "react-router-dom";
 import { Button, Typography, Box, CircularProgress } from "@mui/material";
 import { Google, Twitter, GitHub } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique IDs
@@ -198,7 +198,7 @@ const SignUp = () => {
           ></Button>
         </Box> */}
 
-        <Typography
+        <Link
           to={"/login"}
           variant="body2"
           className="existing-account"
@@ -213,7 +213,7 @@ const SignUp = () => {
           }}
         >
           Already have an account? Log in
-        </Typography>
+        </Link>
       </Box>
     </div>
   );

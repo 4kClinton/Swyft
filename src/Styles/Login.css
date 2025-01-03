@@ -51,12 +51,21 @@
   align-items: center;
   background-color: var(--primary-color);
   border-radius: 16px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
   width: 100%;
   max-width: 400px;
   padding: 20px;
+      
 }
-
+#login-section{
+  position: absolute;
+        top: 30vh;
+}
+.introPic{
+  width: 60%;
+    position: absolute;
+    top: 13vh;
+}
 .login-header {
   font-family: var(--font-family);
   font-size: 25px;
@@ -74,6 +83,15 @@
   font-style: normal;
   font-family: var(--font-family);
   color: var(--text-color);
+}
+.existing-account{
+      text-align: center;
+        margin-top: 18px;
+        position: relative;
+        bottom: -3vh;
+        font-style: normal;
+        font-family: var(--font-family);
+        color: var(--text-color);
 }
 .login-loader svg{
   color:#fff

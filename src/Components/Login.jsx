@@ -13,6 +13,7 @@ import { addUser } from "../Redux/Reducers/UserSlice";
 import axios from "axios";
 import GoogleLogin from "./GoogleLogin"; // Make sure this import is correct
 import "../Styles/Login.css";
+import introPic from "../assets/loaders-swyft.png"
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -65,7 +66,8 @@ const Login = () => {
 
   return (
     <div className="login-component">
-      <Box className="login-container">
+      <img className="introPic" src={introPic} alt="intro pic" />
+      <Box className="login-container" id="login-section">
         <header className="login-header">Log in to Swyft</header>
         {error && <Typography color="error">{error}</Typography>}
         {success && (

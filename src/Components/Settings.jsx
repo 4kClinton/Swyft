@@ -57,8 +57,8 @@ function Settings() {
             onChange={handlePaymentMethodChange}
             style={styles.select}
           >
-            <option value="Visa **** 1234">Visa **** 1234</option>
-            <option value="M-Pesa">PayPal</option>
+            <option value="Cash">Cash</option>
+            <option value="M-Pesa">M-Pesa</option>
           </select>
         </div>
       </div>
