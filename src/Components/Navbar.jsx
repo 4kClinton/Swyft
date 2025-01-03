@@ -98,7 +98,7 @@ const Navbar = () => {
                 alignItems: "center",
                 justifyContent: "center",
                 marginBottom: "2vh",
-                marginLeft:"7vh"
+                marginLeft: "7vh",
               }}
             >
               <HomeIcon style={{ color: "#18b700", marginRight: "8px" }} />
@@ -106,13 +106,13 @@ const Navbar = () => {
             </Link>
           </div>
           {/* Account Info */}
-          <div className="card" id="Account-Card"  >
+          <div className="card" id="Account-Card">
             <Link
               onClick={toggleSidebar}
               to={"/acc"}
               style={{
-                width:"80%",
-                fontSize:"20px",
+                width: "80%",
+                fontSize: "20px",
                 backgroundColor: "var(--primary-color)",
                 padding: "1vh",
                 borderRadius: "10px",
@@ -211,32 +211,30 @@ const Navbar = () => {
                   />
                   Settings
                 </Link>
-               
-                  <Link
-                    to="/track"
-                    // onClick={notify}
-                    onClick={toggleSidebar}
+
+                <Link
+                  to="/track"
+                  // onClick={notify}
+                  onClick={toggleSidebar}
+                  style={{
+                    backgroundColor: "var(--primary-color)",
+                    // padding: "10px",
+                    borderRadius: "10px",
+                    textDecoration: "none",
+                    color: "inherit",
+                    display: "flex",
+                    marginLeft: "1vh",
+                    alignItems: "center",
+                  }}
+                >
+                  <NearMeIcon
                     style={{
-                      backgroundColor: "var(--primary-color)",
-                      // padding: "10px",
-                      borderRadius: "10px",
-                      textDecoration: "none",
-                      color: "inherit",
-                      display: "flex",
-                      marginLeft:"1vh",
-                      alignItems: "center",
+                      color: "#18b700",
+                      marginRight: "8px",
                     }}
-                  >
-                    <NearMeIcon
-                      style={{
-                        color: "#18b700",
-                        marginRight: "8px",
-                        
-                      }}
-                    />
-                    Track Your Cargo
-                  </Link>
-                
+                  />
+                  Track Your Cargo
+                </Link>
               </ul>
             </div>
           )}
@@ -244,32 +242,31 @@ const Navbar = () => {
           {/* Additional Services */}
           <div className="card">
             <h3>Additional Services</h3>
-            
-                <Link
-                  to="/findhouse"
-                  onClick={toggleSidebar}
-                  style={{
-                    backgroundColor: "#fff",
-                    borderRadius:" 10px",
-                    textDecoration: "none",
-                    color: "inherit",
-                    display: "flex",
-                    margin: "2vh",
-                    alignItems: "center",
-                    justifyContent: "center",
-                    fontSize: "larger",
-                   }}
-                >
-                  <ApartmentIcon
-                    style={{
-                      color: "#18b700", // Custom icon color
-                      marginRight: "8px",
-                      // marginBottom: "8px",
-                    }}
-                  />
-                  Find a House
-                </Link>
-             
+
+            <Link
+              to="/findhouse"
+              onClick={toggleSidebar}
+              style={{
+                backgroundColor: "var(--primary-color)",
+                borderRadius: " 10px",
+                textDecoration: "none",
+                color: "inherit",
+                display: "flex",
+                margin: "2vh",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: "larger",
+              }}
+            >
+              <ApartmentIcon
+                style={{
+                  color: "#18b700", // Custom icon color
+                  marginRight: "8px",
+                  // marginBottom: "8px",
+                }}
+              />
+              Find a House
+            </Link>
           </div>
         </div>
       </div>

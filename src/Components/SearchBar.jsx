@@ -11,12 +11,11 @@ const SearchBar = ({ setDestination }) => {
   const [selectedPlace, setSelectedPlace] = useState(null); // State for selected place
   const [isLocationLoading, setIsLocationLoading] = useState(false); // Track location loading state
 
-
-    useEffect(()=>{
+  useEffect(() => {
     console.log(userInput);
     console.log(userSuggestions);
-    
-    },[userInput,userSuggestions])
+  }, [userInput, userSuggestions]);
+
   // Fetch location suggestions based on searchInput (Search input)
   useEffect(() => {
     const fetchSearchSuggestions = async () => {
@@ -29,7 +28,10 @@ const SearchBar = ({ setDestination }) => {
 
       const service = new window.google.maps.places.AutocompleteService();
       service.getPlacePredictions(
-        { input: searchInput },
+        {
+          input: searchInput,
+          componentRestrictions: { country: "KE" }, // Restrict suggestions to Kenya
+        },
         (predictions, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
             setSearchSuggestions(predictions);
@@ -55,7 +57,10 @@ const SearchBar = ({ setDestination }) => {
 
       const service = new window.google.maps.places.AutocompleteService();
       service.getPlacePredictions(
-        { input: userInput },
+        {
+          input: userInput,
+          componentRestrictions: { country: "KE" }, // Restrict suggestions to Kenya
+        },
         (predictions, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
             setUserSuggestions(predictions);
@@ -86,8 +91,7 @@ const SearchBar = ({ setDestination }) => {
 
   // Handle clicking on a suggestion to select a location for search input
   const handleSuggestionClick = (place) => {
-    setSearchSuggestions([]); 
-    // setSearchInput(place.description); // Set the selected place as the input
+    setSearchSuggestions([]);
     setSelectedPlace(place);
 
     const geocoder = new window.google.maps.Geocoder();
@@ -100,13 +104,10 @@ const SearchBar = ({ setDestination }) => {
         console.error("Geocoding failed with status:", status);
       }
     });
-
-    // Clear suggestions after selection
   };
 
   // Handle selecting a suggestion for user location (first input)
   const handleUserLocationSuggestionClick = (place) => {
-    // setUserInput(place.description); // Set the selected place for user location
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ placeId: place.place_id }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
