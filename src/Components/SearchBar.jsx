@@ -177,7 +177,7 @@ const SearchBar = ({ setDestination }) => {
         />
         {isLocationLoading && (
           <div className="loader-overlay">
-            <CircularProgress size={20} />
+            <CircularProgress size={20} style={{marginLeft:"1vh"}} />
           </div>
         )}
         {/* Suggestions list for userInput */}
