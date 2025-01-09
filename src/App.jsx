@@ -21,6 +21,7 @@ import FindDriver from "./Components/FindDriver.jsx";
 import { Phone } from "@mui/icons-material";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
+import { SocketProvider } from "./contexts/SocketContext.jsx";
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -30,7 +31,7 @@ function App() {
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
     if (token) {
-      fetch("https://swyft-backend-client-eta.vercel.app/check_session", {
+      fetch("https://swyft-backend-client-ac1s.onrender.com/check_session", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -62,32 +63,34 @@ function App() {
   }, []);
 
   return (
-    <UserProvider>
-      <Router>
-        {isLoading ? (
-          <LoadingScreen />
-        ) : (
-          <div>
-            <Navbar />
-            <Routes>
-              <Route path="/" element={<Map />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/signup" element={<SignUp />} />
-              <Route path="/scheduled-rides" element={<ScheduledRides />} />
-              <Route path="/acc" element={<Account />} />
-              <Route path="/ridesHistory" element={<RidesHistory />} />
-              <Route path="/settings" element={<Settings />} />
-              <Route path="/driverDetails" element={<DriverDetails />} />
-              <Route path="/track" element={<TripTracker />} />
-              <Route path="/findhouse" element={<FindHouse />} />
-              {/* You can add more routes here */}
-            </Routes>
-            <Analytics />
-            <SpeedInsights />
-          </div>
-        )}
-      </Router>
-    </UserProvider>
+    <SocketProvider>
+      <UserProvider>
+        <Router>
+          {isLoading ? (
+            <LoadingScreen />
+          ) : (
+            <div>
+              <Navbar />
+              <Routes>
+                <Route path="/" element={<Map />} />
+                <Route path="/login" element={<Login />} />
+                <Route path="/signup" element={<SignUp />} />
+                <Route path="/scheduled-rides" element={<ScheduledRides />} />
+                <Route path="/acc" element={<Account />} />
+                <Route path="/ridesHistory" element={<RidesHistory />} />
+                <Route path="/settings" element={<Settings />} />
+                <Route path="/driverDetails" element={<DriverDetails />} />
+                <Route path="/track" element={<TripTracker />} />
+                <Route path="/findhouse" element={<FindHouse />} />
+                {/* You can add more routes here */}
+              </Routes>
+              <Analytics />
+              <SpeedInsights />
+            </div>
+          )}
+        </Router>
+      </UserProvider>
+    </SocketProvider>
   );
 }
 

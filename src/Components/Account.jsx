@@ -10,7 +10,7 @@ import CircularProgress from "@mui/material/CircularProgress";
 const fetchUserDetails = async (authToken, setUser, setError) => {
   try {
     const response = await axios.get(
-      "https://swyft-backend-client-nine.vercel.app/me",
+      "https://swyft-backend-client-ac1s.onrender.com/me",
       {
         headers: {
           Authorization: `Bearer ${authToken}`, // Pass the token in the Authorization header

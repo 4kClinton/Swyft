@@ -31,7 +31,7 @@ const Navbar = () => {
     if (loginStatus) {
       setIsLoggedIn(true); // User is logged in
     }
-
+    
   }, [theUser]);
 
   const notify = () => {
