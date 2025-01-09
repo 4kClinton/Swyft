@@ -11,7 +11,7 @@ function RidesHistory() {
 
   useEffect(() => {
     // Replace this URL with your actual API endpoint
-    fetch("https://swyft-backend-client-eta.vercel.app/rides")
+    fetch("https://swyft-backend-client-ac1s.onrender.com/rides")
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch rides history");
