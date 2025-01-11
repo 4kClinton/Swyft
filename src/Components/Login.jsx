@@ -13,7 +13,7 @@ import { addUser } from "../Redux/Reducers/UserSlice";
 import axios from "axios";
 import GoogleLogin from "./GoogleLogin"; // Make sure this import is correct
 import "../Styles/Login.css";
-import introPic from "../assets/loaders-swyft.png"
+import introPic from "../assets/loaders-swyft.png";
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -38,7 +38,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://swyft-backend-client-eta.vercel.app/login",
+        "https://swyft-backend-client-ac1s.onrender.com/login",
         { email, password },
         { headers: { "Content-Type": "application/json" } }
       );

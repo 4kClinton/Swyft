@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button, Typography, Box, CircularProgress } from "@mui/material";
 import { Google, Twitter, GitHub } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique IDs
@@ -47,7 +47,7 @@ const SignUp = () => {
     try {
       // Make a POST request to your Express server
       const response = await fetch(
-        "https://swyft-backend-client-eta.vercel.app/signup",
+        "https://swyft-backend-client-ac1s.onrender.com/signup",
         {
           method: "POST",
           headers: {

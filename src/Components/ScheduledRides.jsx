@@ -1,17 +1,50 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
 function ScheduledRides() {
   const location = useLocation();
   const navigate = useNavigate();
+  const [scheduledRides, setScheduledRides] = useState([]);
+
+  // Placeholder for order data
+  const orderData = location.state?.orderData || {};
+
+  useEffect(() => {
+    const scheduleRide = async () => {
+      try {
+        console.log("Attempting to schedule a ride...");
+        const response = await fetch(
+          "https://swyft-backend-client-ac1s.onrender.com/schedule",
+          {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify(orderData),
+          }
+        );
+
+        if (!response.ok) {
+          const errorData = await response.json();
+          console.error("Failed to place order:", errorData);
+          throw new Error("Server error: " + response.statusText);
+        }
+
+        const responseData = await response.json();
+        console.log("Ride scheduled successfully:", responseData);
+
+        // Assuming the response contains updated rides
+        setScheduledRides(responseData.rides || []);
+      } catch (error) {
+        console.error("Error scheduling ride:", error.message);
+      }
+    };
+
+    if (Object.keys(orderData).length > 0) {
+      scheduleRide();
+    }
+  }, [orderData]);
 
   // Log location state to debug data flow
   console.log("Location state:", location.state);
-
-  const scheduledRides = location.state?.rides || [];
-
-  // Log rides data to confirm it's correctly parsed
-  console.log("Scheduled rides data:", scheduledRides);
 
   const handleGoBack = () => {
     console.log("Navigating back to home...");
