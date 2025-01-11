@@ -38,6 +38,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showPopup, setShowPopup] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const theUser = useSelector((state) => state.user.value);
+
+  const [isLoading, setIsLoading] = useState(false);
+  const [orderConfirmed, setOrderConfirmed] = useState(false); 
+  
+
   const socket = useSocket()
 
 
@@ -54,6 +59,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       socket.off('order_update'); // Clean up the event listener when the component unmounts
     }
   })}, [socket, theUser])
+
 
   useEffect(() => {
     const loginStatus = theUser.name;
@@ -117,7 +123,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
 
-  const handleSelectDateTime = () => {
+  const handleSelectDateTime = async () => {
     if (!selectedOption) {
       setErrorMessage("Please select a vehicle first.");
       return;
@@ -136,15 +142,38 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       time: new Date().toLocaleString(),
     };
 
-    // Save order data to localStorage
-    localStorage.setItem("orderDetails", JSON.stringify(orderData));
+    try {
+      // Save order data to localStorage
+      localStorage.setItem("orderDetails", JSON.stringify(orderData));
 
-    // Log the stored order details for debugging
-    console.log("Order details stored locally:", orderData);
+      // Log the stored order details for debugging
+      console.log("Order details stored locally:", orderData);
 
-    setShowDateTimePopup(true); // Show Date/Time Popup after selecting vehicle
+      // Push order data to the backend
+      const response = await fetch(
+        "https://swyft-backend-client-ac1s.onrender.com/schedule",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify(orderData),
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to schedule the order: ${response.statusText}`);
+      }
+
+      const responseData = await response.json();
+      console.log("Order successfully scheduled:", responseData);
+
+      setShowDateTimePopup(true); // Show Date/Time Popup after a successful API call
+    } catch (error) {
+      console.error("Error scheduling the order:", error.message);
+      setErrorMessage("Failed to schedule the order. Please try again later.");
+    }
   };
-
 
 
   const handleScheduleOrder = () => {
@@ -167,49 +196,44 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   };
 
   const confirmOrder = async () => {
-    if (!destination) {
-      setErrorMessage("Please enter a destination location.");
-      return;
-    }
-    if (!selectedOption) {
-      setErrorMessage("Please select a vehicle.");
-      return;
-    }
+  
 
-    // Check if the user is logged in
-    function LoggedIn() {
-      return isLoggedIn;
-    }
+  if (!destination) {
+    setErrorMessage("Please enter a destination location.");
+    return;
+  }
+  if (!selectedOption) {
+    setErrorMessage("Please select a vehicle.");
+    return;
+  }
 
-    // Usage
-    // if (!LoggedIn()) {
-    //   navigate("/login");
-    //   setErrorMessage("You must be logged in to place an order.");
-    //   return;
-    // }
+  // Check if the user is logged in
+  function LoggedIn() {
+    return isLoggedIn;
+  }
 
-    // Assuming `user` is retrieved from sessionStorage or state
-    const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
-    if (!theUser || !theUser.id || !theUser.name) {
-      setErrorMessage("User details are missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
+  const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
+  if (!theUser || !theUser.id || !theUser.name) {
+    setErrorMessage("User details are missing. Please log in again.");
 
-    // Construct the order data including user details
-    const orderData = {
-      id: theUser.id, // User ID
-      vehicle: selectedOption,
-      distance,
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
-      totalCost: calculatedCosts[selectedOption],
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
+    return;
+  }
 
-    setFindDriverComponent(true); // Show loader popup while processing
+  // Construct the order data including user details
+  const orderData = {
+    id: theUser.id, // User ID
+    vehicle: selectedOption,
+    distance,
+    loaders: includeLoader ? numLoaders : 0,
+    loaderCost: includeLoader ? numLoaders * 300 : 0,
+    totalCost: calculatedCosts[selectedOption],
+    userLocation,
+    destination,
+    time: new Date().toLocaleString(),
+  };
+
+  setFindDriverComponent(true); // Show driver search component
+  setIsLoading(true); // Start loading state
 
     const token = sessionStorage.getItem("authToken");
 
@@ -223,23 +247,29 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         }
       );
 
-      if (!response.ok) {
-        throw new Error("Failed to place order, server error");
-      }
 
-      const result = await response.json();
-      
-      console.log("Order placed successfully:", result);
+ 
 
-      setShowLoaderPopup(false); // Close loader popup
-      setShowSuccessPopup(true); // Show success popup
-      resetDash(); // Reset the dashboard after a successful order
-    } catch (error) {
-      console.error("Error while placing order:", error);
-      setShowLoaderPopup(false); // Close loader popup
-      setErrorMessage("Failed to place order. Please try again."); // Show error popup
+
+    if (!response.ok) {
+      throw new Error("Failed to place order, server error");
+  
     }
-  };
+
+    const result = await response.json();
+    console.log("Order placed successfully:", result);
+
+    setShowLoaderPopup(false); // Close loader popup
+    setShowSuccessPopup(true); // Show success popup
+    resetDash(); // Reset the dashboard after a successful order
+  } catch (error) {
+    console.error("Error while placing order:", error);
+    setErrorMessage("Failed to place order. Please try again."); // Show error message
+  } finally {
+    setOrderConfirmed(true);
+    setIsLoading(false); // End loading state
+  }
+};
 
   const calculateDistance = (userLocation, driverLocation) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -282,7 +312,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   };
 
   const resetDash = () => {
-    setSelectedOption("");
+    // setSelectedOption("");
     setIncludeLoader(false);
     setNumLoaders(1);
     setCalculatedCosts(0);
@@ -291,13 +321,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   };
 
   const goBackToDash = () => {
-    resetDash();
+    // resetDash();
     setShowDateTimePopup(false);
     setShowConfirmationPopup(false);
   };
 
   const handlePopupClose = () => {
-    resetDash();
+    // resetDash();
     setShowLoaderPopup(false);
     setErrorMessage("");
   };
@@ -378,41 +408,54 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
       <div className="order-group">
         {/* Confirm and Schedule */}
-        <button className="order-button" onClick={confirmOrder}>
-          Confirm Order
-          <FaCheckCircle
-            size={14}
-            className="check-icon"
-            style={{ marginLeft: "5px" }}
-          />
+        <button
+          className="order-button"
+          onClick={confirmOrder}
+          disabled={isLoading} // Disable the button while loading
+          style={{ opacity: isLoading ? 0.7 : 1 , width : "40vh" }} // Optional styling for loading state
+        >
+          {isLoading ? (
+            <>
+              Placing Order...
+              <span className="spinner" />
+            </>
+          ) : (
+            <>
+              Confirm Order
+              <FaCheckCircle
+                size={14}
+                className="check-icon"
+                style={{ marginLeft: "5px" }}
+              />
+            </>
+          )}
         </button>
 
         {/* Schedule Button with FaRegClock */}
-        <button className="order-button" onClick={handleSelectDateTime}>
-          Schedule Move
-          <FaRegClock
-            size={14}
-            className="check-icon"
-            style={{ marginLeft: "5px" }}
+        {/* <button className="order-button" onClick={handleSelectDateTime}>
+    Schedule Move
+    <FaRegClock
+      size={14}
+      className="check-icon"
+      style={{ marginLeft: "5px" }}
+    />
+  </button> */}
+
+        {/* Popups */}
+        {errorMessage && (
+          <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
+        )}
+        {showConfirmationPopup && <ConfirmationPopup onClose={goBackToDash} />}
+        {showSuccessPopup && <SuccessPopup onClose={goBackToDash} />}
+        {showDateTimePopup && (
+          <DateTimePopup
+            scheduleDateTime={scheduleDateTime}
+            setScheduleDateTime={setScheduleDateTime}
+            onClose={() => setShowDateTimePopup(false)}
           />
-        </button>
+        )}
+        {showLoaderPopup && <LoaderPopup />}
       </div>
-
-      {/* Popups */}
-
-      {errorMessage && (
-        <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
-      )}
-      {showConfirmationPopup && <ConfirmationPopup onClose={goBackToDash} />}
-      {showSuccessPopup && <SuccessPopup onClose={goBackToDash} />}
-      {showDateTimePopup && (
-        <DateTimePopup
-          scheduleDateTime={scheduleDateTime}
-          setScheduleDateTime={setScheduleDateTime}
-          onClose={() => setShowDateTimePopup(false)}
-        />
-      )}
-      {showLoaderPopup && <LoaderPopup />}
     </div>
   );
 };

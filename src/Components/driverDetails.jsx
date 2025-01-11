@@ -43,8 +43,22 @@ const DriverDetails = () => {
       </div>
 
       <div className="phoneContainer">
-        <FaPhoneAlt className="phoneIcon" style={{ marginRight: "20px",color:"#ffff" }} />
-        <h2 className="phoneNumber">{driverData.phone}</h2>
+        <a
+          href={`tel:${driverData.phone}`}
+          style={{
+            display: "flex",
+            alignItems: "center",
+            textDecoration: "none",
+          }}
+        >
+          <FaPhoneAlt
+            className="phoneIcon"
+            style={{ marginRight: "20px", color: "#ffff" }}
+          />
+          <h2 className="phoneNumber" style={{ color: "#ffff" }}>
+            {driverData.phone}
+          </h2>
+        </a>
       </div>
 
       {/* Go back home button */}

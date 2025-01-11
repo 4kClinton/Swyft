@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { useNavigate,Link } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { Button, Typography, Box, CircularProgress } from "@mui/material";
 import { Google, Twitter, GitHub } from "@mui/icons-material";
 import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique IDs

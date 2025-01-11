@@ -1,9 +1,5 @@
 import React, { useState, useEffect } from "react";
-import {
- 
-  CircularProgress,
-
-} from "@mui/material";
+import { CircularProgress } from "@mui/material";
 function RidesHistory() {
   const [rides, setRides] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -28,12 +24,13 @@ function RidesHistory() {
       });
   }, []);
 
-  if (loading) return (
-    <p>
-      <CircularProgress className="login-loader" size={34} color="#0000" />
-      Loading rides history...
-    </p>
-  );
+  if (loading)
+    return (
+      <p>
+        <CircularProgress className="login-loader" size={34} color="#0000" />
+        Loading rides history...
+      </p>
+    );
   if (error) return <p style={{ color: "red" }}>{error}</p>;
 
   return (
