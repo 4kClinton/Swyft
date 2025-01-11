@@ -19,6 +19,7 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
+import { useSocket } from "../hooks/useSocket.js";
 
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const navigate = useNavigate();
@@ -37,9 +38,28 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showPopup, setShowPopup] = useState(true);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const theUser = useSelector((state) => state.user.value);
+
   const [isLoading, setIsLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false); 
   
+
+  const socket = useSocket()
+
+
+  useEffect(() => {
+    socket.on('order_update', (data) => {
+      const { status, driver } = data;
+      alert(`Order has been ${status?"Accepted":"Declined"}`);
+      
+  
+     
+  
+    // Cleanup the listener when the component is unmounted
+    return () => {
+      socket.off('order_update'); // Clean up the event listener when the component unmounts
+    }
+  })}, [socket, theUser])
+
 
   useEffect(() => {
     const loginStatus = theUser.name;
@@ -215,18 +235,25 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   setFindDriverComponent(true); // Show driver search component
   setIsLoading(true); // Start loading state
 
-  try {
-    const response = await fetch(
-      "https://swyft-backend-client-ac1s.onrender.com/orders",
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      }
-    );
+    const token = sessionStorage.getItem("authToken");
+
+    try {
+      const response = await fetch(
+        "https://swyft-backend-client-ac1s.onrender.com/orders",
+        {
+          method: "POST",
+          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
+          body: JSON.stringify(orderData),
+        }
+      );
+
+
+ 
+
 
     if (!response.ok) {
       throw new Error("Failed to place order, server error");
+  
     }
 
     const result = await response.json();
