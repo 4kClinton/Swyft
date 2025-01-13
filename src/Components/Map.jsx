@@ -70,9 +70,7 @@ const Map = () => {
       if (distanceElement && distanceElement.status === "OK") {
         const calculatedDistance = distanceElement.distance.value / 1000; // Convert to kilometers
         setDistance(calculatedDistance); // Set the distance
-        console.log("Updated Distance State:", calculatedDistance);
-
-        console.log("Calculated Distance:", calculatedDistance); // Log the distance
+    
         setDuration(distanceElement.duration.text);
       } else {
         console.error("Distance calculation failed:", distanceElement);

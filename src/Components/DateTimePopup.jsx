@@ -41,7 +41,7 @@ function DateTimePopup({ onClose }) {
     localStorage.setItem("orderDetails", JSON.stringify(orderData));
 
     // Log the stored order details for debugging
-    console.log("Order details stored locally:", orderData);
+   
     onClose();
   };
 

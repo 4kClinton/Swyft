@@ -15,7 +15,7 @@ export const UserProvider = ({ children }) => {
       if (event.key === "accessToken") {
         const updatedToken = event.newValue;
         setUser(updatedToken ? { accessToken: updatedToken } : null);
-        console.log("SessionStorage updated. New user state:", updatedToken);
+        
       }
     };
 
@@ -31,13 +31,13 @@ export const UserProvider = ({ children }) => {
   const logIn = (accessToken) => {
     sessionStorage.setItem("accessToken", accessToken);
     setUser({ accessToken });
-    console.log("User logged in with token:", accessToken);
+  
   };
 
   const logOut = () => {
     sessionStorage.removeItem("accessToken");
     setUser(null);
-    console.log("User logged out.");
+  
   };
 
   return (

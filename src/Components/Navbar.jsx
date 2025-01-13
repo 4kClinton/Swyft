@@ -27,7 +27,7 @@ const Navbar = () => {
   // Check login status on mount
   useEffect(() => {
     const loginStatus = theUser.name;
-    console.log("Login status on mount:", loginStatus); // Debugging line
+
     if (loginStatus) {
       setIsLoggedIn(true); // User is logged in
     }
@@ -43,10 +43,7 @@ const Navbar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
 
-    // Check session storage and log the login status
-    const loginStatus = sessionStorage.getItem("Login successful");
-    console.log("Login status on menu click:", loginStatus); // Log the login status
-    
+ 
   };
 
   const handleLogout = () => {

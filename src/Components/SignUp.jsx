@@ -42,7 +42,7 @@ const SignUp = () => {
       password,
     };
 
-    console.log("Signup data being sent to server:", signupData);
+
 
     try {
       // Make a POST request to your Express server
@@ -57,10 +57,10 @@ const SignUp = () => {
         }
       );
 
-      console.log("Server response status:", response.status);
+  
 
       const responseData = await response.json();
-      console.log("Server response data:", responseData);
+     
 
       if (!response.ok) {
         // Set error message from server
