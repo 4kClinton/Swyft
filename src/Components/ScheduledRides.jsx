@@ -14,7 +14,7 @@ function ScheduledRides() {
       try {
         console.log("Attempting to schedule a ride...");
         const response = await fetch(
-          "https://swyft-backend-client-ac1s.onrender.com/schedule",
+          "https://swyft-backend-client-nine.vercel.app/schedule",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },

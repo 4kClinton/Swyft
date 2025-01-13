@@ -31,7 +31,7 @@ function App() {
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
     if (token) {
-      fetch("https://swyft-backend-client-ac1s.onrender.com/check_session", {
+      fetch("https://swyft-backend-client-nine.vercel.app/check_session", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
