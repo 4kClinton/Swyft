@@ -134,6 +134,15 @@
     background: var(--secondary-color);
 }
 
+.order-spinner{
+border: 4px solid var(--primary-color);
+    border-top: 4px solid var(--text-color);
+    border-radius: 50%;
+    width: 35px;
+    height: 35px;
+    animation: spin 0.5s linear infinite;
+    margin-bottom: 10px;
+}
 /* Order Button */
 .order-button {
     background-color: var(--secondary-color);
@@ -142,7 +151,7 @@
     padding: 10px 20px;
     border: none;
     border-radius: var(--border-radius);
-    font-size: 1em;
+    font-size: 1.5em;
     cursor: pointer;
     transition: background 0.3s;
     display: flex;
@@ -156,7 +165,10 @@
     background-color: #18b700;
     /* Slightly darker on hover */
 }
-
+.order-button svg{
+    margin: initial;
+    padding-left: 1vh;
+}
 .check-icon {
     color: #FFFFFF;
     /* Check icon color */

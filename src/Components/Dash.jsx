@@ -41,11 +41,19 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const theUser = useSelector((state) => state.user.value);
 
   const [isLoading, setIsLoading] = useState(false);
+
   const [orderConfirmed, setOrderConfirmed] = useState(false); 
   const dispatch = useDispatch();
   
   
 
+
+      // Cleanup the listener when the component is unmounted
+      return () => {
+        socket.off("order_update"); // Clean up the event listener when the component unmounts
+      };
+    });
+  }, [socket, theUser]);
 
   useEffect(() => {
     const loginStatus = theUser.name;
@@ -159,7 +167,6 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
   };
 
-
   const handleScheduleOrder = () => {
     if (!scheduleDateTime) {
       setErrorMessage("Please select a date and time for scheduling.");
@@ -178,46 +185,44 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
     setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
   };
-
+  console.log("dest:", destination);
   const confirmOrder = async () => {
-  
+    if (!destination.length < 0) {
+      setErrorMessage("Please enter a destination location.");
+      return;
+    }
+    if (!selectedOption) {
+      setErrorMessage("Please select a vehicle.");
+      return;
+    }
 
-  if (!destination) {
-    setErrorMessage("Please enter a destination location.");
-    return;
-  }
-  if (!selectedOption) {
-    setErrorMessage("Please select a vehicle.");
-    return;
-  }
+    // Check if the user is logged in
+    function LoggedIn() {
+      return isLoggedIn;
+    }
 
-  // Check if the user is logged in
-  function LoggedIn() {
-    return isLoggedIn;
-  }
+    const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
+    if (!theUser || !theUser.id || !theUser.name) {
+      setErrorMessage("User details are missing. Please log in again.");
 
-  const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
-  if (!theUser || !theUser.id || !theUser.name) {
-    setErrorMessage("User details are missing. Please log in again.");
+      return;
+    }
 
-    return;
-  }
+    // Construct the order data including user details
+    const orderData = {
+      id: theUser.id, // User ID
+      vehicle: selectedOption,
+      distance,
+      loaders: includeLoader ? numLoaders : 0,
+      loaderCost: includeLoader ? numLoaders * 300 : 0,
+      totalCost: calculatedCosts[selectedOption],
+      userLocation,
+      destination,
+      time: new Date().toLocaleString(),
+    };
 
-  // Construct the order data including user details
-  const orderData = {
-    id: theUser.id, // User ID
-    vehicle: selectedOption,
-    distance,
-    loaders: includeLoader ? numLoaders : 0,
-    loaderCost: includeLoader ? numLoaders * 300 : 0,
-    totalCost: calculatedCosts[selectedOption],
-    userLocation,
-    destination,
-    time: new Date().toLocaleString(),
-  };
-
-  setFindDriverComponent(true); // Show driver search component
-  setIsLoading(true); // Start loading state
+    setFindDriverComponent(true); // Show driver search component
+    setIsLoading(true); // Start loading state
 
     const token = sessionStorage.getItem("authToken");
 
@@ -226,18 +231,30 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         "https://swyft-backend-client-nine.vercel.app/orders",
         {
           method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
           body: JSON.stringify(orderData),
         }
       );
 
+      if (!response.ok) {
+        throw new Error("Failed to place order, server error");
+      }
 
- 
+      const result = await response.json();
+      console.log("Order placed successfully:", result);
 
-
-    if (!response.ok) {
-      throw new Error("Failed to place order, server error");
-  
+      setShowLoaderPopup(false); // Close loader popup
+      setShowSuccessPopup(true); // Show success popup
+      resetDash(); // Reset the dashboard after a successful order
+    } catch (error) {
+      console.error("Error while placing order:", error);
+      setErrorMessage("Failed to place order. Please try again."); // Show error message
+    } finally {
+      setOrderConfirmed(true);
+      setIsLoading(false); // End loading state
     }
 
     const result = await response.json();
@@ -255,6 +272,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setIsLoading(false); // End loading state
   }
 };
+
 
   const calculateDistance = (userLocation, driverLocation) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;
@@ -336,33 +354,32 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         Which means do you prefer?
       </h2>
       <div className="dash-content">
-        {Object.entries(calculatedCosts).map(([vehicle, cost]) => {
-          const Icon = {
-            pickup: FaTruckPickup,
-            miniTruck: FaTruck,
-            lorry: FaTruckMoving,
-            flatbed: FaCarCrash,
-          }[vehicle];
-          return (
-            <label
-              key={vehicle}
-              className="Option"
-              onClick={() => handleOptionChange(vehicle)}
-            >
-              <div
-                className={`checkbox ${
-                  selectedOption === vehicle ? "selected" : ""
-                }`}
+        {Object.entries(calculatedCosts)
+          .filter(([vehicle]) => vehicle !== "flatbed") // Exclude "flatbed" option
+          .map(([vehicle, cost]) => {
+            const Icon = {
+              pickup: FaTruckPickup,
+              miniTruck: FaTruck,
+              lorry: FaTruckMoving,
+            }[vehicle];
+            return (
+              <label
+                key={vehicle}
+                className="Option"
+                onClick={() => handleOptionChange(vehicle)}
               >
-                <Icon size={24} />
-              </div>
-              {vehicle === "flatbed"
-                ? "Car Rescue (Flatbed)"
-                : vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}{" "}
-              - Ksh {distance > 0 ? cost : "0"}
-            </label>
-          );
-        })}
+                <div
+                  className={`checkbox ${
+                    selectedOption === vehicle ? "selected" : ""
+                  }`}
+                >
+                  <Icon size={24} />
+                </div>
+                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{" "}
+                {distance > 0 ? cost : "0"}
+              </label>
+            );
+          })}
       </div>
 
       {/* Loader Option */}
@@ -397,12 +414,16 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
           className="order-button"
           onClick={confirmOrder}
           disabled={isLoading} // Disable the button while loading
-          style={{ opacity: isLoading ? 0.7 : 1 , width : "40vh" }} // Optional styling for loading state
+          style={{
+            opacity: isLoading ? 0.7 : 1,
+            width: "40vh",
+            backgroundColor: "#00D46A",
+          }} // Optional styling for loading state
         >
           {isLoading ? (
             <>
               Placing Order...
-              <span className="spinner" />
+              <span className="order-spinner" />
             </>
           ) : (
             <>
@@ -410,7 +431,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
               <FaCheckCircle
                 size={14}
                 className="check-icon"
-                style={{ marginLeft: "5px" }}
+                style={{ marginLeft: "5px", width: "2vh" }}
               />
             </>
           )}

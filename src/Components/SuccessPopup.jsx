@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
-import '../Styles/ConfirmationPopup.css';
+import '../Styles/orderLoader.css';
 import { useNavigate } from 'react-router-dom';
 
 const SuccessPopup = ({ onClose, closePopup }) => {
@@ -22,8 +22,8 @@ const SuccessPopup = ({ onClose, closePopup }) => {
       <div className="popup" style={styles.popup} onClick={(e) => e.stopPropagation()}>
         {isLoading ? (
           <>
-            <h2 style={styles.heading}>Finding You A Driver</h2>
-            <div style={styles.spinner}>
+            <h2 >Finding You A Driver</h2>
+            <div >
               {/* Add your preferred spinner component or library here */}
               {/* Example using a simple CSS spinner: */}
               <div className="spinner-border" role="status">
@@ -59,7 +59,7 @@ const styles = {
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    zIndex: 9999,
+    zIndex: 999999,
   },
   popup: {
     backgroundColor: "#fff",
