@@ -5,7 +5,7 @@ import GoogleIcon from "@mui/icons-material/Google";
 
 const GoogleLogin = ({ setLoading, setError, dispatch, addUser, navigate }) => {
   const handleSignInWithGoogle = async () => {
-    console.log("setLoading", setLoading); // Debugging to make sure it's defined
+ 
     setLoading(true);
     try {
       const { user, session, error } = await supabase.auth.signInWithOAuth({

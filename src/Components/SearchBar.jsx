@@ -12,8 +12,7 @@ const SearchBar = ({ setDestination }) => {
   const [isLocationLoading, setIsLocationLoading] = useState(false); // Track location loading state
 
   useEffect(() => {
-    console.log(userInput);
-    console.log(userSuggestions);
+
   }, [userInput, userSuggestions]);
 
   // Fetch location suggestions based on searchInput (Search input)
