@@ -48,13 +48,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   
 
 
-      // Cleanup the listener when the component is unmounted
-      return () => {
-        socket.off("order_update"); // Clean up the event listener when the component unmounts
-      };
-    });
-  }, [socket, theUser]);
-
+   
   useEffect(() => {
     const loginStatus = theUser.name;
   
@@ -204,7 +198,6 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
     if (!theUser || !theUser.id || !theUser.name) {
       setErrorMessage("User details are missing. Please log in again.");
-
       return;
     }
 
@@ -256,23 +249,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       setOrderConfirmed(true);
       setIsLoading(false); // End loading state
     }
-
-    const result = await response.json();
-    dispatch(saveOrder(result?.order));
-
-
-    setShowLoaderPopup(false); // Close loader popup
-    setShowSuccessPopup(true); // Show success popup
-    resetDash(); // Reset the dashboard after a successful order
-  } catch (error) {
-    console.error("Error while placing order:", error);
-    setErrorMessage("Failed to place order. Please try again."); // Show error message
-  } finally {
-    setOrderConfirmed(true);
-    setIsLoading(false); // End loading state
-  }
-};
-
+  };
 
   const calculateDistance = (userLocation, driverLocation) => {
     const toRadians = (degrees) => (degrees * Math.PI) / 180;
