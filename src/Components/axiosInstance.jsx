@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://swyft-backend-client-ac1s.onrender.com/", // Backend URL
+  baseURL: "https://swyft-backend-client-nine.vercel.app/", // Backend URL
   withCredentials: true, // Important for sending cookies
 });
 
@@ -26,7 +26,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          "https://swyft-backend-client-ac1s.onrender.com/",
+          "https://swyft-backend-client-nine.vercel.app/",
           {},
           { withCredentials: true }
         );

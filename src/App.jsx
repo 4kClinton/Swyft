@@ -15,23 +15,83 @@ import FindHouse from "./Components/FindHouse.jsx";
 import RidesHistory from "./Components/MyRides.jsx";
 import DriverDetails from "./Components/driverDetails.jsx";
 import Settings from "./Components/Settings.jsx";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "./Redux/Reducers/UserSlice";
 import FindDriver from "./Components/FindDriver.jsx";
 import { Phone } from "@mui/icons-material";
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
-import { SocketProvider } from "./contexts/SocketContext.jsx";
+import { supabase } from "./supabase.js";
+import { deleteOrder } from "./Redux/Reducers/CurrentOrderSlice.js";
+
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [isLightMode, setIsLightMode] = useState(true);
   const dispatch = useDispatch();
+  const customer = useSelector((state) => state.user.value);
+  const currentOrder = useSelector((state) => state.currentOrder.value);
+
+
+  useEffect(() => {
+    // Subscribe to changes in the 'orders' table
+    let supabaseOrderId;
+    const token = sessionStorage.getItem("authToken");
+    const ordersChannel = supabase
+      .channel('orders')
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, (payload) => {
+      
+        if (payload?.new?.customer_id === customer.id && payload?.new?.status === 'Accepted') {
+          fetch(`https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,{
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application',
+              Authorization : `Bearer ${token}`
+          }}).
+          then((response) => {
+            if (!response.ok) {
+              throw new Error("Failed to fetch driver data");
+            }
+            return response.json();
+          }).then((driverData) => { 
+            console.log(driverData,payload.new)
+          }
+          )
+
+
+
+          console.log('Order accepted:', payload.new);     
+        } 
+      })
+      //Save the supabase order id to delete the order if no driver is found
+      .on('postgres_changes', { event: 'UPDATE', schema: 'public', table: 'orders' }, (payload) => {
+        if (payload?.new?.customer_id === customer.id ) {
+          supabaseOrderId = payload.new.id; 
+        } 
+      })
+      .on('postgres_changes', { event: 'DELETE', schema: 'public', table: 'orders' }, (payload) => {
+        if (payload?.old?.id === supabaseOrderId) {
+          console.log('No driver found:', payload.old);
+          dispatch(deleteOrder());
+        }
+     
+      })
+      .subscribe();
+
+    // Cleanup the subscription on component unmount
+    return () => {
+      if (ordersChannel) {
+        supabase.removeChannel(ordersChannel)
+          .then(() => console.log('Channel successfully removed'))
+          .catch((error) => console.error('Error removing channel:', error));
+      }
+    };
+  }, [customer.id, dispatch]);
 
   useEffect(() => {
     const token = sessionStorage.getItem("authToken");
     if (token) {
-      fetch("https://swyft-backend-client-ac1s.onrender.com/check_session", {
+      fetch("https://swyft-backend-client-nine.vercel.app/check_session", {
         headers: {
           Authorization: `Bearer ${token}`,
         },
@@ -44,7 +104,7 @@ function App() {
         })
 
         .then((userData) => {
-          console.log(userData);
+      
 
           dispatch(addUser(userData));
         })
@@ -63,7 +123,7 @@ function App() {
   }, []);
 
   return (
-    <SocketProvider>
+  
       <UserProvider>
         <Router>
           {isLoading ? (
@@ -90,7 +150,7 @@ function App() {
           )}
         </Router>
       </UserProvider>
-    </SocketProvider>
+  
   );
 }
 

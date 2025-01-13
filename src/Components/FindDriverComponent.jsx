@@ -55,10 +55,7 @@ const FindDriverComponent = ({ orderData }) => {
       }
 
       const result = await response.json();
-      console.log(
-        `Order sent to driver ${selectedDriver.id} successfully:`,
-        result
-      );
+     
 
       // Step 5: Navigate to /driverDetails with driver info
       navigate("/driverDetails", {

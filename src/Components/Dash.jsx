@@ -19,7 +19,8 @@ import {
 } from "react-icons/fa";
 import { useSelector } from "react-redux";
 import { useDispatch } from "react-redux";
-import { useSocket } from "../hooks/useSocket.js";
+import { saveOrder } from "../Redux/Reducers/CurrentOrderSlice.js";
+
 
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const navigate = useNavigate();
@@ -41,29 +42,14 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
   const [isLoading, setIsLoading] = useState(false);
   const [orderConfirmed, setOrderConfirmed] = useState(false); 
+  const dispatch = useDispatch();
   
-
-  const socket = useSocket()
-
-
-  useEffect(() => {
-    socket.on('order_update', (data) => {
-      const { status, driver } = data;
-      alert(`Order has been ${status?"Accepted":"Declined"}`);
-      
   
-     
-  
-    // Cleanup the listener when the component is unmounted
-    return () => {
-      socket.off('order_update'); // Clean up the event listener when the component unmounts
-    }
-  })}, [socket, theUser])
 
 
   useEffect(() => {
     const loginStatus = theUser.name;
-    console.log("Login status on mount:", loginStatus); // Debugging line
+  
     if (loginStatus) {
       setIsLoggedIn(true); // User is logged in
     }
@@ -147,11 +133,10 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       localStorage.setItem("orderDetails", JSON.stringify(orderData));
 
       // Log the stored order details for debugging
-      console.log("Order details stored locally:", orderData);
-
+     
       // Push order data to the backend
       const response = await fetch(
-        "https://swyft-backend-client-ac1s.onrender.com/schedule",
+        "https://swyft-backend-client-nine.vercel.app/schedule",
         {
           method: "POST",
           headers: {
@@ -166,8 +151,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       }
 
       const responseData = await response.json();
-      console.log("Order successfully scheduled:", responseData);
-
+     
       setShowDateTimePopup(true); // Show Date/Time Popup after a successful API call
     } catch (error) {
       console.error("Error scheduling the order:", error.message);
@@ -239,7 +223,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     try {
       const response = await fetch(
-        "https://swyft-backend-client-ac1s.onrender.com/orders",
+        "https://swyft-backend-client-nine.vercel.app/orders",
         {
           method: "POST",
           headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
@@ -257,7 +241,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
 
     const result = await response.json();
-    console.log("Order placed successfully:", result);
+    dispatch(saveOrder(result?.order));
+
 
     setShowLoaderPopup(false); // Close loader popup
     setShowSuccessPopup(true); // Show success popup
@@ -304,7 +289,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       }
 
       const result = await response.json();
-      console.log("Order sent successfully:", result);
+     
     } catch (error) {
       console.error("Error while sending order:", error);
       setErrorMessage("Failed to place order. Please try again.");

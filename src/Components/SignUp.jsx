@@ -42,12 +42,12 @@ const SignUp = () => {
       password,
     };
 
-    console.log("Signup data being sent to server:", signupData);
+
 
     try {
       // Make a POST request to your Express server
       const response = await fetch(
-        "https://swyft-backend-client-ac1s.onrender.com/signup",
+        "https://swyft-backend-client-nine.vercel.app/signup",
         {
           method: "POST",
           headers: {
@@ -57,10 +57,10 @@ const SignUp = () => {
         }
       );
 
-      console.log("Server response status:", response.status);
+  
 
       const responseData = await response.json();
-      console.log("Server response data:", responseData);
+     
 
       if (!response.ok) {
         // Set error message from server

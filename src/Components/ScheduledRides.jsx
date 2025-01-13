@@ -12,9 +12,9 @@ function ScheduledRides() {
   useEffect(() => {
     const scheduleRide = async () => {
       try {
-        console.log("Attempting to schedule a ride...");
+
         const response = await fetch(
-          "https://swyft-backend-client-ac1s.onrender.com/schedule",
+          "https://swyft-backend-client-nine.vercel.app/schedule",
           {
             method: "POST",
             headers: { "Content-Type": "application/json" },
@@ -29,8 +29,7 @@ function ScheduledRides() {
         }
 
         const responseData = await response.json();
-        console.log("Ride scheduled successfully:", responseData);
-
+      
         // Assuming the response contains updated rides
         setScheduledRides(responseData.rides || []);
       } catch (error) {
@@ -44,15 +43,14 @@ function ScheduledRides() {
   }, [orderData]);
 
   // Log location state to debug data flow
-  console.log("Location state:", location.state);
 
   const handleGoBack = () => {
-    console.log("Navigating back to home...");
+  
     navigate("/");
   };
 
   const handleBookNow = (rideId) => {
-    console.log(`Booking ride with ID: ${rideId}`);
+   
     alert(`Booking ride with ID: ${rideId}`);
   };
 
