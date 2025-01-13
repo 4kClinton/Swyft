@@ -194,11 +194,10 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
     setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
   };
-
+console.log("dest:",destination);
   const confirmOrder = async () => {
-  
-
-  if (!destination) {
+    
+  if (!destination.length<0) {
     setErrorMessage("Please enter a destination location.");
     return;
   }
@@ -351,33 +350,32 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         Which means do you prefer?
       </h2>
       <div className="dash-content">
-        {Object.entries(calculatedCosts).map(([vehicle, cost]) => {
-          const Icon = {
-            pickup: FaTruckPickup,
-            miniTruck: FaTruck,
-            lorry: FaTruckMoving,
-            flatbed: FaCarCrash,
-          }[vehicle];
-          return (
-            <label
-              key={vehicle}
-              className="Option"
-              onClick={() => handleOptionChange(vehicle)}
-            >
-              <div
-                className={`checkbox ${
-                  selectedOption === vehicle ? "selected" : ""
-                }`}
+        {Object.entries(calculatedCosts)
+          .filter(([vehicle]) => vehicle !== "flatbed") // Exclude "flatbed" option
+          .map(([vehicle, cost]) => {
+            const Icon = {
+              pickup: FaTruckPickup,
+              miniTruck: FaTruck,
+              lorry: FaTruckMoving,
+            }[vehicle];
+            return (
+              <label
+                key={vehicle}
+                className="Option"
+                onClick={() => handleOptionChange(vehicle)}
               >
-                <Icon size={24} />
-              </div>
-              {vehicle === "flatbed"
-                ? "Car Rescue (Flatbed)"
-                : vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}{" "}
-              - Ksh {distance > 0 ? cost : "0"}
-            </label>
-          );
-        })}
+                <div
+                  className={`checkbox ${
+                    selectedOption === vehicle ? "selected" : ""
+                  }`}
+                >
+                  <Icon size={24} />
+                </div>
+                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{" "}
+                {distance > 0 ? cost : "0"}
+              </label>
+            );
+          })}
       </div>
 
       {/* Loader Option */}
@@ -412,12 +410,16 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
           className="order-button"
           onClick={confirmOrder}
           disabled={isLoading} // Disable the button while loading
-          style={{ opacity: isLoading ? 0.7 : 1 , width : "40vh" }} // Optional styling for loading state
+          style={{
+            opacity: isLoading ? 0.7 : 1,
+            width: "40vh",
+            backgroundColor: "#00D46A",
+          }} // Optional styling for loading state
         >
           {isLoading ? (
             <>
               Placing Order...
-              <span className="spinner" />
+              <span className="order-spinner" />
             </>
           ) : (
             <>
@@ -425,7 +427,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
               <FaCheckCircle
                 size={14}
                 className="check-icon"
-                style={{ marginLeft: "5px" }}
+                style={{ marginLeft: "5px",width:"2vh" }}
               />
             </>
           )}
