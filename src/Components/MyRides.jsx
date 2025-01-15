@@ -6,8 +6,15 @@ function RidesHistory() {
   const [error, setError] = useState(null);
 
   useEffect(() => {
+    const token = sessionStorage.getItem("authToken");
     // Replace this URL with your actual API endpoint
-    fetch("https://swyft-backend-client-nine.vercel.app/rides")
+    fetch("https://swyft-backend-client-nine.vercel.app/orders",{
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization' : `Bearer ${token}`
+      }
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error("Failed to fetch rides history");
