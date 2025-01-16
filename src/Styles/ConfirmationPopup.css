@@ -1,74 +1,74 @@
 .popup-overlay {
-    background-color: rgba(0, 0, 0, 0.5);
-    /* Semi-transparent background */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 150%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 99999;
-    /* Increase z-index to ensure it appears on top */
+  background-color: rgba(0, 0, 0, 0.5);
+  /* Semi-transparent background */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 150%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 99999;
+  /* Increase z-index to ensure it appears on top */
 }
 
 .popup {
-    background-color: #621a1a;
-    border-radius: 8px;
-    width: 60%;
-    max-width: 400px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    z-index: 2147483647;
-    /* Ensure popup content is above overlay */
+  background-color: #621a1a;
+  border-radius: 8px;
+  width: 60%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  z-index: 2147483647;
+  /* Ensure popup content is above overlay */
 }
 
 .heading {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 .text {
-    font-size: 1em;
-    color: #666;
-    margin: 10px 0;
+  font-size: 1em;
+  color: #666;
+  margin: 10px 0;
 }
 
 .button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    font-size: 1em;
-    color: #fff;
-    background-color: #18b700;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #18b700;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .check-icon {
-    color: #ffffff;
-    margin-bottom: 10px;
+  color: #ffffff;
+  margin-bottom: 10px;
 }
 
 button {
-    background-color: #fba421;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #fba421;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }

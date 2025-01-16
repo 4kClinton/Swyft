@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 function ScheduledRides() {
   const location = useLocation();
@@ -12,112 +12,110 @@ function ScheduledRides() {
   useEffect(() => {
     const scheduleRide = async () => {
       try {
-
         const response = await fetch(
-          "https://swyft-backend-client-nine.vercel.app/schedule",
+          'https://swyft-backend-client-nine.vercel.app/schedule',
           {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(orderData),
           }
         );
 
         if (!response.ok) {
           const errorData = await response.json();
-          console.error("Failed to place order:", errorData);
-          throw new Error("Server error: " + response.statusText);
+          console.error('Failed to place order:', errorData);
+          throw new Error('Server error: ' + response.statusText);
         }
 
         const responseData = await response.json();
-      
+
         // Assuming the response contains updated rides
         setScheduledRides(responseData.rides || []);
       } catch (error) {
-        console.error("Error scheduling ride:", error.message);
+        console.error('Error scheduling ride:', error.message);
       }
     };
 
     if (Object.keys(orderData).length > 0) {
       scheduleRide();
     }
-  }, [orderData]);
+    //eslint-disable-next-line
+  }, []);
 
   // Log location state to debug data flow
 
   const handleGoBack = () => {
-  
-    navigate("/");
+    navigate('/');
   };
 
   const handleBookNow = (rideId) => {
-   
     alert(`Booking ride with ID: ${rideId}`);
   };
 
   // Inline styles
   const containerStyle = {
-    padding: "20px",
-    textAlign: "center",
+    padding: '20px',
+    textAlign: 'center',
   };
 
   const headingStyle = {
-    fontSize: "2em",
-    marginBottom: "20px",
+    fontSize: '2em',
+    marginBottom: '20px',
   };
 
   const listStyle = {
-    color: "white",
-    listStyleType: "none",
-    padding: "0",
-    margin: "0",
+    color: 'white',
+    listStyleType: 'none',
+    padding: '0',
+    margin: '0',
   };
 
   const listItemStyle = {
-    backgroundColor: "var(--card-background)",
-    margin: "10px 0",
-    padding: "15px",
-    borderRadius: "var(--border-radius)",
-    boxShadow: "1px 1px 5px rgba(0, 0, 0, 0.1)",
-    color: "var(--text-color)",
+    backgroundColor: 'var(--card-background)',
+    margin: '10px 0',
+    padding: '15px',
+    borderRadius: 'var(--border-radius)',
+    boxShadow: '1px 1px 5px rgba(0, 0, 0, 0.1)',
+    color: 'var(--text-color)',
   };
 
   const rideInfoStyle = {
-    color: "white",
-    marginBottom: "10px",
-    fontSize: "0.9em",
+    color: 'white',
+    marginBottom: '10px',
+    fontSize: '0.9em',
   };
 
   const bookNowButtonStyle = {
-    padding: "8px 16px",
-    fontSize: "0.85em",
-    backgroundColor: "var(--secondary-color)",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
+    padding: '8px 16px',
+    fontSize: '0.85em',
+    backgroundColor: 'var(--secondary-color)',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
   };
 
   const bookNowButtonHoverStyle = {
-    backgroundColor: "#00B257", // Slightly darker green
+    backgroundColor: '#00B257', // Slightly darker green
   };
 
   const goBackButtonStyle = {
-    marginTop: "20px",
-    padding: "10px 20px",
-    fontSize: "1em",
-    backgroundColor: "#212121",
-    color: "white",
-    border: "none",
-    borderRadius: "5px",
-    fontWeight: "bold",
-    cursor: "pointer",
-    transition: "background-color 0.3s ease",
+    marginTop: '20px',
+    padding: '10px 20px',
+    fontSize: '1em',
+    backgroundColor: '#212121',
+    color: 'white',
+    border: 'none',
+    borderRadius: '5px',
+    fontWeight: 'bold',
+    cursor: 'pointer',
+    transition: 'background-color 0.3s ease',
   };
 
   const goBackButtonHoverStyle = {
-    backgroundColor: "#2563eb",
+    backgroundColor: '#2563eb',
   };
 
   return (
@@ -128,16 +126,16 @@ function ScheduledRides() {
           scheduledRides.map((ride) => (
             <li key={ride.id} style={listItemStyle}>
               <p style={rideInfoStyle}>
-                <strong>Date:</strong> {ride.date || "N/A"}
+                <strong>Date:</strong> {ride.date || 'N/A'}
               </p>
               <p style={rideInfoStyle}>
-                <strong>Time:</strong> {ride.time || "N/A"}
+                <strong>Time:</strong> {ride.time || 'N/A'}
               </p>
               <p style={rideInfoStyle}>
-                <strong>From:</strong> {ride.fromLocation || "N/A"}
+                <strong>From:</strong> {ride.fromLocation || 'N/A'}
               </p>
               <p style={rideInfoStyle}>
-                <strong>To:</strong> {ride.toLocation || "N/A"}
+                <strong>To:</strong> {ride.toLocation || 'N/A'}
               </p>
               <button
                 style={bookNowButtonStyle}
@@ -154,7 +152,7 @@ function ScheduledRides() {
             </li>
           ))
         ) : (
-          <p style={{ color: "black" }}>No scheduled rides available.</p>
+          <p style={{ color: 'black' }}>No scheduled rides available.</p>
         )}
       </ul>
       <button

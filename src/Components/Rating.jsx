@@ -1,6 +1,6 @@
-import React from "react";
-import "../Styles/Ratings.css"; // Import the CSS file for Ratings component
+import '../Styles/Ratings.css'; // Import the CSS file for Ratings component
 
+//eslint-disable-next-line
 const Ratings = ({ rating }) => {
   const fullStars = Math.floor(rating);
   const hasHalfStar = rating % 1 !== 0;

@@ -1,6 +1,5 @@
-import React from "react";
-import PropTypes from "prop-types";
-import "../Styles/PopupTutorial.css"; // Add styles for the popup
+import PropTypes from 'prop-types';
+import '../Styles/PopupTutorial.css'; // Add styles for the popup
 
 const PopupTutorial = ({ message, onDismiss }) => {
   return (

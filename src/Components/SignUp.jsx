@@ -1,18 +1,18 @@
-import React, { useState } from "react";
-import { useNavigate, Link } from "react-router-dom";
-import { Button, Typography, Box, CircularProgress } from "@mui/material";
-import { Google, Twitter, GitHub } from "@mui/icons-material";
-import { v4 as uuidv4 } from "uuid"; // Import uuid for generating unique IDs
+import { useState } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
+import { Typography, Box, CircularProgress } from '@mui/material';
 
-import "../Styles/Login.css";
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
+
+import '../Styles/Login.css';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
-  const [phoneNumber, setPhoneNumber] = useState("");
-  const [password, setPassword] = useState("");
-  const [confirmPassword, setConfirmPassword] = useState("");
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -25,7 +25,7 @@ const SignUp = () => {
     setSuccess(null);
 
     if (password !== confirmPassword) {
-      setError("Passwords do not match.");
+      setError('Passwords do not match.');
       setLoading(false);
       return;
     }
@@ -42,34 +42,29 @@ const SignUp = () => {
       password,
     };
 
-
-
     try {
       // Make a POST request to your Express server
       const response = await fetch(
-        "https://swyft-backend-client-nine.vercel.app/signup",
+        'https://swyft-backend-client-nine.vercel.app/signup',
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
           },
           body: JSON.stringify(signupData),
         }
       );
 
-  
-
       const responseData = await response.json();
-     
 
       if (!response.ok) {
         // Set error message from server
-        setError(responseData.message || "Sign-up failed. Please try again.");
+        setError(responseData.message || 'Sign-up failed. Please try again.');
         return;
       }
 
       // Set success message from server
-      setSuccess(responseData.message || "Account created successfully!");
+      setSuccess(responseData.message || 'Account created successfully!');
 
       // Save user data (excluding password) locally
       const userData = {
@@ -78,22 +73,19 @@ const SignUp = () => {
         phone: phoneNumber,
         email,
       };
-      localStorage.setItem("user", JSON.stringify(userData));
+      localStorage.setItem('user', JSON.stringify(userData));
 
       // Redirect to the home route on successful sign-up
-      setTimeout(() => navigate("/"), 3000); // Redirect after showing success message
+      setTimeout(() => navigate('/'), 3000); // Redirect after showing success message
     } catch (err) {
-      console.error("An error occurred during sign-up:", err);
-      setError(err.message || "An error occurred. Please try again.");
+      console.error('An error occurred during sign-up:', err);
+      setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
   // toLogin function defined outside of signUp function
-  const toLogin = () => {
-    navigate("/login");
-  };
 
   return (
     <div className="login-component">
@@ -139,22 +131,11 @@ const SignUp = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-          <button
-            variant="contained"
-            type="submit"
-            className="login-button"
-            sx={{
-              mt: 2,
-              backgroundColor: "#00D46A",
-              fontWeight: "bold",
-              color: "#ffff",
-            }}
-            disabled={loading}
-          >
+          <button type="submit" className="login-button" disabled={loading}>
             {loading ? (
               <CircularProgress size={34} color="inherit" />
             ) : (
-              "Sign Up"
+              'Sign Up'
             )}
           </button>
         </form>
@@ -199,17 +180,17 @@ const SignUp = () => {
         </Box> */}
 
         <Link
-          to={"/login"}
+          to={'/login'}
           variant="body2"
           className="existing-account"
           sx={{
             mt: 2,
-            marginBottom: "2vh",
-            color: "#00D46A",
-            fontSize: "15px",
-            display: "block",
-            textAlign: "center",
-            cursor: "pointer",
+            marginBottom: '2vh',
+            color: '#00D46A',
+            fontSize: '15px',
+            display: 'block',
+            textAlign: 'center',
+            cursor: 'pointer',
           }}
         >
           Already have an account? Log in

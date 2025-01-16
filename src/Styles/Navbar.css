@@ -1,112 +1,109 @@
-
-
 .icon-button {
-    position: absolute;
-    width: 4vh;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    height: 4vh;
-    border-radius: 50%;
-    background-color: var(--primary-color);
-    /* Dark background for icons */
-    top: 20px;
-    left: 20px;
-    cursor: pointer;
-    z-index: 12000;
-    box-shadow: 0px 1px 20px 1px var(--primary-color);
+  position: absolute;
+  width: 4vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 4vh;
+  border-radius: 50%;
+  background-color: var(--primary-color);
+  /* Dark background for icons */
+  top: 20px;
+  left: 20px;
+  cursor: pointer;
+  z-index: 12000;
+  box-shadow: 0px 1px 20px 1px var(--primary-color);
 }
-#Account-Card{
-    display: flex;
-    align-items: center;
-    justify-content: center;
-
+#Account-Card {
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
-.toast-container{
-    z-index: 12002;
+.toast-container {
+  z-index: 12002;
 }
 
 .sidebar {
-    font-size: large;
-    width: 300px;
-    height: 98vh;
-    background-color: var(--primary-color);
-    /* Main dark background */
-    position: fixed;
-    top: 0;
-    left: -350px;
-    transition: left 0.3s ease-in-out;
-    padding: 20px;
-    z-index: 4000;
-    box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
-    overflow-y: scroll;
+  font-size: large;
+  width: 300px;
+  height: 98vh;
+  background-color: var(--primary-color);
+  /* Main dark background */
+  position: fixed;
+  top: 0;
+  left: -350px;
+  transition: left 0.3s ease-in-out;
+  padding: 20px;
+  z-index: 4000;
+  box-shadow: 2px 0 5px rgba(0, 0, 0, 0.5);
+  overflow-y: scroll;
 }
 
 .show-sidebar {
-    left: 0;
+  left: 0;
 }
 
 .sidebar ul {
-    list-style-type: none;
-    padding: 0;
-    margin: 0;
-    background-color: var(--primary-color);
+  list-style-type: none;
+  padding: 0;
+  margin: 0;
+  background-color: var(--primary-color);
 }
 
 .sidebar ul li {
-    padding: 15px 0;
-    color: var(--text-color);
-    /* Text color */
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    background-color: var(--primary-color);
+  padding: 15px 0;
+  color: var(--text-color);
+  /* Text color */
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  background-color: var(--primary-color);
 }
 
 .card {
-    background-color: var(--primary-color);
-    /* Card background */
-    padding: 15px;
-    margin: 10px 0;
-    border-radius: 8px;
-    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-    display: flex;
-    flex-direction: column;
+  background-color: var(--primary-color);
+  /* Card background */
+  padding: 15px;
+  margin: 10px 0;
+  border-radius: 8px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
+  display: flex;
+  flex-direction: column;
 }
 
 .card h3 {
-    font-size: small;
-    color: var(--text-color);
-    /* Text color for card headers */
-    margin-left: 5px;
-    margin: 0;
+  font-size: small;
+  color: var(--text-color);
+  /* Text color for card headers */
+  margin-left: 5px;
+  margin: 0;
 }
 
 .theme-toggle {
-    display: flex;
-    align-items: center;
-    margin-top: 10px;
+  display: flex;
+  align-items: center;
+  margin-top: 10px;
 }
 
 .theme-toggle label {
-    display: flex;
-    align-items: center;
-    color: var(--text-color);
-    /* Label color */
+  display: flex;
+  align-items: center;
+  color: var(--text-color);
+  /* Label color */
 }
 
 .theme-toggle input {
-    margin-left: 10px;
+  margin-left: 10px;
 }
 
 .cards {
-    font-size: small;
-    margin-top: 7vh;
-    background-color: var(--primary-color);
+  font-size: small;
+  margin-top: 7vh;
+  background-color: var(--primary-color);
 }
 
 .menu-options {
-    display: flex;
-    flex-direction: column;
-    gap: 3vh;
+  display: flex;
+  flex-direction: column;
+  gap: 3vh;
 }

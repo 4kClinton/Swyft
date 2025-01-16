@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from "react";
-import ReactDOM from "react-dom";
-import { useNavigate } from "react-router-dom";
-import "../Styles/Calendar.css"
+import { useState, useEffect } from 'react';
+import ReactDOM from 'react-dom';
+import { useNavigate } from 'react-router-dom';
+import '../Styles/Calendar.css';
 
 function DateTimePopup({ onClose }) {
-  const [selectedDate, setSelectedDate] = useState("");
-  const [selectedTime, setSelectedTime] = useState("");
+  const [selectedDate, setSelectedDate] = useState('');
+  const [selectedTime, setSelectedTime] = useState('');
   const [showConfirmation, setShowConfirmation] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {
     // Add blur effect and disable scrolling
-    document.body.classList.add("blurred");
-    document.body.style.overflow = "hidden";
+    document.body.classList.add('blurred');
+    document.body.style.overflow = 'hidden';
 
     return () => {
       // Remove blur effect and re-enable scrolling
-      document.body.classList.remove("blurred");
-      document.body.style.overflow = "";
+      document.body.classList.remove('blurred');
+      document.body.style.overflow = '';
     };
   }, []);
 
@@ -34,14 +34,13 @@ function DateTimePopup({ onClose }) {
   };
 
   const handleFinalConfirm = () => {
-    navigate("/scheduled-rides", {
+    navigate('/scheduled-rides', {
       state: { date: selectedDate, time: selectedTime },
     });
     // Save order data to localStorage
-    localStorage.setItem("orderDetails", JSON.stringify(orderData));
 
     // Log the stored order details for debugging
-   
+
     onClose();
   };
 
@@ -106,94 +105,94 @@ export default DateTimePopup;
 
 const styles = {
   overlay: {
-    position: "fixed", // Makes the overlay fixed on screen
+    position: 'fixed', // Makes the overlay fixed on screen
     top: 0,
     left: 0,
     right: 0,
     bottom: 0,
-    backgroundColor: "rgba(0, 0, 0, 0.6)", // Semi-transparent overlay
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    backgroundColor: 'rgba(0, 0, 0, 0.6)', // Semi-transparent overlay
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     zIndex: 10000, // Ensure overlay is on top of other elements
   },
   popup: {
-    backgroundColor: "#fff",
-    borderRadius: "8px",
-    width: "60%",
-    maxWidth: "400px",
-    padding: "20px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-    textAlign: "center",
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    width: '60%',
+    maxWidth: '400px',
+    padding: '20px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    textAlign: 'center',
     zIndex: 10002, // Ensure the popup content is on top of overlay
-    position: "relative",
-    fontFamily: "Montserat",
+    position: 'relative',
+    fontFamily: 'Montserat',
   },
   heading: {
-    fontSize: "1.5em",
-    color: "#333",
-    marginBottom: "20px",
-    fontFamily: "Montserat",
+    fontSize: '1.5em',
+    color: '#333',
+    marginBottom: '20px',
+    fontFamily: 'Montserat',
   },
   input: {
-    width: "100%",
-    padding: "10px",
-    margin: "10px 0",
-    fontSize: "1em",
-    borderRadius: "4px",
-    border: "1px solid #ccc",
-    outline: "none",
+    width: '100%',
+    padding: '10px',
+    margin: '10px 0',
+    fontSize: '1em',
+    borderRadius: '4px',
+    border: '1px solid #ccc',
+    outline: 'none',
   },
   button: {
-    width: "100%",
-    padding: "12px",
-    marginTop: "15px",
-    fontSize: "1em",
-    color: "#fff",
-    backgroundColor: "#00D46A",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontFamily: "Montserat",
+    width: '100%',
+    padding: '12px',
+    marginTop: '15px',
+    fontSize: '1em',
+    color: '#fff',
+    backgroundColor: '#00D46A',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontFamily: 'Montserat',
   },
   closeButton: {
-    marginTop: "10px",
-    width: "100%",
-    padding: "10px",
-    fontSize: "0.9em",
-    backgroundColor: "#BA274A",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontFamily: "Montserat",
+    marginTop: '10px',
+    width: '100%',
+    padding: '10px',
+    fontSize: '0.9em',
+    backgroundColor: '#BA274A',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontFamily: 'Montserat',
   },
   confirmation: {
-    textAlign: "center",
-    fontFamily: "Montserat",
+    textAlign: 'center',
+    fontFamily: 'Montserat',
   },
   confirmHeading: {
-    fontSize: "1.2em",
-    color: "#333",
-    marginBottom: "10px",
-    fontFamily: "Montserat",
+    fontSize: '1.2em',
+    color: '#333',
+    marginBottom: '10px',
+    fontFamily: 'Montserat',
   },
   text: {
-    fontSize: "1em",
-    color: "#666",
-    margin: "5px 0",
-    fontFamily: "Montserat",
+    fontSize: '1em',
+    color: '#666',
+    margin: '5px 0',
+    fontFamily: 'Montserat',
   },
   backButton: {
-    marginTop: "10px",
-    width: "100%",
-    padding: "10px",
-    fontSize: "0.9em",
-    backgroundColor: "#841C26",
-    color: "#fff",
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
-    fontFamily: "Montserat",
+    marginTop: '10px',
+    width: '100%',
+    padding: '10px',
+    fontSize: '0.9em',
+    backgroundColor: '#841C26',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+    fontFamily: 'Montserat',
   },
 };

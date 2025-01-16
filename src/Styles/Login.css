@@ -1,10 +1,10 @@
 :root {
   --primary-color: #121212;
-  --secondary-color: #00D46A;
-  --text-color: #E0E0E0;
-  --input-background: #1E1E1E;
+  --secondary-color: #00d46a;
+  --text-color: #e0e0e0;
+  --input-background: #1e1e1e;
   --card-background: #252525;
-  --highlight-color: #FFD54F;
+  --highlight-color: #ffd54f;
   --border-color: #333333;
   --border-radius: 5vh;
   font-family: 'Montserrat', sans-serif;
@@ -55,16 +55,15 @@
   width: 90%;
   max-width: 400px;
   /* padding: 20px; */
-      
 }
-#login-section{
+#login-section {
   position: absolute;
-        top: 30vh;
+  top: 30vh;
 }
-.introPic{
+.introPic {
   width: 60%;
-    position: absolute;
-    top: 13vh;
+  position: absolute;
+  top: 13vh;
 }
 .login-header {
   font-family: var(--font-family);
@@ -84,17 +83,17 @@
   font-family: var(--font-family);
   color: var(--text-color);
 }
-.existing-account{
-      text-align: center;
-        margin-top: 18px;
-        position: relative;
-        bottom: -3vh;
-        font-style: normal;
-        font-family: var(--font-family);
-        color: var(--text-color);
+.existing-account {
+  text-align: center;
+  margin-top: 18px;
+  position: relative;
+  bottom: -3vh;
+  font-style: normal;
+  font-family: var(--font-family);
+  color: var(--text-color);
 }
-.login-loader svg{
-  color:#fff
+.login-loader svg {
+  color: #fff;
 }
 .login-button {
   background-color: var(--secondary-color);
@@ -107,8 +106,8 @@
   font-family: var(--font-family);
   font-weight: bold;
   font-size: 21px;
-    width: 90%;
-    height: 7vh;
+  width: 90%;
+  height: 7vh;
   transition: background-color 0.3s;
 }
 
@@ -118,17 +117,17 @@
 
 .login-input {
   padding: 10px;
-    margin: 10px 0;
-    width: 90%;
-    height: 4vh;
-    margin-bottom: 3vh;
-    background-color: var(--input-background);
-    color: var(--text-color);
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: bold;
-    font-size: large;
-    border-radius: 4px;
+  margin: 10px 0;
+  width: 90%;
+  height: 4vh;
+  margin-bottom: 3vh;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: bold;
+  font-size: large;
+  border-radius: 4px;
 }
 
 .login-input::placeholder {
@@ -143,7 +142,7 @@
   color: #888;
   border: none;
 }
-.css-aixiz9-MuiButtonBase-root-MuiIconButton-root{
+.css-aixiz9-MuiButtonBase-root-MuiIconButton-root {
   margin-top: 2vh;
 }
 

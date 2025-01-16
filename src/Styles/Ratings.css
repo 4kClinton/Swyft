@@ -1,25 +1,25 @@
 .ratings-container {
-    display: inline-flex;
-    align-items: center;
-    font-size: 20px;
+  display: inline-flex;
+  align-items: center;
+  font-size: 20px;
 }
 
 .star {
-    color: #ffc107;
-    /* Gold color for the stars */
+  color: #ffc107;
+  /* Gold color for the stars */
 }
 
 .full {
-    color: #ffc107;
-    /* Full star color */
+  color: #ffc107;
+  /* Full star color */
 }
 
 .half {
-    color: #ffeb3b;
-    /* Lighter gold color for half stars */
+  color: #ffeb3b;
+  /* Lighter gold color for half stars */
 }
 
 .empty {
-    color: #e0e0e0;
-    /* Gray color for empty stars */
+  color: #e0e0e0;
+  /* Gray color for empty stars */
 }

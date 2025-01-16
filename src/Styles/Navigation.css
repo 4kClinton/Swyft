@@ -1,133 +1,131 @@
 :root {
-    --clr: #298cfd;
-    /* Bolt's signature green */
-    --bg-color: #1e1e1e;
-    /* Dark background */
-    --text-color: #bdbdbd;
-    /* Muted text color */
-    --active-text-color: #ffffff;
-    /* White for active text */
+  --clr: #298cfd;
+  /* Bolt's signature green */
+  --bg-color: #1e1e1e;
+  /* Dark background */
+  --text-color: #bdbdbd;
+  /* Muted text color */
+  --active-text-color: #ffffff;
+  /* White for active text */
 }
 
 /* Navigation bar container */
 .navigation {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    height: 70px;
-    background-color: var(--bg-color);
-    /* Dark background for the navbar */
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.3);
-    /* border-radius: 20px 20px 0 0; */
-    /* Rounded top corners */
-    z-index: 2000;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 70px;
+  background-color: var(--bg-color);
+  /* Dark background for the navbar */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.3);
+  /* border-radius: 20px 20px 0 0; */
+  /* Rounded top corners */
+  z-index: 2000;
 }
 
 /* List of options */
 .navigation ul {
-    display: flex;
-    justify-content: space-between;
-    width: 100%;
-    max-width: 400px;
-    /* Ensure it doesn't stretch too wide */
-    padding: 0 20px;
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+  max-width: 400px;
+  /* Ensure it doesn't stretch too wide */
+  padding: 0 20px;
 }
 
 /* Each navigation option */
 .navigation ul li {
-    position: relative;
-    list-style: none;
-    width: 70px;
-    height: 70px;
-    z-index: 1;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    cursor: pointer;
+  position: relative;
+  list-style: none;
+  width: 70px;
+  height: 70px;
+  z-index: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  cursor: pointer;
 }
 
 /* Link inside each option */
 .navigation ul li a {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-direction: column;
-    width: 100%;
-    text-align: center;
-    font-weight: 500;
-    color: var(--text-color);
-    /* Muted color for inactive icons/text */
-    text-decoration: none;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  width: 100%;
+  text-align: center;
+  font-weight: 500;
+  color: var(--text-color);
+  /* Muted color for inactive icons/text */
+  text-decoration: none;
 }
 
 /* Icon styling */
 .navigation ul li a .icon {
-    color: #ffffff;
-    font-size: 2.5em;
-    
-    /* Muted color for inactive icons */
-    transition: 0.3s;
+  color: #ffffff;
+  font-size: 2.5em;
+
+  /* Muted color for inactive icons */
+  transition: 0.3s;
 }
 
 /* Move the icon up when active */
 .navigation ul li.active a .icon {
-    transform: translateY(-10px);/* Subtle lift effect */
-    background-color: #0048ff;
-    width: 8vh;
-    height: 8vh;
-    border-radius: 50%;
-    
-   
+  transform: translateY(-10px); /* Subtle lift effect */
+  background-color: #0048ff;
+  width: 8vh;
+  height: 8vh;
+  border-radius: 50%;
 }
 
 /* Text styling */
 .navigation ul li a .text {
-   margin-bottom: 13px;
-    font-size: 1em;
-    color: var(--text-color);
-    /* Muted color for inactive text */
-    opacity: 0;
-    /* Hidden initially */
-    transform: translateY(10px);
-    transition: 0.3s;
+  margin-bottom: 13px;
+  font-size: 1em;
+  color: var(--text-color);
+  /* Muted color for inactive text */
+  opacity: 0;
+  /* Hidden initially */
+  transform: translateY(10px);
+  transition: 0.3s;
 }
 
 /* Show text when active */
 .navigation ul li.active a .text {
-    opacity: 1;
-    transform: translateY(0);
-    /* Visible when active */
-    color: var(--active-text-color);
-    /* White text for active */
+  opacity: 1;
+  transform: translateY(0);
+  /* Visible when active */
+  color: var(--active-text-color);
+  /* White text for active */
 }
 
 /* Indicator */
 .indicator {
-    position: absolute;
-    bottom: 0;
-    width: 70px;
-    height: 3px;
-    background-color: var(--clr);
-    /* Green active indicator */
-    border-radius: 10px 10px 0 0;
-    /* Rounded edges */
-    transition: 0.5s;
+  position: absolute;
+  bottom: 0;
+  width: 70px;
+  height: 3px;
+  background-color: var(--clr);
+  /* Green active indicator */
+  border-radius: 10px 10px 0 0;
+  /* Rounded edges */
+  transition: 0.5s;
 }
 
 /* Indicator movement based on active item */
-.navigation ul li:nth-child(1).active~.indicator {
-    transform: translateX(calc(70px * 0));
+.navigation ul li:nth-child(1).active ~ .indicator {
+  transform: translateX(calc(70px * 0));
 }
 
-.navigation ul li:nth-child(2).active~.indicator {
-    transform: translateX(calc(70px * 1));
+.navigation ul li:nth-child(2).active ~ .indicator {
+  transform: translateX(calc(70px * 1));
 }
 
-.navigation ul li:nth-child(3).active~.indicator {
-    transform: translateX(calc(70px * 2));
+.navigation ul li:nth-child(3).active ~ .indicator {
+  transform: translateX(calc(70px * 2));
 }

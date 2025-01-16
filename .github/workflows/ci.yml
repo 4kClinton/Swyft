@@ -3,10 +3,10 @@ name: CI Workflow
 on:
   push:
     branches:
-      - "*"  # Trigger on push to main branch
+      - '*' # Trigger on push to main branch
   pull_request:
     branches:
-      - main  # Trigger on PR to main branch
+      - main # Trigger on PR to main branch
 
 jobs:
   lint:
@@ -31,6 +31,6 @@ jobs:
       - name: Run lint-staged
         run: npx lint-staged
 
-      # Run tests 
+      # Run tests
       - name: Run tests
         run: npm test

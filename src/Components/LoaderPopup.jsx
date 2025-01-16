@@ -1,6 +1,4 @@
-// LoaderPopup.js
-import React from "react";
-
+//eslint-disable-next-line
 const LoaderPopup = ({ message }) => {
   return (
     <div className="loader-popup">

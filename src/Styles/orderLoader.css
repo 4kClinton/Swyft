@@ -2,52 +2,52 @@
 
 /* Overlay styling */
 .popup-overlay {
-    background-color: rgba(0, 0, 0, 0.8);
-    /* Darker overlay for better contrast */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 999999;
+  background-color: rgba(0, 0, 0, 0.8);
+  /* Darker overlay for better contrast */
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999999;
 }
 
 /* Text styling */
 .popup-overlay h2 {
-    font-family: 'Montserrat', sans-serif;
-    font-weight: 700;
-    /* Bold font */
-    font-size: 2rem;
-    /* Large text size */
-    color: #ffffff;
-    /* White color for contrast */
-    text-align: center;
-    margin: 0;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 700;
+  /* Bold font */
+  font-size: 2rem;
+  /* Large text size */
+  color: #ffffff;
+  /* White color for contrast */
+  text-align: center;
+  margin: 0;
 }
 
 /* Optional spinner styling */
 .spinner-border {
-    width: 50px;
-    height: 50px;
-    border: 4px solid #ffffff;
-    /* White spinner */
-    border-top: 4px solid #00D46A;
-    /* Green accent */
-    border-radius: 50%;
-    animation: spin 1s linear infinite;
-    margin-top: 20px;
+  width: 50px;
+  height: 50px;
+  border: 4px solid #ffffff;
+  /* White spinner */
+  border-top: 4px solid #00d46a;
+  /* Green accent */
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+  margin-top: 20px;
 }
 
 /* Keyframes for spinner */
 @keyframes spin {
-    0% {
-        transform: rotate(0deg);
-    }
+  0% {
+    transform: rotate(0deg);
+  }
 
-    100% {
-        transform: rotate(360deg);
-    }
+  100% {
+    transform: rotate(360deg);
+  }
 }

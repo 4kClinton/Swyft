@@ -1,95 +1,97 @@
 /* Root Variables */
 :root {
-    --primary-color: #121212;
-    --secondary-color: #00D46A;
-    --text-color: #E0E0E0;
-    --input-background: #1E1E1E;
-    --card-background: #252525;
-    --highlight-color: #FFD54F;
-    --border-color: #333333;
-    --border-radius: 5vh;
-    font-family: 'Montserrat', sans-serif;
+  --primary-color: #121212;
+  --secondary-color: #00d46a;
+  --text-color: #e0e0e0;
+  --input-background: #1e1e1e;
+  --card-background: #252525;
+  --highlight-color: #ffd54f;
+  --border-color: #333333;
+  --border-radius: 5vh;
+  font-family: 'Montserrat', sans-serif;
 }
 
 /* General Container */
 body {
-    background-color: var(--primary-color);
-    color: var(--text-color);
-    font-family: var(--font-family);
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  background-color: var(--primary-color);
+  color: var(--text-color);
+  font-family: var(--font-family);
+  margin: 0;
+  padding: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .account-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
 }
 
 .user-card {
-    background: var(--card-background);
-    color: var(--text-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    padding: 20px;
-    width: 300px;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  background: var(--card-background);
+  color: var(--text-color);
+  border: 1px solid var(--border-color);
+  border-radius: var(--border-radius);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  text-align: center;
+  padding: 20px;
+  width: 300px;
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
 }
 
 .user-card:hover {
-    transform: scale(1.05);
-    box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  transform: scale(1.05);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
 }
 
 /* Avatar */
-.user-avatar{
-    width: 100px;
-    height: 100px;
-    border-radius: 50%;
-    margin-bottom: 15px;
-    border: 4px solid var(--primary-color);
+.user-avatar {
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  margin-bottom: 15px;
+  border: 4px solid var(--primary-color);
 }
 
 /* Loading Spinner */
 .loading {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    color: var(--text-color);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  color: var(--text-color);
 }
 
 .spinner {
-    border: 4px solid var(--card-background);
-    border-top: 4px solid var(--secondary-color);
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    animation: spin 1s linear infinite;
-    margin-bottom: 10px;
+  border: 4px solid var(--card-background);
+  border-top: 4px solid var(--secondary-color);
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  animation: spin 1s linear infinite;
+  margin-bottom: 10px;
 }
 
 @keyframes spin {
-    to {
-        transform: rotate(360deg);
-    }
+  to {
+    transform: rotate(360deg);
+  }
 }
 
 /* Add spacing to text elements */
 .user-card h2 {
-    color: var(--highlight-color);
-    margin-bottom: 10px;
+  color: var(--highlight-color);
+  margin-bottom: 10px;
 }
 
 .user-card p {
-    margin: 10px 10;
-    color: #fff;
+  margin: 10px 10;
+  color: #fff;
 }
