@@ -1,28 +1,21 @@
 import { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom"; // Import Router and Routes
+import { Outlet } from "react-router-dom";
 import Navbar from "./Components/Navbar.jsx";
-import Map from "./Components/Map.jsx";
+
 import LoadingScreen from "./Components/LoadingScreen.jsx";
-import Login from "./Components/Login.jsx";
-import SignUp from "./Components/SignUp.jsx";
-import ScheduledRides from "./Components/ScheduledRides.jsx";
+
 import "./App.css";
-import TripTracker from "./Components/TripTracker.jsx";
-import PrivateRoute from "./Components/PrivateRoute.jsx";
+
 import { UserProvider } from "./contexts/UserContext.jsx";
-import Account from "./Components/Account.jsx";
-import FindHouse from "./Components/FindHouse.jsx";
-import RidesHistory from "./Components/MyRides.jsx";
-import DriverDetails from "./Components/driverDetails.jsx";
-import Settings from "./Components/Settings.jsx";
+
 import { useDispatch, useSelector } from "react-redux";
 import { addUser } from "./Redux/Reducers/UserSlice";
-import FindDriver from "./Components/FindDriver.jsx";
-import { Phone } from "@mui/icons-material";
+
 import { Analytics } from "@vercel/analytics/react";
 import { SpeedInsights } from "@vercel/speed-insights/react";
 import { supabase } from "./supabase.js";
-import { deleteOrder } from "./Redux/Reducers/CurrentOrderSlice.js";
+import { deleteOrder, saveOrder } from "./Redux/Reducers/CurrentOrderSlice.js";
+import { saveDriver } from "./Redux/Reducers/DriverDetailsSlice.js";
 
 
 function App() {
@@ -54,7 +47,10 @@ function App() {
             }
             return response.json();
           }).then((driverData) => { 
-            console.log(driverData,payload.new)
+            dispatch(saveDriver(driverData))
+            localStorage.setItem('driverData',JSON.stringify(driverData))
+            localStorage.setItem('orderData',JSON.stringify(currentOrder))
+       
           }
           )
 
@@ -107,6 +103,12 @@ function App() {
       
 
           dispatch(addUser(userData));
+         const storedDriverData = localStorage.getItem('driverData')
+         const storedOrderData = localStorage.getItem('orderData')
+
+         dispatch(saveDriver(JSON.parse(storedDriverData)))
+         dispatch(saveOrder(JSON.parse(storedOrderData)))
+
         })
         .catch((error) => {
           console.error("Token verification failed:", error);
@@ -125,30 +127,18 @@ function App() {
   return (
   
       <UserProvider>
-        <Router>
+       
           {isLoading ? (
             <LoadingScreen />
           ) : (
             <div>
               <Navbar />
-              <Routes>
-                <Route path="/" element={<Map />} />
-                <Route path="/login" element={<Login />} />
-                <Route path="/signup" element={<SignUp />} />
-                <Route path="/scheduled-rides" element={<ScheduledRides />} />
-                <Route path="/acc" element={<Account />} />
-                <Route path="/ridesHistory" element={<RidesHistory />} />
-                <Route path="/settings" element={<Settings />} />
-                <Route path="/driverDetails" element={<DriverDetails />} />
-                <Route path="/track" element={<TripTracker />} />
-                <Route path="/findhouse" element={<FindHouse />} />
-                {/* You can add more routes here */}
-              </Routes>
+              <Outlet/>
               <Analytics />
               <SpeedInsights />
             </div>
           )}
-        </Router>
+      
       </UserProvider>
   
   );

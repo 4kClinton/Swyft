@@ -1,11 +1,12 @@
-import React from "react";
+
 import "../Styles/DriverDetails.css"; // Import the CSS file
 import profilePic from "../assets/profilePic.jpeg";
 import carPic from "../assets/pickup.png";
-import Ratings from "../Components/Rating.jsx"; // Import the Ratings component
-
+/* import Ratings from "../Components/Rating.jsx"; // Import the Ratings component
+ */
 import { FaPhoneAlt } from "react-icons/fa"; // Importing the phone icon
 import { useNavigate } from "react-router-dom"; // Importing useNavigate for navigation
+import { useSelector } from "react-redux";
 
 // Sample data for the driver
 const driverData = {
@@ -20,21 +21,26 @@ const driverData = {
 
 const DriverDetails = () => {
   const navigate = useNavigate(); // Hook to navigate
+  const driver = useSelector(state => state.driverDetails.value)
 
   const handleGoHome = () => {
     navigate("/"); // Navigate to the home page
   };
 
+  if(!driver?.id) {
+    return null;
+  }
+
   return (
     <div className="container">
       <div className="driverInfo">
-        <img src={driverData.pictureUrl} alt="Driver" className="driverImage" />
+        <img src={driver.profilePicture && driver.profilePicture} alt="Driver" className="driverImage" />
         <div className="textContainer">
-          <h2 className="name">{driverData.name}</h2>
-          <p className="numberPlate">{driverData.numberPlate}</p>
-          <p className="carType">{driverData.carType}</p>
+          <h2 className="name">{driver.name}</h2>
+          <p className="numberPlate">{driver.license_plate}</p>
+          <p className="carType">{driver.car_type}</p>
           {/* Add the Ratings component here */}
-          <Ratings rating={driverData.rating} />
+          {/* <Ratings rating={driver.rating && driver.rating} /> */}
         </div>
       </div>
 
@@ -44,7 +50,7 @@ const DriverDetails = () => {
 
       <div className="phoneContainer">
         <a
-          href={`tel:${driverData.phone}`}
+          href={`tel:${driver.phone}`}
           style={{
             display: "flex",
             alignItems: "center",
@@ -56,7 +62,7 @@ const DriverDetails = () => {
             style={{ marginRight: "20px", color: "#ffff" }}
           />
           <h2 className="phoneNumber" style={{ color: "#ffff" }}>
-            {driverData.phone}
+            {driver.phone}
           </h2>
         </a>
       </div>

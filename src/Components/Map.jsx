@@ -24,6 +24,8 @@ const Map = () => {
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
+        console.log("User location",position);
+        
         const userLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
