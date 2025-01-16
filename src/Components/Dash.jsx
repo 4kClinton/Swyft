@@ -243,12 +243,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
       const result = await response.json();
       console.log("Order placed successfully:", result);
-      if(driver?.id){
+      
         setShowLoaderPopup(false); // Close loader popup
         setShowSuccessPopup(true); // Show success popup
         resetDash(); 
 
-      }
      // Reset the dashboard after a successful order
     } catch (error) {
       console.error("Error while placing order:", error);
