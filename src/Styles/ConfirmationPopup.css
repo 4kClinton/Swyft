@@ -1,5 +1,6 @@
 .popup-overlay {
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: rgb(0 0 0 / 50%);
+
   /* Semi-transparent background */
   position: fixed;
   top: 0;
@@ -10,6 +11,7 @@
   align-items: center;
   justify-content: center;
   z-index: 99999;
+
   /* Increase z-index to ensure it appears on top */
 }
 
@@ -19,9 +21,10 @@
   width: 60%;
   max-width: 400px;
   padding: 20px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
   text-align: center;
   z-index: 2147483647;
+
   /* Ensure popup content is above overlay */
 }
 
@@ -50,7 +53,7 @@
 }
 
 .check-icon {
-  color: #ffffff;
+  color: #fff;
   margin-bottom: 10px;
 }
 

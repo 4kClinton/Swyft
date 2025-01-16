@@ -3,14 +3,17 @@
   flex-direction: column;
   align-items: center;
   border-radius: 25px;
+
   /* padding: 8px 12px; */
   background-color: var(--primary-color);
+
   /* box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1); */
   width: 80%;
   max-width: 600px;
   margin: 10px auto;
-  font-family: 'Montserrat', sans-serif;
+  font-family: Montserrat, sans-serif;
 }
+
 .whereTo {
   font-size: larger;
   margin: 1px;
@@ -20,13 +23,10 @@
 .UserInput,
 .SearchInput {
   height: 80%;
-  font-size: medium;
-  background-color: #303030;
   border: 3px solid #00d46a;
   outline: none;
   background-color: var(--input-background);
   color: var(--text-color);
-
   flex-grow: 1;
   font-size: 16px;
   padding: 8px;
@@ -34,20 +34,20 @@
   margin-right: 10px;
   margin-top: 5px;
   text-align: center;
-  font-family: 'Montserrat', sans-serif;
+  font-family: Montserrat, sans-serif;
   font-weight: bold;
 }
 
 .UserInput::placeholder,
 .SearchInput::placeholder {
   color: #999;
-  font-family: 'Montserrat', sans-serif;
+  font-family: Montserrat, sans-serif;
   font-weight: bold;
   text-align: center;
 }
 
 .search-Button {
-  background-color: #0066ff;
+  background-color: #06f;
   width: 30px;
   height: 30px;
   color: #fff;
@@ -63,6 +63,7 @@
   align-items: center;
   justify-content: center;
 }
+
 .search-Button svg {
   width: 20px;
   height: 20px;
@@ -73,7 +74,7 @@
 }
 
 .location-Button {
-  background-color: #0066ff;
+  background-color: #06f;
   color: #fff;
   border: none;
   border-radius: 45%;
@@ -89,32 +90,35 @@
 .location-Button:hover {
   background-color: #515151;
 }
+
 .client-suggestions-list {
   color: #b7b7b7;
   height: fit-content;
   display: flex;
   flex-direction: column;
   align-items: center;
+
   /* justify-content: center; */
   position: absolute;
   top: 5.5vh;
-  left: 0vh;
+  left: 0;
   background-color: #393939;
   border: 1px solid #ccc;
   border-radius: 14px;
   list-style-type: none;
   padding: 0;
   margin: 0;
-  z-index: 10;
   width: 118%;
   z-index: 1000;
   max-height: 200px;
   overflow-y: auto;
 }
+
 .client-suggestions-list li {
   padding: 10px;
   cursor: pointer;
 }
+
 .suggestions-list {
   color: #b7b7b7;
   position: absolute;
@@ -151,6 +155,7 @@
   width: 100%;
   padding-right: 30px;
   height: 80%;
+
   /* Add padding to avoid overlap with loader */
 }
 
@@ -163,5 +168,6 @@
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
+
   /* Prevent interaction with loader */
 }

@@ -2,13 +2,17 @@
 .container {
   padding: 20px;
   max-width: 400px;
+
   /* Adjusted width for a more compact design */
   margin: 20px auto;
   border-radius: 16px;
+
   /* Rounded corners for a softer, more modern look */
   background-color: #fff;
+
   /* White background for a clean look */
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+
   /* Slightly larger shadow for depth */
 }
 
@@ -18,6 +22,7 @@
   align-items: center;
   padding-bottom: 16px;
   border-bottom: 1px solid #f0f0f0;
+
   /* Light border between sections */
   margin-bottom: 16px;
 }
@@ -29,6 +34,7 @@
   border-radius: 50%;
   object-fit: cover;
   margin-right: 16px;
+
   /* Increased margin for more space between image and text */
 }
 
@@ -44,6 +50,7 @@
   font-weight: bold;
   margin: 0;
   color: #333;
+
   /* Darker color for better readability */
 }
 
@@ -51,6 +58,7 @@
 .numberPlate {
   font-size: 12px;
   color: #777;
+
   /* Lighter color for less emphasis */
   margin-top: 4px;
 }
@@ -59,6 +67,7 @@
 .carType {
   font-size: 12px;
   color: #777;
+
   /* Same color as number plate */
   margin-top: 4px;
 }
@@ -73,9 +82,11 @@
 .carImage {
   width: 100%;
   height: 200px;
+
   /* Set height to make car images consistent */
   object-fit: cover;
   border-radius: 12px;
+
   /* Rounded corners for car image */
 }
 
@@ -87,9 +98,11 @@
   align-items: center;
   justify-content: center;
 }
+
 /* Add styles for the Go Home button */
 .goHomeButton {
   background-color: #00d46a;
+
   /* Blue color for the button */
   color: white;
   border: none;
@@ -104,5 +117,6 @@
 
 .goHomeButton:hover {
   background-color: #1a7fd7;
+
   /* Darker blue when hovered */
 }

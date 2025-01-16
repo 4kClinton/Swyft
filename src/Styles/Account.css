@@ -6,9 +6,10 @@
   --input-background: #1e1e1e;
   --card-background: #252525;
   --highlight-color: #ffd54f;
-  --border-color: #333333;
+  --border-color: #333;
   --border-radius: 5vh;
-  font-family: 'Montserrat', sans-serif;
+
+  font-family: Montserrat, sans-serif;
 }
 
 /* General Container */
@@ -36,7 +37,7 @@ body {
   color: var(--text-color);
   border: 1px solid var(--border-color);
   border-radius: var(--border-radius);
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
   text-align: center;
   padding: 20px;
   width: 300px;
@@ -47,7 +48,7 @@ body {
 
 .user-card:hover {
   transform: scale(1.05);
-  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.4);
+  box-shadow: 0 6px 12px rgb(0 0 0 / 40%);
 }
 
 /* Avatar */

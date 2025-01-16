@@ -1,20 +1,23 @@
 .popup-tutorial {
   position: absolute;
   top: -30px;
+
   /* Adjust as needed */
   left: 0;
   background-color: #2191fb;
+
   /* Blue background */
   color: white;
   padding: 5px 10px;
   border-radius: 5px;
   font-size: 14px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 2px 4px rgb(0 0 0 / 20%);
   z-index: 10;
   cursor: pointer;
 }
 
 .popup-tutorial:hover {
   background-color: #176bc1;
+
   /* Slightly darker blue on hover */
 }

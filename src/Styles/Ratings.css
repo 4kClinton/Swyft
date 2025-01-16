@@ -6,20 +6,24 @@
 
 .star {
   color: #ffc107;
+
   /* Gold color for the stars */
 }
 
 .full {
   color: #ffc107;
+
   /* Full star color */
 }
 
 .half {
   color: #ffeb3b;
+
   /* Lighter gold color for half stars */
 }
 
 .empty {
   color: #e0e0e0;
+
   /* Gray color for empty stars */
 }

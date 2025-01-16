@@ -6,20 +6,25 @@
   height: 100vh;
   width: 100vw;
   background-color: #00d46a;
+
   /* Adjust as per your theme */
   position: fixed;
   top: 0;
   left: 0;
   z-index: 10000;
+
   /* Ensure it overlays the app content */
 }
+
 #second-logo {
   position: absolute;
   top: 50%;
   left: 38%;
   width: 150px;
+
   /* Adjust size as needed */
   animation: breathe 2s ease-in-out infinite;
+
   /* Combine breathing and spinning animations */
 }
 
@@ -32,20 +37,23 @@
 
 .circular-loader {
   color: #ffff;
-
   position: absolute;
+
   /* Keeps the loader centered over the logo */
 }
 
 .MuiCircularProgress-root {
   color: #00d46a !important;
+
   /* Ensure high specificity */
 }
+
 .loading-logo {
   width: 250px;
 
   /* Adjust size as needed */
   animation: breathe 2s ease-in-out infinite;
+
   /* Combine breathing and spinning animations */
 }
 
@@ -54,11 +62,13 @@
   0%,
   100% {
     transform: scale(1);
+
     /* Normal size */
   }
 
   50% {
     transform: scale(1.1);
+
     /* Slightly bigger size */
   }
 }

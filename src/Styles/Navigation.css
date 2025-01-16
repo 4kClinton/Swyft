@@ -1,11 +1,15 @@
 :root {
   --clr: #298cfd;
+
   /* Bolt's signature green */
   --bg-color: #1e1e1e;
+
   /* Dark background */
   --text-color: #bdbdbd;
+
   /* Muted text color */
-  --active-text-color: #ffffff;
+  --active-text-color: #fff;
+
   /* White for active text */
 }
 
@@ -17,12 +21,15 @@
   right: 0;
   height: 70px;
   background-color: var(--bg-color);
+
   /* Dark background for the navbar */
   display: flex;
   justify-content: center;
   align-items: center;
-  box-shadow: 0 -1px 10px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 -1px 10px rgb(0 0 0 / 30%);
+
   /* border-radius: 20px 20px 0 0; */
+
   /* Rounded top corners */
   z-index: 2000;
 }
@@ -33,6 +40,7 @@
   justify-content: space-between;
   width: 100%;
   max-width: 400px;
+
   /* Ensure it doesn't stretch too wide */
   padding: 0 20px;
 }
@@ -61,13 +69,14 @@
   text-align: center;
   font-weight: 500;
   color: var(--text-color);
+
   /* Muted color for inactive icons/text */
   text-decoration: none;
 }
 
 /* Icon styling */
 .navigation ul li a .icon {
-  color: #ffffff;
+  color: #fff;
   font-size: 2.5em;
 
   /* Muted color for inactive icons */
@@ -88,8 +97,10 @@
   margin-bottom: 13px;
   font-size: 1em;
   color: var(--text-color);
+
   /* Muted color for inactive text */
   opacity: 0;
+
   /* Hidden initially */
   transform: translateY(10px);
   transition: 0.3s;
@@ -99,8 +110,10 @@
 .navigation ul li.active a .text {
   opacity: 1;
   transform: translateY(0);
+
   /* Visible when active */
   color: var(--active-text-color);
+
   /* White text for active */
 }
 
@@ -111,8 +124,10 @@
   width: 70px;
   height: 3px;
   background-color: var(--clr);
+
   /* Green active indicator */
   border-radius: 10px 10px 0 0;
+
   /* Rounded edges */
   transition: 0.5s;
 }

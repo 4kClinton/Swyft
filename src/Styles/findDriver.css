@@ -6,10 +6,12 @@
   justify-content: center;
   height: 100vh;
   background: #f4f4f4;
+
   /* Change to your brand's primary background color */
   color: #2191fb;
+
   /* Swyft signature color */
-  font-family: 'Arial', sans-serif;
+  font-family: Arial, sans-serif;
 }
 
 .spinner {
