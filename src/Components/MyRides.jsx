@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { CircularProgress } from "@mui/material";
 function RidesHistory() {
   const [rides, setRides] = useState([]);
@@ -44,7 +44,7 @@ function RidesHistory() {
     <div style={styles.container}>
       <h2 style={styles.heading}>Rides History</h2>
       <div style={styles.rideList}>
-        {rides.map((ride) => (
+        {rides[0] && rides.map((ride) => (
           <div key={ride.id} style={styles.rideCard}>
             <div style={styles.rideInfo}>
               <p style={styles.date}>{ride.date}</p>
