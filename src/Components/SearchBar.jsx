@@ -1,24 +1,23 @@
-import React, { useState, useEffect } from "react";
-import "../Styles/SearchBar.css";
-import SearchIcon from "@mui/icons-material/Search";
-import CircularProgress from "@mui/material/CircularProgress"; // For loader
+import { useState, useEffect } from 'react';
+import '../Styles/SearchBar.css';
 
+import CircularProgress from '@mui/material/CircularProgress'; // For loader
+
+//eslint-disable-next-line
 const SearchBar = ({ setDestination }) => {
-  const [userInput, setUserInput] = useState(""); // State for user's input (initial location)
-  const [searchInput, setSearchInput] = useState(""); // State for search input (location search)
+  const [userInput, setUserInput] = useState(''); // State for user's input (initial location)
+  const [searchInput, setSearchInput] = useState(''); // State for search input (location search)
   const [userSuggestions, setUserSuggestions] = useState([]); // State for user location suggestions
   const [searchSuggestions, setSearchSuggestions] = useState([]); // State for search location suggestions
-  const [selectedPlace, setSelectedPlace] = useState(null); // State for selected place
+
   const [isLocationLoading, setIsLocationLoading] = useState(false); // Track location loading state
 
-  useEffect(() => {
-
-  }, [userInput, userSuggestions]);
+  useEffect(() => {}, [userInput, userSuggestions]);
 
   // Fetch location suggestions based on searchInput (Search input)
   useEffect(() => {
     const fetchSearchSuggestions = async () => {
-      if (searchInput === "") {
+      if (searchInput === '') {
         setSearchSuggestions([]);
         return;
       }
@@ -29,7 +28,7 @@ const SearchBar = ({ setDestination }) => {
       service.getPlacePredictions(
         {
           input: searchInput,
-          componentRestrictions: { country: "KE" }, // Restrict suggestions to Kenya
+          componentRestrictions: { country: 'KE' }, // Restrict suggestions to Kenya
         },
         (predictions, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
@@ -47,7 +46,7 @@ const SearchBar = ({ setDestination }) => {
   // Fetch location suggestions for user's location input (userInput)
   useEffect(() => {
     const fetchUserSuggestions = async () => {
-      if (userInput === "") {
+      if (userInput === '') {
         setUserSuggestions([]);
         return;
       }
@@ -58,7 +57,7 @@ const SearchBar = ({ setDestination }) => {
       service.getPlacePredictions(
         {
           input: userInput,
-          componentRestrictions: { country: "KE" }, // Restrict suggestions to Kenya
+          componentRestrictions: { country: 'KE' }, // Restrict suggestions to Kenya
         },
         (predictions, status) => {
           if (status === window.google.maps.places.PlacesServiceStatus.OK) {
@@ -76,6 +75,8 @@ const SearchBar = ({ setDestination }) => {
   // Fetch current location when the component mounts
   useEffect(() => {
     handleGetCurrentLocation();
+
+    //eslint-disable-next-line
   }, []);
 
   // Update the userInput (User's location) when the user types in the first input
@@ -91,7 +92,6 @@ const SearchBar = ({ setDestination }) => {
   // Handle clicking on a suggestion to select a location for search input
   const handleSuggestionClick = (place) => {
     setSearchSuggestions([]);
-    setSelectedPlace(place);
 
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ placeId: place.place_id }, (results, status) => {
@@ -100,7 +100,7 @@ const SearchBar = ({ setDestination }) => {
         const newDestination = { lat: location.lat(), lng: location.lng() };
         setDestination(newDestination); // Set the destination based on the selected suggestion
       } else {
-        console.error("Geocoding failed with status:", status);
+        console.error('Geocoding failed with status:', status);
       }
     });
   };
@@ -114,7 +114,7 @@ const SearchBar = ({ setDestination }) => {
         const newDestination = { lat: location.lat(), lng: location.lng() };
         setDestination(newDestination); // Set the destination for user location
       } else {
-        console.error("Geocoding failed with status:", status);
+        console.error('Geocoding failed with status:', status);
       }
     });
 
@@ -143,19 +143,19 @@ const SearchBar = ({ setDestination }) => {
               setUserInput(results[0].formatted_address); // Set the user's location in the input field
               setDestination(newDestination); // Set the destination to the user's location
             } else {
-              console.error("Error retrieving address:", status);
+              console.error('Error retrieving address:', status);
             }
             setIsLocationLoading(false); // Stop loading state after geocoding
           });
         },
         (error) => {
-          console.error("Error getting location:", error);
+          console.error('Error getting location:', error);
           alert(`Error: ${error.message}`);
           setIsLocationLoading(false); // Stop loading state if there's an error
         }
       );
     } else {
-      alert("Geolocation is not supported by this browser.");
+      alert('Geolocation is not supported by this browser.');
       setIsLocationLoading(false); // Stop loading state if geolocation is not supported
     }
   };
@@ -176,7 +176,7 @@ const SearchBar = ({ setDestination }) => {
         />
         {isLocationLoading && (
           <div className="loader-overlay">
-            <CircularProgress size={20} style={{marginLeft:"1vh"}} />
+            <CircularProgress size={20} style={{ marginLeft: '1vh' }} />
           </div>
         )}
         {/* Suggestions list for userInput */}

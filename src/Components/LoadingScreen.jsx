@@ -1,10 +1,5 @@
-import React from "react";
-import "../Styles/LoadingScreen.css"; // Add styles here if needed
-import logo from "../assets/loading-logo.png"; // Ensure the path to the logo is correct
-import CircularProgress from "@mui/material/CircularProgress"; // Import CircularProgress from MUI
-import { RiLoader5Line } from "react-icons/ri";
-import { RiLoader4Fill } from "react-icons/ri";
-import { RiLoader3Fill } from "react-icons/ri";
+import '../Styles/LoadingScreen.css'; // Add styles here if needed
+import logo from '../assets/loading-logo.png'; // Ensure the path to the logo is correct
 
 const LoadingScreen = () => (
   <div className="loading-screen">

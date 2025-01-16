@@ -1,66 +1,74 @@
 /* LoadingScreen.css */
 .loading-screen {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    width: 100vw;
-    background-color:#00D46A;
-    /* Adjust as per your theme */
-    position: fixed;
-    top: 0;
-    left: 0;
-    z-index: 10000;
-    /* Ensure it overlays the app content */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  width: 100vw;
+  background-color: #00d46a;
+
+  /* Adjust as per your theme */
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 10000;
+
+  /* Ensure it overlays the app content */
 }
-#second-logo{
-    position: absolute;
-    top: 50%;
-    left: 38%;
-    width: 150px;
-        /* Adjust size as needed */
-        animation: breathe 2s ease-in-out infinite
-            /* Combine breathing and spinning animations */
+
+#second-logo {
+  position: absolute;
+  top: 50%;
+  left: 38%;
+  width: 150px;
+
+  /* Adjust size as needed */
+  animation: breathe 2s ease-in-out infinite;
+
+  /* Combine breathing and spinning animations */
 }
 
 .loader-wrapper {
-    position: relative;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-.circular-loader  {
-    color: #ffff;
-    
-    position: absolute;
-    /* Keeps the loader centered over the logo */
+.circular-loader {
+  color: #ffff;
+  position: absolute;
+
+  /* Keeps the loader centered over the logo */
 }
 
 .MuiCircularProgress-root {
-    color: #00D46A !important;
-    /* Ensure high specificity */
+  color: #00d46a !important;
+
+  /* Ensure high specificity */
 }
+
 .loading-logo {
-    width: 250px;
-    
-    /* Adjust size as needed */
-    animation: breathe 2s ease-in-out infinite
-    /* Combine breathing and spinning animations */
+  width: 250px;
+
+  /* Adjust size as needed */
+  animation: breathe 2s ease-in-out infinite;
+
+  /* Combine breathing and spinning animations */
 }
 
 /* Breathing animation */
 @keyframes breathe {
+  0%,
+  100% {
+    transform: scale(1);
 
-    0%,
-    100% {
-        transform: scale(1);
-        /* Normal size */
-    }
+    /* Normal size */
+  }
 
-    50% {
-        transform: scale(1.1);
-        /* Slightly bigger size */
-    }
+  50% {
+    transform: scale(1.1);
+
+    /* Slightly bigger size */
+  }
 }
-

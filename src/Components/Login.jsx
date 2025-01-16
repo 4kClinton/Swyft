@@ -1,25 +1,25 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Typography,
   Box,
   CircularProgress,
   IconButton,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { addUser } from "../Redux/Reducers/UserSlice";
-import axios from "axios";
-import GoogleLogin from "./GoogleLogin"; // Make sure this import is correct
-import "../Styles/Login.css";
-import introPic from "../assets/loaders-swyft.png";
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useDispatch } from 'react-redux';
+import { addUser } from '../Redux/Reducers/UserSlice';
+import axios from 'axios';
+
+import '../Styles/Login.css';
+import introPic from '../assets/loaders-swyft.png';
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
@@ -38,26 +38,26 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://swyft-backend-client-nine.vercel.app/login",
+        'https://swyft-backend-client-nine.vercel.app/login',
         { email, password },
-        { headers: { "Content-Type": "application/json" } }
+        { headers: { 'Content-Type': 'application/json' } }
       );
 
       const { access_token, user, message } = response.data;
 
-      sessionStorage.setItem("authToken", access_token);
+      sessionStorage.setItem('authToken', access_token);
       dispatch(addUser(user));
-      sessionStorage.setItem("message", message || "Login successful!");
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("status", "user logged in!");
+      sessionStorage.setItem('message', message || 'Login successful!');
+      localStorage.setItem('user', JSON.stringify(user));
+      localStorage.setItem('status', 'user logged in!');
 
-      setSuccess(message || "Login successful!");
+      setSuccess(message || 'Login successful!');
       setTimeout(() => {
-        navigate("/");
+        navigate('/');
       }, 3000);
     } catch (err) {
       const errorMessage =
-        err.response?.data?.message || "An error occurred. Please try again.";
+        err.response?.data?.message || 'An error occurred. Please try again.';
       setError(errorMessage);
     } finally {
       setLoading(false);
@@ -88,7 +88,7 @@ const Login = () => {
           <Box className="input-container">
             <input
               placeholder="Password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               className="login-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -104,11 +104,9 @@ const Login = () => {
           </Box>
 
           <button
-            variant="contained"
             color="success"
             type="submit"
             className="login-button"
-            sx={{ mt: 2, backgroundColor: "#18b700", fontWeight: "bold" }}
             disabled={loading}
           >
             {loading ? (
@@ -118,7 +116,7 @@ const Login = () => {
                 color="#fff"
               />
             ) : (
-              "Log In"
+              'Log In'
             )}
           </button>
         </form>
@@ -133,13 +131,13 @@ const Login = () => {
         /> */}
 
         <Button
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate('/signup')}
           variant="text"
           sx={{
             mt: 2,
-            color: "#18b700",
-            fontWeight: "bold",
-            fontFamily: "Montserrat",
+            color: '#18b700',
+            fontWeight: 'bold',
+            fontFamily: 'Montserrat',
           }}
         >
           Create account

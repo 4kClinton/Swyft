@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '../Styles/orderLoader.css';
 import { useNavigate } from 'react-router-dom';
@@ -15,15 +15,21 @@ const SuccessPopup = ({ onClose, closePopup }) => {
     }, 2000); // Adjust the delay as needed
 
     return () => clearTimeout(delay);
+
+    //eslint-disable-next-line
   }, []);
 
   return ReactDOM.createPortal(
     <div className="popup-overlay" style={styles.overlay}>
-      <div className="popup" style={styles.popup} onClick={(e) => e.stopPropagation()}>
+      <div
+        className="popup"
+        style={styles.popup}
+        onClick={(e) => e.stopPropagation()}
+      >
         {isLoading ? (
           <>
-            <h2 >Finding You A Driver</h2>
-            <div >
+            <h2>Finding You A Driver</h2>
+            <div>
               {/* Add your preferred spinner component or library here */}
               {/* Example using a simple CSS spinner: */}
               <div className="spinner-border" role="status">
@@ -50,46 +56,46 @@ export default SuccessPopup;
 
 const styles = {
   overlay: {
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent black
-    position: "fixed",
+    backgroundColor: 'rgba(0, 0, 0, 0.5)', // Semi-transparent black
+    position: 'fixed',
     top: 0,
     left: 0,
-    width: "100%",
-    height: "10%",
-    display: "flex",
-    alignItems: "center",
-    justifyContent: "center",
+    width: '100%',
+    height: '10%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
     zIndex: 999999,
   },
   popup: {
-    backgroundColor: "#fff",
-    borderRadius: "8px",
-    width: "60%",
-    maxWidth: "400px",
-    padding: "20px",
-    boxShadow: "0 4px 8px rgba(0, 0, 0, 0.2)",
-    textAlign: "center",
+    backgroundColor: '#fff',
+    borderRadius: '8px',
+    width: '60%',
+    maxWidth: '400px',
+    padding: '20px',
+    boxShadow: '0 4px 8px rgba(0, 0, 0, 0.2)',
+    textAlign: 'center',
   },
   heading: {
-    fontSize: "1.5em",
-    color: "#333",
-    marginBottom: "20px",
+    fontSize: '1.5em',
+    color: '#333',
+    marginBottom: '20px',
   },
   text: {
-    fontSize: "1em",
-    color: "#666",
-    margin: "10px 0",
+    fontSize: '1em',
+    color: '#666',
+    margin: '10px 0',
   },
   button: {
-    width: "100%",
-    padding: "12px",
-    marginTop: "15px",
-    fontSize: "1em",
-    color: "#fff",
-    backgroundColor: "#00D46A", // Green for success
-    border: "none",
-    borderRadius: "4px",
-    cursor: "pointer",
+    width: '100%',
+    padding: '12px',
+    marginTop: '15px',
+    fontSize: '1em',
+    color: '#fff',
+    backgroundColor: '#00D46A', // Green for success
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
   },
 };
 
@@ -106,5 +112,5 @@ const slideIn = `
     }
   }
 `;
-
+//eslint-disable-next-line
 export { styles, slideIn };
