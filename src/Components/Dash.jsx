@@ -25,6 +25,8 @@ import { saveOrder } from "../Redux/Reducers/CurrentOrderSlice.js";
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const navigate = useNavigate();
   const [isOpen, setIsOpen] = useState(false);
+  const driver = useSelector((state) => state.driverDetails.value);
+  
   const [selectedOption, setSelectedOption] = useState("");
   const [calculatedCosts, setCalculatedCosts] = useState({});
   const [includeLoader, setIncludeLoader] = useState(false);
@@ -181,6 +183,9 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   };
   console.log("dest:", destination);
   const confirmOrder = async () => {
+    localStorage.removeItem('driverData')
+    console.log(driver);
+    
     if (!destination.length < 0) {
       setErrorMessage("Please enter a destination location.");
       return;
@@ -238,10 +243,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
       const result = await response.json();
       console.log("Order placed successfully:", result);
+      if(driver?.id){
+        setShowLoaderPopup(false); // Close loader popup
+        setShowSuccessPopup(true); // Show success popup
+        resetDash(); 
 
-      setShowLoaderPopup(false); // Close loader popup
-      setShowSuccessPopup(true); // Show success popup
-      resetDash(); // Reset the dashboard after a successful order
+      }
+     // Reset the dashboard after a successful order
     } catch (error) {
       console.error("Error while placing order:", error);
       setErrorMessage("Failed to place order. Please try again."); // Show error message
