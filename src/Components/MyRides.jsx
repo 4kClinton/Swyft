@@ -44,7 +44,7 @@ function RidesHistory() {
     <div style={styles.container}>
       <h2 style={styles.heading}>Rides History</h2>
       <div style={styles.rideList}>
-        {rides &&
+        {rides[0] &&
           rides.map((ride) => (
             <div key={ride.id} style={styles.rideCard}>
               <div style={styles.rideInfo}>
