@@ -191,13 +191,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       }
     }
     if (!order?.id) {
-      // Order is empty or deleted
-      const response = localStorage.getItem('PendingDriverResponse');
+      console.log('here');
 
-      if (!response) {
-        setIsLoading(false); // Stop loading if no order exists and driver was not found
-        localStorage.setItem('PendingDriverResponse', 'true'); // Prevent re-checking the response
-      }
+      // Order is empty or deleted
+
+      setIsLoading(false);
     } else {
       // Order exists
       setIsLoading(true); // You can trigger loading if needed when order is being processed
@@ -217,6 +215,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
   const goBackToDash = () => {
     // resetDash();
+    setShowSuccessPopup(false);
     setShowDateTimePopup(false);
     setShowConfirmationPopup(false);
   };
