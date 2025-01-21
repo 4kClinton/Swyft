@@ -48,6 +48,10 @@ export default function RidesHistory() {
             };
           })
         );
+        // Sort rides by created_at in descending order (latest first)
+        ridesWithAddresses.sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
         setRides(ridesWithAddresses);
         setAddressesLoaded(true);
         setLoading(false);
@@ -56,7 +60,11 @@ export default function RidesHistory() {
       if (isLoaded) {
         fetchAddresses();
       } else {
-        setRides(ordersHistory);
+        // Sort ordersHistory directly if addresses are not loaded
+        const sortedRides = [...ordersHistory].sort(
+          (a, b) => new Date(b.created_at) - new Date(a.created_at)
+        );
+        setRides(sortedRides);
         setLoading(false);
       }
     }
@@ -72,6 +80,14 @@ export default function RidesHistory() {
         }
       });
     });
+  };
+
+  const formatMonth = (month) => {
+    const [year, monthIndex] = month.split('-');
+    return new Intl.DateTimeFormat('en-US', {
+      month: 'long',
+      year: 'numeric',
+    }).format(new Date(year, monthIndex - 1));
   };
 
   if ((loading || !addressesLoaded) && rides.length !== 0)
@@ -95,7 +111,8 @@ export default function RidesHistory() {
       <main>
         {Object.keys(groupedRides).map((month) => (
           <section key={month} className={styles.day_section}>
-            <h2 className={styles.h2}>{month}</h2>
+            <h2 className={styles.h2}>{formatMonth(month)}</h2>
+
             {groupedRides[month].map((ride, index) => (
               <div
                 key={index}
@@ -106,8 +123,17 @@ export default function RidesHistory() {
                 <Bus className={styles.ride_icon} />
                 <div className={styles.ride_details}>
                   <div className={styles.ride_time}>
-                    {new Date(ride.created_at).toLocaleTimeString()}
+                    {new Date(ride.created_at).toLocaleDateString('en-US', {
+                      day: 'numeric',
+                      month: 'short',
+                    })}{' '}
+                    {new Date(ride.created_at).toLocaleTimeString('en-US', {
+                      hour: '2-digit',
+                      minute: '2-digit',
+                      hour12: true,
+                    })}
                   </div>
+
                   <div className={styles.ride_location}>
                     {ride.userAddress} to {ride.destAddress}
                   </div>
@@ -115,10 +141,10 @@ export default function RidesHistory() {
                     {ride.total_cost ? `Ksh ${ride.total_cost}` : 'Ksh 0.00'}
                   </div>
                 </div>
-                <br />
+                <hr />
               </div>
             ))}
-            <hr />
+            <br />
           </section>
         ))}
       </main>
