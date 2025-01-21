@@ -14,11 +14,15 @@ import {
   FaCheckCircle,
 } from 'react-icons/fa';
 import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import CancelOrderPopup from './CancelOrderPopup';
 
 //eslint-disable-next-line
 const Dash = ({ distance = 0, userLocation, destination }) => {
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const driver = useSelector((state) => state.driverDetails.value);
+
+  const navigate = useNavigate();
 
   const [selectedOption, setSelectedOption] = useState('');
   const [calculatedCosts, setCalculatedCosts] = useState({});
@@ -30,6 +34,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [scheduleDateTime, setScheduleDateTime] = useState('');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
+  const order = useSelector((state) => state.currentOrder.value);
 
   const theUser = useSelector((state) => state.user.value);
 
@@ -108,10 +113,10 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
     setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
   }; */
-  console.log('dest:', destination);
+
   const confirmOrder = async () => {
     localStorage.removeItem('driverData');
-    console.log(driver);
+
     //eslint-disable-next-line
     if (!destination.length < 0) {
       setErrorMessage('Please enter a destination location.');
@@ -163,19 +168,43 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
       const result = await response.json();
       console.log('Order placed successfully:', result);
+      setShowSuccessPopup(true);
 
-      setShowLoaderPopup(false); // Close loader popup
-      setShowSuccessPopup(true); // Show success popup
       resetDash();
 
       // Reset the dashboard after a successful order
     } catch (error) {
       console.error('Error while placing order:', error);
       setErrorMessage('Failed to place order. Please try again.'); // Show error message
-    } finally {
-      setIsLoading(false); // End loading state
     }
   };
+  useEffect(() => {
+    if (order?.status === 'Accepted') {
+      //check if the driver details has been shown before
+      const navigated = localStorage.getItem('NavigateToDriverDetails');
+
+      // If the details haven't been shown yet, display it
+      if (!navigated) {
+        navigate('/driverDetails');
+        // Set the item in localStorage
+        localStorage.setItem('NavigateToDriverDetails', true);
+      }
+    }
+    if (!order?.id) {
+      // Order is empty or deleted
+      const response = localStorage.getItem('PendingDriverResponse');
+
+      if (!response) {
+        setIsLoading(false); // Stop loading if no order exists and driver was not found
+        localStorage.setItem('PendingDriverResponse', 'true'); // Prevent re-checking the response
+      }
+    } else {
+      // Order exists
+      setIsLoading(true); // You can trigger loading if needed when order is being processed
+    }
+
+    //eslint-disable-next-line
+  }, [order]);
 
   const resetDash = () => {
     // setSelectedOption("");
@@ -197,6 +226,58 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowLoaderPopup(false);
     setErrorMessage('');
   };
+
+  const handleCancelOrder = () => {
+    setShowCancelPopup(true);
+  };
+
+  const closeCancelPopup = () => {
+    setShowCancelPopup(false);
+  };
+
+  if (order?.id) {
+    return (
+      <div ref={dashRef} className={`Dash ${isOpen ? 'open' : ''}`}>
+        <div className="notch" onClick={toggleDash}>
+          <div className="notch-indicator"></div>
+        </div>
+        <h2 className="catch">Current Order Details</h2>
+        <div className="order-details">
+          <p className="order-detail-item">
+            <strong>Vehicle:</strong>{' '}
+            {order.vehicle_type.charAt(0).toUpperCase() +
+              order.vehicle_type.slice(1)}
+          </p>
+
+          <p className="order-detail-item">
+            <strong>Loaders:</strong> {order.loaders}
+          </p>
+          <p className="order-detail-item">
+            <strong>Distance:</strong> {order.distance} km
+          </p>
+          <p className="order-detail-item">
+            <strong>Total Cost:</strong> Ksh {order.total_cost}
+          </p>
+        </div>
+        <button
+          className="cancel-button"
+          style={{ backgroundColor: '#00d46a' }}
+          onClick={() => navigate('/driverDetails')}
+        >
+          View driver details
+        </button>
+        <br /> <br />
+        <button
+          className="cancel-button"
+          style={{ backgroundColor: 'red' }}
+          onClick={handleCancelOrder}
+        >
+          Cancel Order
+        </button>
+        {showCancelPopup && <CancelOrderPopup onClose={closeCancelPopup} />}
+      </div>
+    );
+  }
 
   return (
     <div

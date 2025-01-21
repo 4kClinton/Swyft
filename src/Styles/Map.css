@@ -4,7 +4,16 @@
   height: 50vh;
   position: relative;
   bottom: 24vh;
+  transition: height 0.3s ease, bottom 0.3s ease; /* Smooth transition */
 }
+
+.map-container.order-active {
+  height: 90vh; 
+  top:5vh;
+  bottom: 10vh; 
+}
+
+
 
 .info-box {
   position: absolute;

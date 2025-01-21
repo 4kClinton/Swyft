@@ -11,6 +11,7 @@ import Settings from './Components/Settings';
 import DriverDetails from './Components/driverDetails';
 import TripTracker from './Components/TripTracker';
 import FindHouse from './Components/FindHouse';
+import OrderCompletion from './Components/OrderCompletion';
 
 const routes = [
   {
@@ -27,6 +28,7 @@ const routes = [
       { path: '/driverDetails', element: <DriverDetails /> },
       { path: '/track', element: <TripTracker /> },
       { path: '/findhouse', element: <FindHouse /> },
+      { path: '/rate-driver', element: <OrderCompletion /> },
     ],
   },
 ];

@@ -56,8 +56,10 @@ const Login = () => {
         navigate('/');
       }, 3000);
     } catch (err) {
+      console.log(err.response);
+
       const errorMessage =
-        err.response?.data?.message || 'An error occurred. Please try again.';
+        err.response?.data?.error || 'An error occurred. Please try again.';
       setError(errorMessage);
     } finally {
       setLoading(false);
