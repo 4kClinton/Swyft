@@ -8,6 +8,7 @@ import CircularProgress from '@mui/material/CircularProgress'; // For loader
 import '../Styles/Map.css';
 import SearchBar from './SearchBar';
 import Dash from './Dash'; // Import the Dash component
+import { useSelector } from 'react-redux';
 
 const Map = () => {
   const { isLoaded } = useLoadScript({
@@ -17,6 +18,7 @@ const Map = () => {
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState(0); // Initial state for distance
+  const order = useSelector((state) => state.currentOrder.value); // Fetch ongoing order from Redux
 
   //eslint-disable-next-line
   const [duration, setDuration] = useState('');
@@ -26,19 +28,22 @@ const Map = () => {
   useEffect(() => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition((position) => {
-        console.log('User location', position);
-
         const userLocation = {
           lat: position.coords.latitude,
           lng: position.coords.longitude,
         };
         setCurrentLocation(userLocation);
-        setDestination(userLocation); // Optional: set as initial destination
       });
     } else {
       alert('Geolocation is not supported by this browser.');
     }
-  }, []);
+    if (order && order.dest_lat && order.dest_lng) {
+      setDestination({
+        lat: order.dest_lat,
+        lng: order.dest_lng,
+      });
+    }
+  }, [order]);
 
   useEffect(() => {
     if (isLoaded && currentLocation && destination) {
@@ -94,8 +99,13 @@ const Map = () => {
     );
 
   return (
-    <div className="map-container">
-      <SearchBar setDestination={setDestination} />
+    <div className={`map-container ${order?.id ? 'order-active' : ''}`}>
+      {!order?.id && (
+        <SearchBar
+          setDestination={setDestination}
+          setCurrentLocation={setCurrentLocation}
+        />
+      )}
 
       <GoogleMap
         mapContainerClassName="google-map"

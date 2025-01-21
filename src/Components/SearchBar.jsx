@@ -1,21 +1,24 @@
 import { useState, useEffect } from 'react';
 import '../Styles/SearchBar.css';
-
 import CircularProgress from '@mui/material/CircularProgress'; // For loader
 
 //eslint-disable-next-line
-const SearchBar = ({ setDestination }) => {
+const SearchBar = ({ setDestination, setCurrentLocation }) => {
   const [userInput, setUserInput] = useState(''); // State for user's input (initial location)
   const [searchInput, setSearchInput] = useState(''); // State for search input (location search)
   const [userSuggestions, setUserSuggestions] = useState([]); // State for user location suggestions
   const [searchSuggestions, setSearchSuggestions] = useState([]); // State for search location suggestions
-
   const [isLocationLoading, setIsLocationLoading] = useState(false); // Track location loading state
+  const [isSuggestionClicked, setIsSuggestionClicked] = useState(false); // Track if a suggestion was clicked
+  const [isUserLocationSuggestionClicked, setIsUserLocationSuggestionClicked] =
+    useState(false); // Track if a suggestion was clicked
 
   useEffect(() => {}, [userInput, userSuggestions]);
 
   // Fetch location suggestions based on searchInput (Search input)
   useEffect(() => {
+    if (isSuggestionClicked) return; // Skip fetching if suggestion is clicked
+
     const fetchSearchSuggestions = async () => {
       if (searchInput === '') {
         setSearchSuggestions([]);
@@ -41,10 +44,11 @@ const SearchBar = ({ setDestination }) => {
     };
 
     fetchSearchSuggestions();
-  }, [searchInput]);
+  }, [searchInput, isSuggestionClicked]);
 
   // Fetch location suggestions for user's location input (userInput)
   useEffect(() => {
+    if (isUserLocationSuggestionClicked) return; // Skip fetching if suggestion is clicked
     const fetchUserSuggestions = async () => {
       if (userInput === '') {
         setUserSuggestions([]);
@@ -70,55 +74,57 @@ const SearchBar = ({ setDestination }) => {
     };
 
     fetchUserSuggestions();
-  }, [userInput]);
+  }, [userInput, isUserLocationSuggestionClicked]);
 
   // Fetch current location when the component mounts
   useEffect(() => {
     handleGetCurrentLocation();
-
-    //eslint-disable-next-line
   }, []);
 
   // Update the userInput (User's location) when the user types in the first input
   const handleUserInputChange = (e) => {
     setUserInput(e.target.value);
+    setIsUserLocationSuggestionClicked(false);
   };
 
   // Update the searchInput (Search location) when the user types in the second input
   const handleSearchInputChange = (e) => {
     setSearchInput(e.target.value);
+    setIsSuggestionClicked(false);
   };
 
-  // Handle clicking on a suggestion to select a location for search input
   const handleSuggestionClick = (place) => {
-    setSearchSuggestions([]);
+    setIsSuggestionClicked(true); // Mark that a suggestion was clicked
+    setSearchInput(place.description); // Set the input field to the selected suggestion
+    setSearchSuggestions([]); // Clear the suggestions list
 
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ placeId: place.place_id }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
         const location = results[0].geometry.location;
         const newDestination = { lat: location.lat(), lng: location.lng() };
-        setDestination(newDestination); // Set the destination based on the selected suggestion
+        setDestination(newDestination); // Set the destination
       } else {
         console.error('Geocoding failed with status:', status);
       }
     });
   };
 
-  // Handle selecting a suggestion for user location (first input)
   const handleUserLocationSuggestionClick = (place) => {
+    setIsUserLocationSuggestionClicked(true); // Mark that a suggestion was clicked
+    setUserInput(place.description); // Set the input field to the selected suggestion
+    setUserSuggestions([]); // Clear the suggestions list
+
     const geocoder = new window.google.maps.Geocoder();
     geocoder.geocode({ placeId: place.place_id }, (results, status) => {
       if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
         const location = results[0].geometry.location;
-        const newDestination = { lat: location.lat(), lng: location.lng() };
-        setDestination(newDestination); // Set the destination for user location
+        const newLocation = { lat: location.lat(), lng: location.lng() };
+        setCurrentLocation(newLocation);
       } else {
         console.error('Geocoding failed with status:', status);
       }
     });
-
-    setUserSuggestions([]); // Clear suggestions after selection
   };
 
   // Handle fetching the current location
@@ -127,11 +133,6 @@ const SearchBar = ({ setDestination }) => {
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
         (position) => {
-          const newDestination = {
-            lat: position.coords.latitude,
-            lng: position.coords.longitude,
-          };
-
           const geocoder = new window.google.maps.Geocoder();
           const latlng = {
             lat: position.coords.latitude,
@@ -141,7 +142,6 @@ const SearchBar = ({ setDestination }) => {
           geocoder.geocode({ location: latlng }, (results, status) => {
             if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
               setUserInput(results[0].formatted_address); // Set the user's location in the input field
-              setDestination(newDestination); // Set the destination to the user's location
             } else {
               console.error('Error retrieving address:', status);
             }

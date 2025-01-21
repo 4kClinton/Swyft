@@ -1,22 +1,17 @@
 import { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 import '../Styles/orderLoader.css';
-import { useNavigate } from 'react-router-dom';
 
 const SuccessPopup = ({ onClose, closePopup }) => {
   const [isLoading, setIsLoading] = useState(true);
-  const navigate = useNavigate();
 
   useEffect(() => {
     const delay = setTimeout(() => {
       setIsLoading(false);
       // Simulate driver finding process (replace with actual API call)
-      navigate('/driverDetails');
     }, 2000); // Adjust the delay as needed
 
     return () => clearTimeout(delay);
-
-    //eslint-disable-next-line
   }, []);
 
   return ReactDOM.createPortal(

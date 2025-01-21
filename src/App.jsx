@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Outlet } from 'react-router-dom';
+import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Components/Navbar.jsx';
 
 import LoadingScreen from './Components/LoadingScreen.jsx';
@@ -15,52 +15,41 @@ import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { supabase } from './supabase.js';
 import { deleteOrder, saveOrder } from './Redux/Reducers/CurrentOrderSlice.js';
-import { saveDriver } from './Redux/Reducers/DriverDetailsSlice.js';
+import {
+  removeDriver,
+  saveDriver,
+} from './Redux/Reducers/DriverDetailsSlice.js';
+import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
 
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.user.value);
-  const currentOrder = useSelector((state) => state.currentOrder.value);
+
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Subscribe to changes in the 'orders' table
     let supabaseOrderId;
-    const token = sessionStorage.getItem('authToken');
+
     const ordersChannel = supabase
       .channel('orders')
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'orders' },
         (payload) => {
-          if (
-            payload?.new?.customer_id === customer.id &&
-            payload?.new?.status === 'Accepted'
-          ) {
-            fetch(
-              `https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,
-              {
-                method: 'GET',
-                headers: {
-                  'Content-Type': 'application',
-                  Authorization: `Bearer ${token}`,
-                },
-              }
-            )
-              .then((response) => {
-                if (!response.ok) {
-                  throw new Error('Failed to fetch driver data');
-                }
-                return response.json();
-              })
-              .then((driverData) => {
-                dispatch(saveDriver(driverData));
-                localStorage.setItem('driverData', JSON.stringify(driverData));
-                localStorage.setItem('orderData', JSON.stringify(currentOrder));
-              });
-
-            console.log('Order accepted:', payload.new);
+          if (payload?.new?.customer_id === customer.id) {
+            const updatedStatus = payload?.new?.status;
+            if (updatedStatus === 'Accepted') {
+              handleOrderAccepted(payload);
+            } else if (updatedStatus === 'arrived_at_customer') {
+              handleArrivedAtCustomer(payload);
+            } else if (updatedStatus === 'on_the_way_to_destination') {
+              handleOnTheWayToDestination(payload);
+            } else if (updatedStatus === 'completed') {
+              handleRideCompleted();
+            }
           }
         }
       )
@@ -118,8 +107,37 @@ function App() {
           const storedDriverData = localStorage.getItem('driverData');
           const storedOrderData = localStorage.getItem('orderData');
 
-          dispatch(saveDriver(JSON.parse(storedDriverData)));
-          dispatch(saveOrder(JSON.parse(storedOrderData)));
+          const orderData = JSON.parse(storedOrderData);
+
+          if (
+            orderData.status !== 'completed' ||
+            orderData.status !== 'cancelled'
+          ) {
+            dispatch(saveDriver(JSON.parse(storedDriverData)));
+            dispatch(saveOrder(orderData));
+          } else {
+            localStorage.removeItem('driverData');
+            localStorage.removeItem('orderData');
+          }
+        })
+
+        .then(() => {
+          fetch('https://swyft-backend-client-nine.vercel.app/orders', {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+          })
+            .then((response) => {
+              if (!response.ok) {
+                throw new Error('Failed to fetch rides history');
+              }
+              return response.json();
+            })
+            .then((data) => {
+              dispatch(saveOrders(data));
+            });
         })
         .catch((error) => {
           console.error('Token verification failed:', error);
@@ -134,6 +152,59 @@ function App() {
 
     return () => clearTimeout(timer);
   }, []);
+
+  const handleOrderAccepted = async (payload) => {
+    const token = sessionStorage.getItem('authToken');
+    fetch(
+      `https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,
+      {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      }
+    )
+      .then((response) => {
+        if (!response.ok) {
+          throw new Error('Failed to fetch driver data');
+        }
+        return response.json();
+      })
+      .then((driverData) => {
+        dispatch(saveDriver(driverData));
+        dispatch(saveOrder(payload.new));
+        localStorage.setItem('driverData', JSON.stringify(driverData));
+        localStorage.setItem('orderData', JSON.stringify(payload.new));
+        // Show customer an alert or update UI
+      })
+      .catch((error) => {
+        console.error('Error fetching driver data:', error);
+      });
+  };
+
+  const handleArrivedAtCustomer = (payload) => {
+    dispatch(saveOrder(payload.new)); // Update Redux state with new order data
+
+    alert('Your driver has arrived at the customer location!');
+  };
+
+  const handleOnTheWayToDestination = (payload) => {
+    dispatch(saveOrder(payload.new)); // Update Redux state with new order data
+
+    alert('Your driver is on the way to the destination!');
+  };
+
+  const handleRideCompleted = () => {
+    dispatch(deleteOrder());
+    dispatch(removeDriver());
+    localStorage.removeItem('NavigateToDriverDetails');
+
+    // Navigate to the Rating Page after ride completion
+    navigate('/rate-driver');
+
+    alert('The ride is completed! Thank you for using our service.');
+  };
 
   return (
     <UserProvider>

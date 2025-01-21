@@ -1,133 +1,133 @@
-import { useState, useEffect } from 'react';
+import { Bus } from 'lucide-react';
+import styles from '../Styles/Rides.module.css';
+import { useEffect, useState } from 'react';
+import { useLoadScript } from '@react-google-maps/api';
 import { CircularProgress } from '@mui/material';
-function RidesHistory() {
-  const [rides, setRides] = useState([]);
+import RideDetailsModal from './RideDetailsModal';
+import { useSelector } from 'react-redux';
+export default function RidesHistory() {
   const [loading, setLoading] = useState(true);
-  const [error, setError] = useState(null);
+
+  const [rides, setRides] = useState([]);
+  const [addressesLoaded, setAddressesLoaded] = useState(false);
+  const [selectedRide, setSelectedRide] = useState(null);
+  const ordersHistory = useSelector((state) => state.ordersHistory.value);
+
+  const { isLoaded } = useLoadScript({
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Load API key from .env
+    libraries: ['places'],
+  });
+
+  // Group rides by month
+  const groupedRides = rides.reduce((acc, ride) => {
+    const date = new Date(ride.created_at);
+    const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
+    if (!acc[month]) {
+      acc[month] = [];
+    }
+    acc[month].push(ride);
+    return acc;
+  }, {});
 
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken');
-    // Replace this URL with your actual API endpoint
-    fetch('https://swyft-backend-client-nine.vercel.app/orders', {
-      method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${token}`,
-      },
-    })
-      .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch rides history');
-        }
-        return response.json();
-      })
-      .then((data) => {
-        setRides(data);
-        setLoading(false);
-      })
-      .catch((error) => {
-        setError(error.message);
-        setLoading(false);
-      });
-  }, []);
+    if (ordersHistory.length > 0) {
+      const fetchAddresses = async () => {
+        const geocoder = new window.google.maps.Geocoder();
+        const ridesWithAddresses = await Promise.all(
+          ordersHistory.map(async (ride) => {
+            const userLatLng = { lat: ride.user_lat, lng: ride.user_lng };
+            const destLatLng = { lat: ride.dest_lat, lng: ride.dest_lng };
 
-  if (loading)
+            const userAddress = await geocodeLatLng(geocoder, userLatLng);
+            const destAddress = await geocodeLatLng(geocoder, destLatLng);
+
+            return {
+              ...ride,
+              userAddress,
+              destAddress,
+            };
+          })
+        );
+        setRides(ridesWithAddresses);
+        setAddressesLoaded(true);
+        setLoading(false);
+      };
+
+      if (isLoaded) {
+        fetchAddresses();
+      } else {
+        setRides(ordersHistory);
+        setLoading(false);
+      }
+    }
+  }, [isLoaded, ordersHistory]);
+
+  const geocodeLatLng = (geocoder, latlng) => {
+    return new Promise((resolve, reject) => {
+      geocoder.geocode({ location: latlng }, (results, status) => {
+        if (status === window.google.maps.GeocoderStatus.OK && results[0]) {
+          resolve(results[0].formatted_address);
+        } else {
+          reject('Error retrieving address');
+        }
+      });
+    });
+  };
+
+  if ((loading || !addressesLoaded) && rides.length !== 0)
     return (
-      <p>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
         <CircularProgress className="login-loader" size={34} color="#0000" />
-        Loading rides history...
-      </p>
+        <span>Loading rides history...</span>
+      </div>
     );
-  if (error) return <p style={{ color: 'red' }}>{error}</p>;
+
+  if (rides.length === 0) {
+    return <div>No rides found</div>;
+  }
 
   return (
-    <div style={styles.container}>
-      <h2 style={styles.heading}>Rides History</h2>
-      <div style={styles.rideList}>
-        {rides[0] &&
-          rides.map((ride) => (
-            <div key={ride.id} style={styles.rideCard}>
-              <div style={styles.rideInfo}>
-                <p style={styles.date}>{ride.date}</p>
-                <p style={styles.route}>
-                  {ride.fromLocation} → {ride.toLocation}
-                </p>
-                <p style={styles.fare}>Fare: Ksh {ride.fare}</p>
+    <div className={styles.app}>
+      <header className={styles.header}>
+        <h1 className={styles.h1}>Rides</h1>
+      </header>
+
+      <main>
+        {Object.keys(groupedRides).map((month) => (
+          <section key={month} className={styles.day_section}>
+            <h2 className={styles.h2}>{month}</h2>
+            {groupedRides[month].map((ride, index) => (
+              <div
+                key={index}
+                className={styles.ride_entry}
+                onClick={() => setSelectedRide(ride)}
+                style={{ cursor: 'pointer' }}
+              >
+                <Bus className={styles.ride_icon} />
+                <div className={styles.ride_details}>
+                  <div className={styles.ride_time}>
+                    {new Date(ride.created_at).toLocaleTimeString()}
+                  </div>
+                  <div className={styles.ride_location}>
+                    {ride.userAddress} to {ride.destAddress}
+                  </div>
+                  <div className={styles.ride_price}>
+                    {ride.total_cost ? `Ksh ${ride.total_cost}` : 'Ksh 0.00'}
+                  </div>
+                </div>
+                <br />
               </div>
-              <div style={styles.status}>
-                <span
-                  style={
-                    ride.status === 'Completed'
-                      ? styles.completed
-                      : styles.canceled
-                  }
-                >
-                  {ride.status}
-                </span>
-              </div>
-            </div>
-          ))}
-      </div>
+            ))}
+            <hr />
+          </section>
+        ))}
+      </main>
+      {selectedRide && (
+        <RideDetailsModal
+          ride={selectedRide}
+          onClose={() => setSelectedRide(null)}
+        />
+      )}
     </div>
   );
 }
-
-export default RidesHistory;
-
-const styles = {
-  container: {
-    padding: '20px',
-    fontFamily: 'Arial, sans-serif',
-    backgroundColor: '#f4f4f8',
-    maxWidth: '600px',
-    margin: '0 auto',
-  },
-  heading: {
-    fontSize: '1.5em',
-    color: '#333',
-    marginBottom: '20px',
-  },
-  rideList: {
-    display: 'flex',
-    flexDirection: 'column',
-    gap: '15px',
-  },
-  rideCard: {
-    display: 'flex',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    padding: '15px',
-    backgroundColor: '#fff',
-    borderRadius: '8px',
-    boxShadow: '0 2px 4px rgba(0, 0, 0, 0.1)',
-  },
-  rideInfo: {
-    display: 'flex',
-    flexDirection: 'column',
-  },
-  date: {
-    fontSize: '0.9em',
-    color: '#888',
-    marginBottom: '5px',
-  },
-  route: {
-    fontSize: '1em',
-    color: '#333',
-    fontWeight: 'bold',
-    marginBottom: '5px',
-  },
-  fare: {
-    fontSize: '0.9em',
-    color: '#555',
-  },
-  status: {
-    fontSize: '0.9em',
-    fontWeight: 'bold',
-  },
-  completed: {
-    color: '#4CAF50', // Green for completed rides
-  },
-  canceled: {
-    color: '#FF5252', // Red for canceled rides
-  },
-};
