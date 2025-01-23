@@ -1,9 +1,9 @@
-import React from "react";
-import { Navigate } from "react-router-dom";
-import * as jwtDecode from "jwt-decode"; // Ensure this is correctly imported
+import { Navigate } from 'react-router-dom';
+import * as jwtDecode from 'jwt-decode'; // Ensure this is correctly imported
 
+//eslint-disable-next-line
 const PrivateRoute = ({ children }) => {
-  const token = localStorage.getItem("accessToken");
+  const token = localStorage.getItem('accessToken');
 
   // Check if token exists
   if (!token) {
@@ -16,11 +16,11 @@ const PrivateRoute = ({ children }) => {
 
     // Check if the token has expired
     if (Date.now() >= exp * 1000) {
-      localStorage.removeItem("accessToken"); // Clear the token from storage
+      localStorage.removeItem('accessToken'); // Clear the token from storage
       return <Navigate to="/login" />;
     }
   } catch (error) {
-    console.error("Error decoding token:", error);
+    console.error('Error decoding token:', error);
     return <Navigate to="/login" />; // Redirect on decode error
   }
 

@@ -1,10 +1,9 @@
-
-import { Provider } from 'react-redux'
+import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
-import {store} from './Redux/Store'
+import { store } from './Redux/Store';
 
-import './index.css'
-import { createBrowserRouter, RouterProvider } from 'react-router-dom'
+import './index.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from './routes';
 
 const router = createBrowserRouter(routes);

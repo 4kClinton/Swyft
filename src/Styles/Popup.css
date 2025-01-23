@@ -1,123 +1,126 @@
 /* Overlay styling */
 .overlay {
-    position: fixed;
-    /* Fixed to viewport */
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6);
-    /* Semi-transparent background */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    z-index: 9999999;
-    /* Ensure it is higher than all other elements */
+  position: fixed;
+
+  /* Fixed to viewport */
+  inset: 0;
+  background-color: rgb(0 0 0 / 60%);
+
+  /* Semi-transparent background */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 9999999;
+
+  /* Ensure it is higher than all other elements */
 }
 
 /* Popup styling */
 .popup {
-    background-color: #fff;
-    border-radius: 8px;
-    width: 60%;
-    max-width: 400px;
-    padding: 20px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    text-align: center;
-    position: fixed;
-        top: 10vh;
-    /* Ensures it stays above all content */
-    z-index: 9999999;
-    /* Higher than the overlay to ensure visibility */
-    animation: slideIn 0.3s ease-in-out;
-    /* Optional animation */
+  background-color: #fff;
+  border-radius: 8px;
+  width: 60%;
+  max-width: 400px;
+  padding: 20px;
+  box-shadow: 0 4px 8px rgb(0 0 0 / 20%);
+  text-align: center;
+  position: fixed;
+  top: 10vh;
+
+  /* Ensures it stays above all content */
+  z-index: 9999999;
+
+  /* Higher than the overlay to ensure visibility */
+  animation: slideIn 0.3s ease-in-out;
+
+  /* Optional animation */
 }
 
 /* Add this animation for smooth entry */
 @keyframes slideIn {
-    from {
-        transform: translateY(-30%);
-        opacity: 0;
-    }
+  from {
+    transform: translateY(-30%);
+    opacity: 0;
+  }
 
-    to {
-        transform: translateY(0);
-        opacity: 1;
-    }
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
 }
 
 /* Heading styling */
 .heading {
-    font-size: 1.5em;
-    color: #333;
-    margin-bottom: 20px;
+  font-size: 1.5em;
+  color: #333;
+  margin-bottom: 20px;
 }
 
 /* Input field styling */
 .input {
-    width: 100%;
-    padding: 10px;
-    margin: 10px 0;
-    font-size: 1em;
-    border-radius: 4px;
-    border: 1px solid #ccc;
-    outline: none;
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  font-size: 1em;
+  border-radius: 4px;
+  border: 1px solid #ccc;
+  outline: none;
 }
 
 /* Primary button styling */
 .button {
-    width: 100%;
-    padding: 12px;
-    margin-top: 15px;
-    font-size: 1em;
-    color: #fff;
-    background-color:#00D46A;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  width: 100%;
+  padding: 12px;
+  margin-top: 15px;
+  font-size: 1em;
+  color: #fff;
+  background-color: #00d46a;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 /* Close button styling */
 .closeButton {
-    margin-top: 10px;
-    width: 100%;
-    padding: 10px;
-    font-size: 0.9em;
-    background-color: #212121;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  font-size: 0.9em;
+  background-color: #212121;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 /* Confirmation section styling */
 .confirmation {
-    text-align: center;
+  text-align: center;
 }
 
 /* Confirmation heading styling */
 .confirmHeading {
-    font-size: 1.2em;
-    color: #333;
-    margin-bottom: 10px;
+  font-size: 1.2em;
+  color: #333;
+  margin-bottom: 10px;
 }
 
 /* Text styling */
 .text {
-    font-size: 1em;
-    color: #666;
-    margin: 5px 0;
+  font-size: 1em;
+  color: #666;
+  margin: 5px 0;
 }
 
 /* Back button styling */
 .backButton {
-    margin-top: 10px;
-    width: 100%;
-    padding: 10px;
-    font-size: 0.9em;
-    background-color: #841C26;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
+  margin-top: 10px;
+  width: 100%;
+  padding: 10px;
+  font-size: 0.9em;
+  background-color: #841c26;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

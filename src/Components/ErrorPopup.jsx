@@ -1,6 +1,6 @@
-import React from "react";
-import "../Styles/Popup.css";
+import '../Styles/Popup.css';
 
+//eslint-disable-next-line
 const ErrorPopup = ({ message, onClose }) => {
   return (
     <div className="popup-overlay" onClick={onClose}>

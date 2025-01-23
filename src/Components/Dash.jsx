@@ -1,63 +1,44 @@
-import React, { useState, useEffect, useRef } from "react";
-import "../Styles/Dash.css";
-import { useNavigate } from "react-router-dom";
-import ConfirmationPopup from "./ConfirmationPopup";
-import DateTimePopup from "./DateTimePopup";
-import LoaderPopup from "./LoaderPopup";
-import ErrorPopup from "./ErrorPopup"; // New ErrorPopup
-import SuccessPopup from "./SuccessPopup"; // New SuccessPopup
-import CircularProgress from "@mui/material/CircularProgress";
-import FindDriverComponent from "./FindDriverComponent";
-import PopupTutorial from "../Components/PopupTutorial.jsx";
+import { useState, useEffect, useRef } from 'react';
+import '../Styles/Dash.css';
+
+import ConfirmationPopup from './ConfirmationPopup';
+import DateTimePopup from './DateTimePopup';
+import LoaderPopup from './LoaderPopup';
+import ErrorPopup from './ErrorPopup'; // New ErrorPopup
+import SuccessPopup from './SuccessPopup'; // New SuccessPopup
+
 import {
   FaTruckPickup,
   FaTruck,
   FaTruckMoving,
-  FaCarCrash,
   FaCheckCircle,
-  FaRegClock,
-} from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { saveOrder } from "../Redux/Reducers/CurrentOrderSlice.js";
+} from 'react-icons/fa';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import CancelOrderPopup from './CancelOrderPopup';
 
-
+//eslint-disable-next-line
 const Dash = ({ distance = 0, userLocation, destination }) => {
-  const navigate = useNavigate();
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const driver = useSelector((state) => state.driverDetails.value);
-  
-  const [selectedOption, setSelectedOption] = useState("");
+
+  const navigate = useNavigate();
+
+  const [selectedOption, setSelectedOption] = useState('');
   const [calculatedCosts, setCalculatedCosts] = useState({});
   const [includeLoader, setIncludeLoader] = useState(false);
   const [numLoaders, setNumLoaders] = useState(1);
   const [showDateTimePopup, setShowDateTimePopup] = useState(false);
   const [showLoaderPopup, setShowLoaderPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+  const [scheduleDateTime, setScheduleDateTime] = useState('');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
-  const [showFindDriverComponent, setFindDriverComponent] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const order = useSelector((state) => state.currentOrder.value);
+
   const theUser = useSelector((state) => state.user.value);
 
   const [isLoading, setIsLoading] = useState(false);
-
-  const [orderConfirmed, setOrderConfirmed] = useState(false); 
-  const dispatch = useDispatch();
-  
-  
-
-
-   
-  useEffect(() => {
-    const loginStatus = theUser.name;
-  
-    if (loginStatus) {
-      setIsLoggedIn(true); // User is logged in
-    }
-  }, [theUser]);
 
   const dashRef = useRef(null);
 
@@ -76,7 +57,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         let calculatedCost = rate * distance;
 
         // Apply specific minimum logic for flatbed
-        if (vehicle === "flatbed") {
+        if (vehicle === 'flatbed') {
           calculatedCost = Math.max(calculatedCost, 3500);
         }
 
@@ -94,6 +75,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     );
 
     setCalculatedCosts(newCalculatedCosts);
+    //eslint-disable-next-line
   }, [distance, includeLoader, numLoaders]);
 
   useEffect(() => {
@@ -101,8 +83,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       if (dashRef.current && !dashRef.current.contains(event.target))
         setIsOpen(false);
     };
-    if (isOpen) document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    if (isOpen) document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
   }, [isOpen]);
 
   const toggleDash = () => setIsOpen(!isOpen);
@@ -113,59 +95,9 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
 
-  const handleSelectDateTime = async () => {
-    if (!selectedOption) {
-      setErrorMessage("Please select a vehicle first.");
-      return;
-    }
-
-    // Construct the order data
-    const orderData = {
-      id: theUser.id, // User ID
-      vehicle: selectedOption,
-      distance,
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
-      totalCost: calculatedCosts[selectedOption],
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
-
-    try {
-      // Save order data to localStorage
-      localStorage.setItem("orderDetails", JSON.stringify(orderData));
-
-      // Log the stored order details for debugging
-     
-      // Push order data to the backend
-      const response = await fetch(
-        "https://swyft-backend-client-nine.vercel.app/schedule",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify(orderData),
-        }
-      );
-
-      if (!response.ok) {
-        throw new Error(`Failed to schedule the order: ${response.statusText}`);
-      }
-
-      const responseData = await response.json();
-     
-      setShowDateTimePopup(true); // Show Date/Time Popup after a successful API call
-    } catch (error) {
-      console.error("Error scheduling the order:", error.message);
-      setErrorMessage("Failed to schedule the order. Please try again later.");
-    }
-  };
-
-  const handleScheduleOrder = () => {
+  /*   const handleScheduleOrder = () => {
     if (!scheduleDateTime) {
-      setErrorMessage("Please select a date and time for scheduling.");
+      setErrorMessage('Please select a date and time for scheduling.');
       return;
     }
 
@@ -177,32 +109,26 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       setTimeout(() => setShowSuccessPopup(true), delay); // Show success popup
       setShowSuccessPopup(true);
     } else {
-      setErrorMessage("Please select a future date and time.");
+      setErrorMessage('Please select a future date and time.');
     }
     setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
-  };
-  console.log("dest:", destination);
+  }; */
+
   const confirmOrder = async () => {
-    localStorage.removeItem('driverData')
-    console.log(driver);
-    
+    localStorage.removeItem('driverData');
+
+    //eslint-disable-next-line
     if (!destination.length < 0) {
-      setErrorMessage("Please enter a destination location.");
+      setErrorMessage('Please enter a destination location.');
       return;
     }
     if (!selectedOption) {
-      setErrorMessage("Please select a vehicle.");
+      setErrorMessage('Please select a vehicle.');
       return;
     }
 
-    // Check if the user is logged in
-    function LoggedIn() {
-      return isLoggedIn;
-    }
-
-    const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
     if (!theUser || !theUser.id || !theUser.name) {
-      setErrorMessage("User details are missing. Please log in again.");
+      setErrorMessage('User details are missing. Please log in again.');
       return;
     }
 
@@ -219,18 +145,17 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       time: new Date().toLocaleString(),
     };
 
-    setFindDriverComponent(true); // Show driver search component
     setIsLoading(true); // Start loading state
 
-    const token = sessionStorage.getItem("authToken");
+    const token = sessionStorage.getItem('authToken');
 
     try {
       const response = await fetch(
-        "https://swyft-backend-client-nine.vercel.app/orders",
+        'https://swyft-backend-client-nine.vercel.app/orders',
         {
-          method: "POST",
+          method: 'POST',
           headers: {
-            "Content-Type": "application/json",
+            'Content-Type': 'application/json',
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify(orderData),
@@ -238,77 +163,59 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       );
 
       if (!response.ok) {
-        throw new Error("Failed to place order, server error");
+        throw new Error('Failed to place order, server error');
       }
 
       const result = await response.json();
-      console.log("Order placed successfully:", result);
-      
-        setShowLoaderPopup(false); // Close loader popup
-        setShowSuccessPopup(true); // Show success popup
-        resetDash(); 
+      console.log('Order placed successfully:', result);
+      setShowSuccessPopup(true);
 
-     // Reset the dashboard after a successful order
+      resetDash();
+
+      // Reset the dashboard after a successful order
     } catch (error) {
-      console.error("Error while placing order:", error);
-      setErrorMessage("Failed to place order. Please try again."); // Show error message
-    } finally {
-      setOrderConfirmed(true);
-      setIsLoading(false); // End loading state
+      console.error('Error while placing order:', error);
+      setErrorMessage('Failed to place order. Please try again.'); // Show error message
     }
   };
+  useEffect(() => {
+    if (order?.status === 'Accepted') {
+      //check if the driver details has been shown before
+      const navigated = localStorage.getItem('NavigateToDriverDetails');
 
-  const calculateDistance = (userLocation, driverLocation) => {
-    const toRadians = (degrees) => (degrees * Math.PI) / 180;
-
-    const R = 6371; // Radius of the Earth in km
-    const lat1 = toRadians(userLocation.latitude);
-    const lon1 = toRadians(userLocation.longitude);
-    const lat2 = toRadians(driverLocation.latitude);
-    const lon2 = toRadians(driverLocation.longitude);
-
-    const dLat = lat2 - lat1;
-    const dLon = lon2 - lon1;
-
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // Distance in km
-  };
-
-  const sendOrderToDriver = async (driverId, orderData) => {
-    try {
-      const response = await fetch(`http://localhost:3000/vehicles`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to place order, server error");
+      // If the details haven't been shown yet, display it
+      if (!navigated) {
+        navigate('/driverDetails');
+        // Set the item in localStorage
+        localStorage.setItem('NavigateToDriverDetails', true);
       }
-
-      const result = await response.json();
-     
-    } catch (error) {
-      console.error("Error while sending order:", error);
-      setErrorMessage("Failed to place order. Please try again.");
     }
-  };
+    if (!order?.id) {
+      console.log('here');
+
+      // Order is empty or deleted
+
+      setIsLoading(false);
+    } else {
+      // Order exists
+      setIsLoading(true); // You can trigger loading if needed when order is being processed
+    }
+
+    //eslint-disable-next-line
+  }, [order]);
 
   const resetDash = () => {
     // setSelectedOption("");
     setIncludeLoader(false);
     setNumLoaders(1);
     setCalculatedCosts(0);
-    setErrorMessage("");
-    setScheduleDateTime("");
+    setErrorMessage('');
+    setScheduleDateTime('');
   };
 
   const goBackToDash = () => {
     // resetDash();
+    setShowSuccessPopup(false);
     setShowDateTimePopup(false);
     setShowConfirmationPopup(false);
   };
@@ -316,14 +223,66 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const handlePopupClose = () => {
     // resetDash();
     setShowLoaderPopup(false);
-    setErrorMessage("");
+    setErrorMessage('');
   };
+
+  const handleCancelOrder = () => {
+    setShowCancelPopup(true);
+  };
+
+  const closeCancelPopup = () => {
+    setShowCancelPopup(false);
+  };
+
+  if (order?.id) {
+    return (
+      <div ref={dashRef} className={`Dash ${isOpen ? 'open' : ''}`}>
+        <div className="notch" onClick={toggleDash}>
+          <div className="notch-indicator"></div>
+        </div>
+        <h2 className="catch">Current Order Details</h2>
+        <div className="order-details">
+          <p className="order-detail-item">
+            <strong>Vehicle:</strong>{' '}
+            {order.vehicle_type.charAt(0).toUpperCase() +
+              order.vehicle_type.slice(1)}
+          </p>
+
+          <p className="order-detail-item">
+            <strong>Loaders:</strong> {order.loaders}
+          </p>
+          <p className="order-detail-item">
+            <strong>Distance:</strong> {order.distance} km
+          </p>
+          <p className="order-detail-item">
+            <strong>Total Cost:</strong> Ksh {order.total_cost}
+          </p>
+        </div>
+        <button
+          className="cancel-button"
+          style={{ backgroundColor: '#00d46a' }}
+          onClick={() => navigate('/driverDetails')}
+        >
+          View driver details
+        </button>
+        <br /> <br />
+        <button
+          className="cancel-button"
+          style={{ backgroundColor: 'red' }}
+          onClick={handleCancelOrder}
+        >
+          Cancel Order
+        </button>
+        {showCancelPopup && <CancelOrderPopup onClose={closeCancelPopup} />}
+      </div>
+    );
+  }
 
   return (
     <div
       key={distance}
       ref={dashRef}
-      className={`Dash ${isOpen ? "open" : ""}`}
+      className={`Dash ${isOpen ? 'open' : ''}`}
     >
       <div className="notch" onClick={toggleDash}>
         <div className="notch-indicator"></div>
@@ -339,7 +298,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       </h2>
       <div className="dash-content">
         {Object.entries(calculatedCosts)
-          .filter(([vehicle]) => vehicle !== "flatbed") // Exclude "flatbed" option
+          .filter(([vehicle]) => vehicle !== 'flatbed') // Exclude "flatbed" option
           .map(([vehicle, cost]) => {
             const Icon = {
               pickup: FaTruckPickup,
@@ -354,13 +313,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
               >
                 <div
                   className={`checkbox ${
-                    selectedOption === vehicle ? "selected" : ""
+                    selectedOption === vehicle ? 'selected' : ''
                   }`}
                 >
                   <Icon size={24} />
                 </div>
-                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{" "}
-                {distance > 0 ? cost : "0"}
+                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{' '}
+                {distance > 0 ? cost : '0'}
               </label>
             );
           })}
@@ -383,13 +342,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             type="number"
             value={numLoaders}
             onChange={handleNumLoadersChange}
-            style={{ marginLeft: "10px", width: "50px" }}
+            style={{ marginLeft: '10px', width: '50px' }}
           />
         )}
       </div>
 
       <div className="total-cost">
-        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "0"}</h3>
+        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || '0'}</h3>
       </div>
 
       <div className="order-group">
@@ -400,8 +359,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
           disabled={isLoading} // Disable the button while loading
           style={{
             opacity: isLoading ? 0.7 : 1,
-            width: "40vh",
-            backgroundColor: "#00D46A",
+            width: '40vh',
+            backgroundColor: '#00D46A',
           }} // Optional styling for loading state
         >
           {isLoading ? (
@@ -415,7 +374,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
               <FaCheckCircle
                 size={14}
                 className="check-icon"
-                style={{ marginLeft: "5px", width: "2vh" }}
+                style={{ marginLeft: '5px', width: '2vh' }}
               />
             </>
           )}
