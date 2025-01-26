@@ -76,7 +76,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     setCalculatedCosts(newCalculatedCosts);
     //eslint-disable-next-line
-  }, [distance, includeLoader, numLoaders]);
+  }, [distance, includeLoader, numLoaders, isLoading]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -163,19 +163,22 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       );
 
       if (!response.ok) {
-        throw new Error('Failed to place order, server error');
+        const errorResult = await response.json();
+        throw new Error(
+          errorResult.error || 'Failed to place order, server error'
+        );
       }
 
-      const result = await response.json();
-      console.log('Order placed successfully:', result);
       setShowSuccessPopup(true);
 
       resetDash();
 
       // Reset the dashboard after a successful order
     } catch (error) {
+      setIsLoading(false);
+      setShowSuccessPopup(false);
       console.error('Error while placing order:', error);
-      setErrorMessage('Failed to place order. Please try again.'); // Show error message
+      setErrorMessage(error.message); // Show error message
     }
   };
   useEffect(() => {
@@ -191,9 +194,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       }
     }
     if (!order?.id) {
-      console.log('here');
-
       // Order is empty or deleted
+      setShowSuccessPopup(false);
 
       setIsLoading(false);
     } else {

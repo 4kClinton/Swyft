@@ -35,11 +35,12 @@ const Login = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
+    const sanitizedEmail = email.trim().toLowerCase();
 
     try {
       const response = await axios.post(
         'https://swyft-backend-client-nine.vercel.app/login',
-        { email, password },
+        { email: sanitizedEmail, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
 
@@ -56,7 +57,7 @@ const Login = () => {
         navigate('/');
       }, 3000);
     } catch (err) {
-      console.log(err.response);
+      console.error(err.response);
 
       const errorMessage =
         err.response?.data?.error || 'An error occurred. Please try again.';
@@ -81,7 +82,8 @@ const Login = () => {
         )}
         <form onSubmit={logIn}>
           <input
-            placeholder="Email or Username"
+            placeholder="Email"
+            type="email"
             className="login-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}

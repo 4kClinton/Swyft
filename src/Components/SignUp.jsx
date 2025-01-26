@@ -32,13 +32,14 @@ const SignUp = () => {
 
     // Generate a unique user ID
     const userId = uuidv4();
+    const sanitizedEmail = email.trim().toLowerCase();
 
     // Prepare signup data
     const signupData = {
       id: userId,
       name,
       phone: phoneNumber,
-      email,
+      email: sanitizedEmail,
       password,
     };
 
@@ -103,6 +104,7 @@ const SignUp = () => {
           />
           <input
             placeholder="Email"
+            type="email"
             className="login-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
