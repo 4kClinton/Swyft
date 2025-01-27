@@ -34,6 +34,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [scheduleDateTime, setScheduleDateTime] = useState('');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
+  const [startY, setStartY] = useState(0);
+  const [endY, setEndY] = useState(0);
   const order = useSelector((state) => state.currentOrder.value);
 
   const theUser = useSelector((state) => state.user.value);
@@ -93,6 +95,26 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const handleNumLoadersChange = (e) => {
     const value = parseInt(e.target.value);
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
+  };
+  const handleTouchStart = (e) => {
+    setStartY(e.touches[0].clientY); // Capture the starting Y position
+  };
+
+  const handleTouchMove = (e) => {
+    setEndY(e.touches[0].clientY); // Update the Y position as the user swipes
+  };
+
+  const handleTouchEnd = () => {
+    const swipeDistance = startY - endY; // Calculate swipe distance
+    const threshold = 50; // Minimum swipe distance to trigger action
+
+    if (swipeDistance > threshold) {
+      // Swipe up
+      setIsOpen(true);
+    } else if (swipeDistance < -threshold) {
+      // Swipe down
+      setIsOpen(false);
+    }
   };
 
   /*   const handleScheduleOrder = () => {
@@ -282,9 +304,12 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
   return (
     <div
-      key={distance}
+      key="dash"
       ref={dashRef}
       className={`Dash ${isOpen ? 'open' : ''}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
     >
       <div className="notch" onClick={toggleDash}>
         <div className="notch-indicator"></div>
