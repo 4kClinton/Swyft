@@ -83,7 +83,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
         // Add loader costs if applicable
         acc[vehicle] = Math.round(
-          calculatedCost + (includeLoader ? 300 * numLoaders : 0)
+          calculatedCost + (includeLoader ? 600 * numLoaders : 0)
         );
 
         return acc;
@@ -123,7 +123,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       vehicle: selectedOption,
       distance,
       loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
+      loaderCost: includeLoader ? numLoaders * 600 : 0,
       totalCost: calculatedCosts[selectedOption],
       userLocation,
       destination,
@@ -207,7 +207,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       vehicle: selectedOption,
       distance,
       loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
+      loaderCost: includeLoader ? numLoaders * 600 : 0,
       totalCost: calculatedCosts[selectedOption],
       userLocation,
       destination,
@@ -368,7 +368,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             checked={includeLoader}
             onChange={handleLoaderChange}
           />
-          Need a loader for unloading? (Ksh 300 per loader)
+          Need a loader for unloading? (Ksh 600 per loader)
         </label>
         {includeLoader && (
           <input

@@ -15,6 +15,8 @@ import "../Styles/Navbar.css";
 import { useUser } from "../contexts/UserContext.jsx"; // Import the useUser hook
 import { deleteUser } from "../Redux/Reducers/UserSlice.js";
 import { useDispatch } from "react-redux";
+// import FindDriver from "./FindDriver"; // Import the loading component
+import LoaderPopup from "./LoaderPopup.jsx";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -81,6 +83,8 @@ const Navbar = () => {
       <div className={`sidebar ${isOpen ? "show-sidebar" : ""}`}>
         <div className="cards">
           <div className="card">
+            {/* <FindDriver /> */}
+            {/* <LoaderPopup /> */}
             <Link
               onClick={toggleSidebar}
               to={"/"}
@@ -139,7 +143,12 @@ const Navbar = () => {
               </button>
             ) : (
               <Link onClick={toggleSidebar} to="/login">
-                <button className="login-button" style={{width:"120%",height:"unset",fontSize:"large",}}>Log In</button>
+                <button
+                  className="login-button"
+                  style={{ width: "120%", height: "unset", fontSize: "large" }}
+                >
+                  Log In
+                </button>
               </Link>
             )}
           </div>
