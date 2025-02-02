@@ -15,6 +15,7 @@ import '../Styles/Navbar.css';
 
 import { deleteUser } from '../Redux/Reducers/UserSlice.js';
 import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -38,7 +39,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    sessionStorage.removeItem('authToken'); // Correct storage removal
+    Cookies.remove('authToken'); // Correct storage removal
     // setUser(null); // Clear the user in the context
     dispatch(deleteUser());
     setIsLoggedIn(false); // Update the login status in state

@@ -16,6 +16,7 @@ import {
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CancelOrderPopup from './CancelOrderPopup';
+import Cookies from 'js-cookie';
 
 //eslint-disable-next-line
 const Dash = ({ distance = 0, userLocation, destination }) => {
@@ -137,7 +138,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   }; */
 
   const confirmOrder = async () => {
-    localStorage.removeItem('driverData');
+    Cookies.remove('driverData');
 
     //eslint-disable-next-line
     if (!destination.length < 0) {
@@ -169,7 +170,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     setIsLoading(true); // Start loading state
 
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
 
     try {
       const response = await fetch(
@@ -206,13 +207,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   useEffect(() => {
     if (order?.status === 'Accepted') {
       //check if the driver details has been shown before
-      const navigated = localStorage.getItem('NavigateToDriverDetails');
+      const navigated = Cookies.get('NavigateToDriverDetails');
 
       // If the details haven't been shown yet, display it
       if (!navigated) {
         navigate('/driverDetails');
         // Set the item in localStorage
-        localStorage.setItem('NavigateToDriverDetails', true);
+        Cookies.set('NavigateToDriverDetails', 'true', { expires: 7 });
       }
     }
     if (!order?.id) {

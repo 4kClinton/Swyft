@@ -11,6 +11,7 @@ import {
 import PersonIcon from '@mui/icons-material/Person';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
+import Cookies from 'js-cookie';
 
 const Profile = () => {
   const user = useSelector((state) => state.user.value);
@@ -30,7 +31,7 @@ const Profile = () => {
   }, [user]);
 
   function handleLogout() {
-    sessionStorage.removeItem('authToken');
+    Cookies.remove('authToken');
     window.location.href = '/';
   }
 
@@ -44,7 +45,7 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
     try {
       const response = await fetch(
         'https://swyft-backend-client-nine.vercel.app/customer/profile',

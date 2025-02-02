@@ -9,6 +9,7 @@ import { useNavigate } from 'react-router-dom'; // Importing useNavigate for nav
 import { useDispatch, useSelector } from 'react-redux';
 import { saveDriver } from '../Redux/Reducers/DriverDetailsSlice';
 import { useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 // Sample data for the driver
 
@@ -20,7 +21,7 @@ const DriverDetails = () => {
 
   useEffect(() => {
     if (order?.status === 'Accepted' && !driver?.id) {
-      const token = sessionStorage.getItem('authToken');
+      const token = Cookies.get('authToken');
       fetch(
         `https://swyft-backend-client-nine.vercel.app/driver/${order.driver_id}`,
         {
@@ -39,7 +40,7 @@ const DriverDetails = () => {
         })
         .then((driverData) => {
           dispatch(saveDriver(driverData));
-          localStorage.setItem('driverData', JSON.stringify(driverData));
+          Cookies.set('driverData', JSON.stringify(driverData), { expires: 7 });
         })
         .catch((error) => {
           console.error('Error fetching driver data:', error);

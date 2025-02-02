@@ -22,6 +22,7 @@ import {
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
+import Cookies from 'js-cookie';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -98,7 +99,7 @@ function App() {
   }, [customer.id, dispatch]);
 
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
     if (token) {
       fetch('https://swyft-backend-client-nine.vercel.app/check_session', {
         headers: {
@@ -114,8 +115,9 @@ function App() {
 
         .then((userData) => {
           dispatch(addUser(userData));
-          const storedDriverData = localStorage.getItem('driverData');
-          const storedOrderData = localStorage.getItem('orderData');
+
+          const storedDriverData = Cookies.get('driverData');
+          const storedOrderData = Cookies.get('orderData');
 
           const orderData = JSON.parse(storedOrderData);
 
@@ -126,8 +128,8 @@ function App() {
             dispatch(saveDriver(JSON.parse(storedDriverData)));
             dispatch(saveOrder(orderData));
           } else {
-            localStorage.removeItem('driverData');
-            localStorage.removeItem('orderData');
+            Cookies.remove('driverData');
+            Cookies.remove('orderData');
           }
         })
 
@@ -138,7 +140,7 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
     if (token) {
       fetch('https://swyft-backend-client-nine.vercel.app/orders', {
         method: 'GET',
@@ -172,7 +174,7 @@ function App() {
   }, []);
 
   const handleOrderAccepted = async (payload) => {
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
     fetch(
       `https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,
       {
@@ -192,8 +194,8 @@ function App() {
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
-        localStorage.setItem('driverData', JSON.stringify(driverData));
-        localStorage.setItem('orderData', JSON.stringify(payload.new));
+        Cookies.set('driverData', JSON.stringify(driverData), { expires: 7 });
+        Cookies.set('orderData', JSON.stringify(payload.new), { expires: 7 });
         // Show customer an alert or update UI
       })
       .catch((error) => {
@@ -216,7 +218,7 @@ function App() {
   const handleRideCompleted = () => {
     dispatch(deleteOrder());
     dispatch(removeDriver());
-    localStorage.removeItem('NavigateToDriverDetails');
+    Cookies.remove('NavigateToDriverDetails');
 
     // Navigate to the Rating Page after ride completion
     navigate('/rate-driver');
