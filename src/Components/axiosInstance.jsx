@@ -1,4 +1,5 @@
 import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
   baseURL: 'https://swyft-backend-client-nine.vercel.app/', // Backend URL
@@ -8,7 +9,7 @@ const axiosInstance = axios.create({
 // Interceptor to add Access Token
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const accessToken = localStorage.getItem('accessToken');
+    const accessToken = Cookies.get('accessToken');
     if (accessToken) {
       config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
@@ -30,7 +31,11 @@ axiosInstance.interceptors.response.use(
           {},
           { withCredentials: true }
         );
-        localStorage.setItem('accessToken', data.accessToken); // Update Access Token
+        Cookies.set('authToken', data.access_token, {
+          expires: 7,
+          secure: true,
+          sameSite: 'Strict',
+        }); // Update Access Token
         axiosInstance.defaults.headers['Authorization'] =
           `Bearer ${data.accessToken}`;
         originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;

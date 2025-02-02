@@ -14,6 +14,7 @@ import axios from 'axios';
 
 import '../Styles/Login.css';
 import introPic from '../assets/loaders-swyft.png';
+import Cookies from 'js-cookie';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -46,11 +47,16 @@ const Login = () => {
 
       const { access_token, user, message } = response.data;
 
-      sessionStorage.setItem('authToken', access_token);
+      Cookies.set('authToken', access_token, {
+        expires: 7,
+        secure: true,
+        sameSite: 'Strict',
+      }); // Set cookie with options
       dispatch(addUser(user));
-      sessionStorage.setItem('message', message || 'Login successful!');
-      localStorage.setItem('user', JSON.stringify(user));
-      localStorage.setItem('status', 'user logged in!');
+      Cookies.set('message', message, { expires: 7 });
+
+      Cookies.set('user', JSON.stringify(user), { expires: 7 });
+      Cookies.set('status', 'user logged in!', { expires: 7 });
 
       setSuccess(message || 'Login successful!');
       setTimeout(() => {
