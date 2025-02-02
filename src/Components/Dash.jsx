@@ -170,7 +170,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     setIsLoading(true); // Start loading state
 
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
 
     try {
       const response = await fetch(

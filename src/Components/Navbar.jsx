@@ -39,7 +39,7 @@ const Navbar = () => {
   };
 
   const handleLogout = () => {
-    Cookies.remove('authToken'); // Correct storage removal
+    Cookies.remove('authTokencl1'); // Correct storage removal
     // setUser(null); // Clear the user in the context
     dispatch(deleteUser());
     setIsLoggedIn(false); // Update the login status in state

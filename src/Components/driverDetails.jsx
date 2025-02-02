@@ -21,7 +21,7 @@ const DriverDetails = () => {
 
   useEffect(() => {
     if (order?.status === 'Accepted' && !driver?.id) {
-      const token = Cookies.get('authToken');
+      const token = Cookies.get('authTokencl1');
       fetch(
         `https://swyft-backend-client-nine.vercel.app/driver/${order.driver_id}`,
         {

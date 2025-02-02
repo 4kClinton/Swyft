@@ -29,7 +29,7 @@ const CancelOrderPopup = ({ onClose }) => {
   };
 
   const handleCancelOrder = () => {
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
     setIsLoading(true);
     fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
       method: 'PUT',

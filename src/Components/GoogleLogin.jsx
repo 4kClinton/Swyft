@@ -17,7 +17,7 @@ const GoogleLogin = ({ setLoading, setError, dispatch, addUser, navigate }) => {
 
       if (user && session) {
         dispatch(addUser(user));
-        sessionStorage.setItem('authToken', session.access_token);
+        sessionStorage.setItem('authTokencl1', session.access_token);
         localStorage.setItem('user', JSON.stringify(user));
         localStorage.setItem('status', 'user logged in!');
         navigate('/');

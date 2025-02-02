@@ -35,7 +35,7 @@ const OrderCompletion = () => {
       return;
     }
 
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
 
     try {
       const response = await fetch(

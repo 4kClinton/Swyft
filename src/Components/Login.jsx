@@ -47,7 +47,7 @@ const Login = () => {
 
       const { access_token, user, message } = response.data;
 
-      Cookies.set('authToken', access_token, {
+      Cookies.set('authTokencl1', access_token, {
         expires: 7,
         secure: true,
         sameSite: 'Strict',

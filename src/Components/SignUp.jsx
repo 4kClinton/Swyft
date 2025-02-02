@@ -77,7 +77,7 @@ const SignUp = () => {
       };
       Cookies.set('user', JSON.stringify(userData), { expires: 7 });
 
-      Cookies.set('authToken', responseData.access_token, {
+      Cookies.set('authTokencl1', responseData.access_token, {
         expires: 7,
         secure: true,
         sameSite: 'Strict',
