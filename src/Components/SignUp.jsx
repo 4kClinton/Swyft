@@ -5,6 +5,7 @@ import { Typography, Box, CircularProgress } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
 
 import '../Styles/Login.css';
+import Cookies from 'js-cookie';
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -74,7 +75,13 @@ const SignUp = () => {
         phone: phoneNumber,
         email,
       };
-      localStorage.setItem('user', JSON.stringify(userData));
+      Cookies.set('user', JSON.stringify(userData), { expires: 7 });
+
+      Cookies.set('authToken', responseData.access_token, {
+        expires: 7,
+        secure: true,
+        sameSite: 'Strict',
+      }); // Set cookie with options
 
       // Redirect to the home route on successful sign-up
       setTimeout(() => navigate('/'), 3000); // Redirect after showing success message

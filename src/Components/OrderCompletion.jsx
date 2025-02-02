@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import Ratings from './Rating';
 import '../Styles/orderCompletion.css';
 import { useNavigate } from 'react-router-dom';
+import Cookies from 'js-cookie';
 
 const OrderCompletion = () => {
   const [rating, setRating] = useState(0);
@@ -10,7 +11,7 @@ const OrderCompletion = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    const storedOrder = localStorage.getItem('orderData');
+    const storedOrder = Cookies.get('orderData');
     if (storedOrder) {
       setOrder(JSON.parse(storedOrder));
     } else {
@@ -34,7 +35,7 @@ const OrderCompletion = () => {
       return;
     }
 
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
 
     try {
       const response = await fetch(
@@ -55,8 +56,8 @@ const OrderCompletion = () => {
         throw new Error('Failed to submit rating');
       }
 
-      localStorage.removeItem('orderData');
-      localStorage.removeItem('driverData');
+      Cookies.remove('orderData');
+      Cookies.remove('driverData');
       navigate('/');
     } catch (error) {
       console.error('Error submitting rating:', error);
