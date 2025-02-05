@@ -31,7 +31,7 @@ const CancelOrderPopup = ({ onClose }) => {
   const handleCancelOrder = () => {
     const token = Cookies.get('authTokencl1');
     setIsLoading(true);
-    fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
+    fetch(`http://127.0.0.1:5000/orders/${order.id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',

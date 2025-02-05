@@ -173,17 +173,14 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     const token = Cookies.get('authTokencl1');
 
     try {
-      const response = await fetch(
-        'https://swyft-backend-client-nine.vercel.app/orders',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(orderData),
-        }
-      );
+      const response = await fetch('http://127.0.0.1:5000/orders', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(orderData),
+      });
 
       if (!response.ok) {
         const errorResult = await response.json();

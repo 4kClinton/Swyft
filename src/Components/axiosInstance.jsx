@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
-  baseURL: 'https://swyft-backend-client-nine.vercel.app/', // Backend URL
+  baseURL: 'http://127.0.0.1:5000/', // Backend URL
   withCredentials: true, // Important for sending cookies
 });
 
@@ -27,7 +27,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          'https://swyft-backend-client-nine.vercel.app/',
+          'http://127.0.0.1:5000/',
           {},
           { withCredentials: true }
         );

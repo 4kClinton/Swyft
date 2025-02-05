@@ -40,7 +40,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        'https://swyft-backend-client-nine.vercel.app/login',
+        'http://127.0.0.1:5000/login',
         { email: sanitizedEmail, password },
         { headers: { 'Content-Type': 'application/json' } }
       );
