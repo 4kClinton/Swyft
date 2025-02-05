@@ -7,7 +7,7 @@ const PrivateRoute = ({ children }) => {
 
   // Check if token exists
   if (!token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   try {
@@ -17,11 +17,11 @@ const PrivateRoute = ({ children }) => {
     // Check if the token has expired
     if (Date.now() >= exp * 1000) {
       localStorage.removeItem('accessToken'); // Clear the token from storage
-      return <Navigate to="/login" />;
+      return <Navigate to="/" />;
     }
   } catch (error) {
     console.error('Error decoding token:', error);
-    return <Navigate to="/login" />; // Redirect on decode error
+    return <Navigate to="/" />; // Redirect on decode error
   }
 
   // Render children if the token is valid

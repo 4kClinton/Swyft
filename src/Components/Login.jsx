@@ -11,8 +11,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
 import axios from 'axios';
-
+import GoogleLogin from './GoogleLogin';
 import '../Styles/Login.css';
+import '../Styles/GoogleLogin.css';
 import introPic from '../assets/loaders-swyft.png';
 
 const Login = () => {
@@ -54,7 +55,7 @@ const Login = () => {
 
       setSuccess(message || 'Login successful!');
       setTimeout(() => {
-        navigate('/');
+        navigate('/dash');
       }, 3000);
     } catch (err) {
       console.error(err.response);
@@ -133,7 +134,15 @@ const Login = () => {
           addUser={addUser}
           navigate={navigate}
         /> */}
-
+        <div className="GoogleLoginContainer">
+          <GoogleLogin
+            setLoading={setLoading}
+            setError={setError}
+            dispatch={dispatch}
+            addUser={addUser}
+            navigate={navigate}
+          />
+        </div>
         <Button
           onClick={() => navigate('/signup')}
           variant="text"

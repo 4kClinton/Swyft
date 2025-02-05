@@ -8,14 +8,23 @@ import 'firebase/database';
 
 // Your web app's Firebase configuration
 // For Firebase JS SDK v7.20.0 and later, measurementId is optional
+
+const apiKey = import.meta.env.VITE_APIKEY
+const authDomain = import.meta.VITE_AUTHDOMAIN
+const projectId = import.meta.VITE_PROJECTID
+const storageBucket = import.meta.VITE_STORAGEBUCKET
+const messagingSenderId = import.meta.VITE_MESSAGINGSENDERID
+const appId = import.meta.env.VITE_APPID
+const measurementId = import.meta.env.VITE_MEASUREMENTID
+
 const firebaseConfig = {
-  apiKey: 'AIzaSyD3UOJEpimIg7F9gGtOF_LdoXQoWc-7rqg',
-  authDomain: 'swyft-ca43e.firebaseapp.com',
-  projectId: 'swyft-ca43e',
-  storageBucket: 'swyft-ca43e.firebasestorage.app',
-  messagingSenderId: '474475564210',
-  appId: '1:474475564210:web:334c733b7f4b6b3d784dab',
-  measurementId: 'G-WFN6CLV1N3',
+  apiKey,
+  authDomain,
+  projectId,
+  storageBucket,
+  messagingSenderId,
+  appId,
+  measurementId
 };
 
 if (!firebase.apps.length) {

@@ -5,7 +5,7 @@ const Logout = () => {
     try {
       await axiosInstance.post('/logout');
       localStorage.removeItem('accessToken'); // Clear tokens
-      window.location.href = '/login';
+      window.location.href = '/';
     } catch (err) {
       console.error('Logout failed', err);
     }
