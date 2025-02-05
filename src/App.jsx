@@ -20,6 +20,8 @@ import {
   saveDriver,
 } from './Redux/Reducers/DriverDetailsSlice.js';
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
+import { ToastContainer, toast } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -68,8 +70,16 @@ function App() {
         { event: 'DELETE', schema: 'public', table: 'orders' },
         (payload) => {
           if (payload?.old?.id === supabaseOrderId) {
-            console.log('No driver found:', payload.old);
-            dispatch(deleteOrder());
+            toast.error(
+              'No driver found for your order. Please try again later.',
+              {
+                position: 'bottom-center',
+                autoClose: 5000,
+                onClose: () => {
+                  dispatch(deleteOrder());
+                },
+              }
+            );
           }
         }
       )
@@ -110,8 +120,8 @@ function App() {
           const orderData = JSON.parse(storedOrderData);
 
           if (
-            orderData.status !== 'completed' ||
-            orderData.status !== 'cancelled'
+            orderData?.status !== 'completed' ||
+            orderData?.status !== 'cancelled'
           ) {
             dispatch(saveDriver(JSON.parse(storedDriverData)));
             dispatch(saveOrder(orderData));
@@ -150,6 +160,7 @@ function App() {
           console.error('Error fetching rides history:', error);
         });
     }
+    //eslint-disable-next-line
   }, []);
 
   useEffect(() => {
@@ -225,6 +236,7 @@ function App() {
           <SpeedInsights />
         </div>
       )}
+      <ToastContainer />
     </UserProvider>
   );
 }
