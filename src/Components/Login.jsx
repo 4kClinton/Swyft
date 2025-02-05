@@ -6,7 +6,6 @@ import {
   Box,
   CircularProgress,
   IconButton,
-  TextField,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
@@ -50,7 +49,9 @@ const Login = () => {
       setStep(2); // Move to OTP verification step
     } catch (err) {
       console.error(err.response);
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
+      setError(
+        err.response?.data?.error || 'An error occurred. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -71,7 +72,11 @@ const Login = () => {
 
       const { access_token, user, message } = response.data;
 
-      Cookies.set('authToken', access_token, { expires: 7, secure: true, sameSite: 'Strict' });
+      Cookies.set('authToken', access_token, {
+        expires: 7,
+        secure: true,
+        sameSite: 'Strict',
+      });
       dispatch(addUser(user));
 
       setSuccess(message || 'Login successful!');
@@ -132,7 +137,15 @@ const Login = () => {
               color="success"
               disabled={loading}
             >
-              {loading ? (<CircularProgress className="login-loader" size={34} color="#fff" />) :( 'Log In')}
+              {loading ? (
+                <CircularProgress
+                  className="login-loader"
+                  size={34}
+                  color="#fff"
+                />
+              ) : (
+                'Log In'
+              )}
             </button>
           </form>
         ) : (
@@ -151,7 +164,15 @@ const Login = () => {
               disabled={loading}
               className="login-button"
             >
-              {loading ? (<CircularProgress className="login-loader" size={34} color="#fff" />) : ('Verify OTP')}
+              {loading ? (
+                <CircularProgress
+                  className="login-loader"
+                  size={34}
+                  color="#fff"
+                />
+              ) : (
+                'Verify OTP'
+              )}
             </button>
           </form>
         )}
@@ -159,7 +180,12 @@ const Login = () => {
         <Button
           onClick={() => navigate('/signup')}
           variant="text"
-          sx={{ mt: 2, color: '#18b700', fontWeight: 'bold', fontFamily: 'Montserrat' }}
+          sx={{
+            mt: 2,
+            color: '#18b700',
+            fontWeight: 'bold',
+            fontFamily: 'Montserrat',
+          }}
         >
           Create account
         </Button>
