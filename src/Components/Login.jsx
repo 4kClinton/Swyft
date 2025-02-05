@@ -40,7 +40,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        ' http://127.0.0.1:5000/login',
+        ' https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/login',
         { email: email.trim().toLowerCase(), password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -65,7 +65,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        ' http://127.0.0.1:5000/verify-otp',
+        ' https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/verify-otp',
         { email, otp },
         { headers: { 'Content-Type': 'application/json' } }
       );
