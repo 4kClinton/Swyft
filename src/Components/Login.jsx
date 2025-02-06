@@ -14,11 +14,10 @@ import axios from 'axios';
 
 import Cookies from 'js-cookie';
 
-
 import '../Styles/Login.css';
 
 import introPic from '../assets/loaders-swyft.png';
-import Cookies from 'js-cookie';
+// import Cookies from 'js-cookie';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -80,14 +79,12 @@ const Login = () => {
         expires: 7,
         secure: true,
         sameSite: 'Strict',
-
       }); // Set cookie with options
       dispatch(addUser(user));
       Cookies.set('message', message, { expires: 7 });
 
       Cookies.set('user', JSON.stringify(user), { expires: 7 });
       Cookies.set('status', 'user logged in!', { expires: 7 });
-
 
       setSuccess(message || 'Login successful!');
 
@@ -135,7 +132,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-                 
+
               <IconButton
                 aria-label="toggle password visibility"
                 onClick={togglePasswordVisibility}
@@ -163,7 +160,6 @@ const Login = () => {
             </button>
           </form>
         ) : (
-          
           <form onSubmit={verifyOtp}>
             <input
               placeholder="Enter OTP"
@@ -191,9 +187,6 @@ const Login = () => {
             </button>
           </form>
         )}
-
-
-
 
         <Button
           onClick={() => navigate('/signup')}

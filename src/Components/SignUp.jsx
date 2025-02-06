@@ -1,25 +1,8 @@
 import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import {
-  Typography,
-  Box,
-  CircularProgress,
-  Dialog,
-  DialogTitle,
-  DialogContent,
-  DialogActions,
-  Button,
-} from '@mui/material';
-import PhoneNumberInput from './PhoneVerification';
-import { createClient } from '@supabase/supabase-js';
-import { v4 as uuidv4 } from 'uuid';
-import '../Styles/Login.css';
+import { Typography, Box, CircularProgress } from '@mui/material';
 
-const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
-const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
-
-
-const supabase = createClient(supabaseUrl, anonKey);
+import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
 
 import '../Styles/Login.css';
 import Cookies from 'js-cookie';
@@ -28,70 +11,59 @@ const SignUp = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
   const [email, setEmail] = useState('');
-  const [phone, setPhone] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
   const [error, setError] = useState(null);
+  const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [otpDialog, setOtpDialog] = useState(false);
-  const [otp, setOtp] = useState('');
 
-  // Send OTP
-  const sendOtp = async () => {
+  // Sign-Up function to register customer data
+  const signUp = async (event) => {
+    event.preventDefault();
     setLoading(true);
     setError(null);
+    setSuccess(null);
 
-    const { error } = await supabase.auth.signInWithOtp({ phone });
-    if (error) {
-      setError(error.message);
-    } else {
-      setOtpDialog(true);
-    }
-    setLoading(false);
-  };
-
-  // Verify OTP and log in user
-  const verifyOtp = async () => {
-    setLoading(true);
-    setError(null);
-
-    console.log('Entered OTP:', otp);
-    const { error } = await supabase.auth.verifyOtp({ phone, token: otp });
-    if (error) {
-      setError('Invalid OTP. Please try again.');
-    } else {
-      completeSignUp(); // Proceed with sign-up
-    }
-    setLoading(false);
-  };
-
-  // Complete sign-up and log in
-  const completeSignUp = async () => {
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
+      setLoading(false);
       return;
     }
-    setLoading(true);
+
+    // Generate a unique user ID
     const userId = uuidv4();
-    const signupData = { id: userId, name, phone, email, password };
+    const sanitizedEmail = email.trim().toLowerCase();
+
+    // Prepare signup data
+    const signupData = {
+      id: userId,
+      name,
+      phone: phoneNumber,
+      email: sanitizedEmail,
+      password,
+    };
 
     try {
-      const response = await fetch(
-        'https://swyft-backend-client-nine.vercel.app/signup',
-        {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify(signupData),
-        }
-      );
+      // Make a POST request to your Express server
+      const response = await fetch('http://127.0.0.1:5000/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(signupData),
+      });
 
       const responseData = await response.json();
+
       if (!response.ok) {
+        // Set error message from server
         setError(responseData.message || 'Sign-up failed. Please try again.');
         return;
       }
+
       // Set success message from server
-      setSuccess(responseData.message || 'Welcome to Swyft!');
+      setSuccess(responseData.message || 'Account created successfully!');
 
       // Save user data (excluding password) locally
       const userData = {
@@ -102,7 +74,7 @@ const SignUp = () => {
       };
       Cookies.set('user', JSON.stringify(userData), { expires: 7 });
 
-      Cookies.set('authToken', responseData.access_token, {
+      Cookies.set('authTokencl1', responseData.access_token, {
         expires: 7,
         secure: true,
         sameSite: 'Strict',
@@ -110,27 +82,25 @@ const SignUp = () => {
 
       // Redirect to the home route on successful sign-up
       setTimeout(() => navigate('/'), 3000); // Redirect after showing success message
-
     } catch (err) {
+      console.error('An error occurred during sign-up:', err);
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
       setLoading(false);
     }
   };
 
+  // toLogin function defined outside of signUp function
+
   return (
-    <div className="signup-component">
+    <div className="login-component">
       <Box className="login-container">
         <header className="login-header">Create an Account</header>
         {error && <Typography color="error">{error}</Typography>}
-        <form
-          onSubmit={(e) => {
-            e.preventDefault();
-            sendOtp();
-          }}
-        >
+        {success && <Typography color="primary">{success}</Typography>}
+        <form onSubmit={signUp}>
           <input
-            placeholder="Name"
+            placeholder="Name or Username"
             className="login-input"
             value={name}
             onChange={(e) => setName(e.target.value)}
@@ -144,7 +114,13 @@ const SignUp = () => {
             onChange={(e) => setEmail(e.target.value)}
             required
           />
-          <PhoneNumberInput phone={phone} setPhone={setPhone} />
+          <input
+            placeholder="Phone Number"
+            className="login-input"
+            value={phoneNumber}
+            onChange={(e) => setPhoneNumber(e.target.value)}
+            required
+          />
           <input
             placeholder="Password"
             type="password"
@@ -163,36 +139,69 @@ const SignUp = () => {
           />
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? (
-              <CircularProgress size={30} sx={{ color: '#fff' }} />
+              <CircularProgress size={34} color="inherit" />
             ) : (
               'Sign Up'
             )}
           </button>
         </form>
-        <Link to={'/'} className="existing-account">
+
+        {/* <Typography
+          variant="body2"
+          align="center"
+          sx={{ mt: 4, fontWeight: "bold" }}
+        >
+          Or sign up with
+        </Typography>
+        <Box
+          className="socials-container"
+          sx={{
+            display: "flex",
+            justifyContent: "space-between",
+            marginBottom: "10px",
+            mt: 2,
+          }}
+        >
+          <Button
+            className="social-icon"
+            color="primary"
+            startIcon={<Google />}
+            fullWidth
+            sx={{ mr: 1 }}
+          ></Button>
+          <Button
+            className="social-icon"
+            color="primary"
+            startIcon={<Twitter />}
+            fullWidth
+            sx={{ mx: 1 }}
+          ></Button>
+          <Button
+            className="social-icon"
+            color="primary"
+            startIcon={<GitHub />}
+            fullWidth
+            sx={{ ml: 1 }}
+          ></Button>
+        </Box> */}
+
+        <Link
+          to={'/login'}
+          variant="body2"
+          className="existing-account"
+          sx={{
+            mt: 2,
+            marginBottom: '2vh',
+            color: '#00D46A',
+            fontSize: '15px',
+            display: 'block',
+            textAlign: 'center',
+            cursor: 'pointer',
+          }}
+        >
           Already have an account? Log in
         </Link>
       </Box>
-
-      {/* OTP Verification Popup */}
-      <Dialog open={otpDialog} onClose={() => setOtpDialog(false)}>
-        <DialogTitle>Enter OTP</DialogTitle>
-        <DialogContent>
-          <input
-            placeholder="OTP Code"
-            className="login-input"
-            value={otp}
-            onChange={(e) => setOtp(e.target.value)}
-            required
-          />
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setOtpDialog(false)}>Cancel</Button>
-          <Button onClick={verifyOtp} color="primary">
-            Verify
-          </Button>
-        </DialogActions>
-      </Dialog>
     </div>
   );
 };
