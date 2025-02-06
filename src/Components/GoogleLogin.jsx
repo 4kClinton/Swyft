@@ -1,55 +1,64 @@
+import PropTypes from 'prop-types';
 import { supabase } from './SupabaseClient'; // Import the configured Supabase client
-import { Button } from '@mui/material';
-import GoogleIcon from '@mui/icons-material/Google';
+import '../Styles/GoogleLogin.css';
+import googleLogo from '../assets/gooogle.png';
 
-//eslint-disable-next-line
-const GoogleLogin = ({ setLoading, setError, dispatch, addUser, navigate }) => {
+const GoogleLogin = ({ setLoading, setError }) => {
   const handleSignInWithGoogle = async () => {
-    setLoading(true);
+    if (typeof setLoading === 'function') setLoading(true);
+
     try {
-      const { user, session, error } = await supabase.auth.signInWithOAuth({
+      const { error } = await supabase.auth.signInWithOAuth({
         provider: 'google',
+        options: {
+          redirectTo: window.location.origin,
+          pkce: true,
+        },
       });
 
       if (error) {
         throw error;
       }
-
-      if (user && session) {
-        dispatch(addUser(user));
-        sessionStorage.setItem('authToken', session.access_token);
-        localStorage.setItem('user', JSON.stringify(user));
-        localStorage.setItem('status', 'user logged in!');
-        navigate('/');
-      } else {
-        setError('Could not retrieve user data after Google Sign-In.');
-      }
     } catch (error) {
-      setError(error.message);
+      if (typeof setError === 'function') setError(error.message);
     } finally {
-      setLoading(false);
+      if (typeof setLoading === 'function') setLoading(false);
     }
   };
 
   return (
-    <Button
+    <button
+      className="GoogleLogin"
       onClick={handleSignInWithGoogle}
-      variant="contained"
-      color="primary"
-      sx={{
-        mt: 2,
+      style={{
+        marginTop: '8px',
         backgroundColor: '#4285F4',
         fontWeight: 'bold',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         width: '80%',
+        padding: '10px',
+        border: 'none',
+        color: '#fff',
+        borderRadius: '4px',
+        cursor: 'pointer',
       }}
     >
-      <GoogleIcon sx={{ marginRight: '10px' }} />
-      Sign in with Google
-    </Button>
+      <img
+        src={googleLogo}
+        alt="Google Logo"
+        style={{ height: '20px', marginRight: '8px' }}
+      />
+      Continue with Google
+    </button>
   );
+};
+
+// ✅ Adding PropTypes validation to fix ESLint errors
+GoogleLogin.propTypes = {
+  setLoading: PropTypes.func.isRequired,
+  setError: PropTypes.func.isRequired,
 };
 
 export default GoogleLogin;

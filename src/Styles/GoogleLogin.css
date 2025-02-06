@@ -1,0 +1,20 @@
+.GoogleLogin {
+  background-color: rgb(225, 225, 225);
+  color: #212121;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  margin-top: 2vh;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-weight: bold;
+  font-size: 17px;
+  width: 90%;
+  height: 7vh;
+  transition: background-color 0.3s;
+      display: flex
+;
+    align-items: center;
+    justify-content: center;
+}
+

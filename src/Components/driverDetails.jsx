@@ -50,7 +50,7 @@ const DriverDetails = () => {
   }, [order]);
 
   const handleGoHome = () => {
-    navigate('/'); // Navigate to the home page
+    navigate('/dash'); // Navigate to the home page
   };
 
   if (!driver?.id) {
