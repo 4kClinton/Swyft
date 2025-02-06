@@ -5,7 +5,6 @@ const Logout = () => {
   const handleLogout = async () => {
     try {
       await axiosInstance.post('/logout');
-
       Cookies.remove('accessToken'); // Clear tokens
       window.location.href = '/login';
 

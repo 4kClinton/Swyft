@@ -17,7 +17,6 @@ const PrivateRoute = ({ children }) => {
 
     // Check if the token has expired
     if (Date.now() >= exp * 1000) {
-
       Cookies.remove('accessToken'); // Clear the token from storage
       return <Navigate to="/login" />;
 

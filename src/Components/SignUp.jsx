@@ -24,7 +24,6 @@ const supabase = createClient(supabaseUrl, anonKey);
 import '../Styles/Login.css';
 import Cookies from 'js-cookie';
 
-
 const SignUp = () => {
   const navigate = useNavigate();
   const [name, setName] = useState('');
