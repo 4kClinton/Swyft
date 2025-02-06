@@ -11,9 +11,12 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
 import axios from 'axios';
+
 import Cookies from 'js-cookie';
 
+
 import '../Styles/Login.css';
+
 import introPic from '../assets/loaders-swyft.png';
 
 const Login = () => {
@@ -80,7 +83,10 @@ const Login = () => {
       dispatch(addUser(user));
 
       setSuccess(message || 'Login successful!');
-      setTimeout(() => navigate('/'), 3000);
+
+      setTimeout(() => {
+        navigate('/dash');
+      }, 3000);
     } catch (err) {
       console.error(err.response);
       setError(err.response?.data?.error || 'Invalid OTP. Please try again.');
@@ -122,6 +128,7 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
+                 
               <IconButton
                 aria-label="toggle password visibility"
                 onClick={togglePasswordVisibility}
@@ -149,6 +156,7 @@ const Login = () => {
             </button>
           </form>
         ) : (
+          
           <form onSubmit={verifyOtp}>
             <input
               placeholder="Enter OTP"
@@ -176,6 +184,9 @@ const Login = () => {
             </button>
           </form>
         )}
+
+
+
 
         <Button
           onClick={() => navigate('/signup')}

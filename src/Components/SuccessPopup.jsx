@@ -35,9 +35,7 @@ const SuccessPopup = ({ onClose, closePopup }) => {
         ) : (
           <>
             <h2 style={styles.heading}>Success</h2>
-            <p style={styles.text}>
-              Your order has been placed successfully! Looking for a driver ...
-            </p>
+            <p style={styles.text}>Finding driver ...</p>
             <button style={styles.button} onClick={closePopup || onClose}>
               OK
             </button>

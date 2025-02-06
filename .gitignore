@@ -1,4 +1,4 @@
-# Logs
+# Logs 
 logs
 *.log
 npm-debug.log*
@@ -13,7 +13,6 @@ dist
 dist-ssr
 *.local
 
-
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
@@ -25,3 +24,7 @@ dist-ssr
 *.sln
 *.sw?
 .vercel
+
+# Ignore firebase.js in any folder
+# firebase.js
+# **/firebase.js

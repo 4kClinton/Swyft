@@ -152,6 +152,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     if (!theUser || !theUser.id || !theUser.name) {
       setErrorMessage('User details are missing. Please log in again.');
+      // navigate("/")
       return;
     }
 
@@ -393,7 +394,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         >
           {isLoading ? (
             <>
-              Placing Order...
+              Finding Driver...
               <span className="order-spinner" />
             </>
           ) : (
