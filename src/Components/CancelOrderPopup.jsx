@@ -4,6 +4,7 @@ import '../Styles/orderLoader.css';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteOrder } from '../Redux/Reducers/CurrentOrderSlice';
 import { removeDriver } from '../Redux/Reducers/DriverDetailsSlice';
+import Cookies from 'js-cookie';
 
 const CancelOrderPopup = ({ onClose }) => {
   const [isLoading, setIsLoading] = useState(false);
@@ -28,7 +29,7 @@ const CancelOrderPopup = ({ onClose }) => {
   };
 
   const handleCancelOrder = () => {
-    const token = sessionStorage.getItem('authToken');
+    const token = Cookies.get('authToken');
     setIsLoading(true);
     fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
       method: 'PUT',
@@ -46,9 +47,9 @@ const CancelOrderPopup = ({ onClose }) => {
         if (response.ok) {
           dispatch(deleteOrder());
           dispatch(removeDriver());
-          localStorage.removeItem('NavigateToDriverDetails');
-          localStorage.removeItem('orderData');
-          localStorage.removeItem('driverData');
+          Cookies.remove('NavigateToDriverDetails');
+          Cookies.remove('orderData');
+          Cookies.remove('driverData');
 
           onClose();
         } else {

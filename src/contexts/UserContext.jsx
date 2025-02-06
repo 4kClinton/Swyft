@@ -1,4 +1,5 @@
 import { createContext, useState, useContext, useEffect } from 'react';
+import Cookies from 'js-cookie';
 
 const UserContext = createContext();
 
@@ -8,7 +9,7 @@ export const useUser = () => useContext(UserContext);
 //eslint-disable-next-line
 export const UserProvider = ({ children }) => {
   const [user, setUser] = useState(() => {
-    const storedUser = sessionStorage.getItem('accessToken');
+    const storedUser = Cookies.get('accessToken');
     return storedUser ? { accessToken: storedUser } : null;
   });
 
@@ -20,7 +21,6 @@ export const UserProvider = ({ children }) => {
       }
     };
 
-    // Add listener for sessionStorage changes
     window.addEventListener('storage', handleStorageChange);
 
     return () => {
@@ -30,12 +30,16 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const logIn = (accessToken) => {
-    sessionStorage.setItem('accessToken', accessToken);
+    Cookies.set('authToken', accessToken, {
+      expires: 7,
+      secure: true,
+      sameSite: 'Strict',
+    });
     setUser({ accessToken });
   };
 
   const logOut = () => {
-    sessionStorage.removeItem('accessToken');
+    Cookies.remove('accessToken');
     setUser(null);
   };
 

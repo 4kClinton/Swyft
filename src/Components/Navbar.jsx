@@ -13,7 +13,11 @@ import 'react-toastify/dist/ReactToastify.css';
 import profile from '../assets/profile.jpeg';
 import '../Styles/Navbar.css';
 
-// import { deleteUser } from '../Redux/Reducers/UserSlice.js';
+
+import { deleteUser } from '../Redux/Reducers/UserSlice.js';
+import { useDispatch } from 'react-redux';
+import Cookies from 'js-cookie';
+
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
@@ -34,13 +38,16 @@ const Navbar = () => {
     setIsOpen(!isOpen);
   };
 
-  // const handleLogout = () => {
-  //   sessionStorage.removeItem('authToken');
-  //   dispatch(deleteUser()); // Clear user data in Redux store
-  //   setIsLoggedIn(false);
-  //   navigate('/'); // Redirect to the home page
-  //   toast.success('Logged out successfully!'); // Display logout success
-  // };
+
+  const handleLogout = () => {
+    Cookies.remove('authToken'); // Correct storage removal
+    // setUser(null); // Clear the user in the context
+    dispatch(deleteUser());
+    setIsLoggedIn(false); // Update the login status in state
+    navigate('/login'); // Redirect to the login page
+    toast.success('Logged out successfully!');
+  };
+
 
   return (
     <div>

@@ -18,7 +18,12 @@ import '../Styles/Login.css';
 const anonKey = import.meta.env.VITE_SUPABASE_ANON_KEY;
 const supabaseUrl = import.meta.env.VITE_SUPABASE_URL;
 
+
 const supabase = createClient(supabaseUrl, anonKey);
+
+import '../Styles/Login.css';
+import Cookies from 'js-cookie';
+
 
 const SignUp = () => {
   const navigate = useNavigate();
@@ -86,14 +91,27 @@ const SignUp = () => {
         setError(responseData.message || 'Sign-up failed. Please try again.');
         return;
       }
+      // Set success message from server
+      setSuccess(responseData.message || 'Welcome to Swyft!');
 
-      // Auto login after signup
-      await supabase.auth.signInWithPassword({ email, password });
-      localStorage.setItem(
-        'user',
-        JSON.stringify({ id: userId, name, phone, email })
-      );
-      navigate('/');
+      // Save user data (excluding password) locally
+      const userData = {
+        id: userId,
+        name,
+        phone: phoneNumber,
+        email,
+      };
+      Cookies.set('user', JSON.stringify(userData), { expires: 7 });
+
+      Cookies.set('authToken', responseData.access_token, {
+        expires: 7,
+        secure: true,
+        sameSite: 'Strict',
+      }); // Set cookie with options
+
+      // Redirect to the home route on successful sign-up
+      setTimeout(() => navigate('/'), 3000); // Redirect after showing success message
+
     } catch (err) {
       setError(err.message || 'An error occurred. Please try again.');
     } finally {
