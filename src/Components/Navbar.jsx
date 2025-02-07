@@ -62,6 +62,7 @@ const Navbar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+  console.log(isLoggedIn);
 
   return (
     <div>

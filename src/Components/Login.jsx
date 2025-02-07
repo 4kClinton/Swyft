@@ -8,7 +8,7 @@ import {
   IconButton,
 } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
-import { useDispatch } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
 import axios from 'axios';
 
@@ -30,6 +30,7 @@ const Login = () => {
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.user.value);
 
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
@@ -99,11 +100,10 @@ const Login = () => {
     }
   };
   useEffect(() => {
-    const token = Cookies.get('authToken');
-    if (token) {
+    if (user?.id) {
       navigate('/dash');
     }
-  }, []);
+  }, [user]);
 
   return (
     <div className="login-component">

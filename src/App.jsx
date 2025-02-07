@@ -118,6 +118,7 @@ function App() {
 
         .then((userData) => {
           dispatch(addUser(userData));
+          console.log(userData);
 
           const storedDriverData = Cookies.get('driverData');
           const storedOrderData = Cookies.get('orderData');

@@ -15,6 +15,7 @@ const Profile = () => {
   const [error, setError] = useState(null); // Error state
   const [isEditing, setIsEditing] = useState(false); // Editing state
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' }); // Form data for editing
+  console.log(user);
 
   useEffect(() => {
     setProfile(user);

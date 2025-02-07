@@ -22,6 +22,7 @@ import Cookies from 'js-cookie';
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const user = useSelector((state) => state.user.value);
 
   const navigate = useNavigate();
 
@@ -52,6 +53,12 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     lorry: 310,
     flatbed: 350,
   };
+
+  useEffect(() => {
+    if (!user?.id) {
+      navigate('/');
+    }
+  }, [user]);
 
   useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
