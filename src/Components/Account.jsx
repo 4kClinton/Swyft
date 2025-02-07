@@ -1,17 +1,10 @@
 import { useEffect, useState } from 'react';
-import {
-  Typography,
-  Card,
-  CardContent,
-  Avatar,
-  CircularProgress,
-  TextField,
-  Button,
-} from '@mui/material';
+import { Typography, CircularProgress } from '@mui/material';
 import PersonIcon from '@mui/icons-material/Person';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
 import Cookies from 'js-cookie';
+import '../Styles/Account.css';
 
 const Profile = () => {
   const user = useSelector((state) => state.user.value);
@@ -103,150 +96,73 @@ const Profile = () => {
   }
 
   return (
-    <div
-      style={{
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: '100vh',
-      }}
-    >
-      <Card
-        style={{
-          width: '100%',
-          maxWidth: '800px',
-          padding: '16px',
-          marginBottom: '16px',
-        }}
-      >
-        <CardContent
-          style={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            paddingBottom: '16px',
-          }}
-        >
-          <Avatar
-            style={{
-              marginBottom: '16px',
-              backgroundColor: '#FFA500',
-              width: '80px',
-              height: '80px',
-            }}
-          >
-            <PersonIcon style={{ fontSize: '40px' }} />
-          </Avatar>
-          <Typography variant="h5" style={{ marginBottom: '16px' }}>
+    <div className="account-container">
+      <div className="user-card">
+        <div className="UserDetails">
+          <div className="avatar">
+            <PersonIcon className="avatar-icon" />
+          </div>
+          <h5 className="username">
             {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                label="Name"
+              <input
+                className="username-input"
+                type="text"
                 value={formData.name}
                 onChange={(e) =>
                   setFormData({ ...formData, name: e.target.value })
                 }
-                style={{ marginBottom: '16px' }}
               />
             ) : (
               profile.name
             )}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="textSecondary"
-            style={{ marginBottom: '8px' }}
-          >
+          </h5>
+          <div className="email-container">
             {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                label="Email"
+              <input
+                className="email-input"
+                type="email"
                 value={formData.email}
                 onChange={(e) =>
                   setFormData({ ...formData, email: e.target.value })
                 }
-                style={{ marginBottom: '16px' }}
               />
             ) : (
-              `Email: ${profile.email}`
+              <p>Email: {profile.email}</p>
             )}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="textSecondary"
-            style={{ marginBottom: '8px' }}
-          >
+          </div>
+
+          <p className="phone-container">
             {isEditing ? (
-              <TextField
-                fullWidth
-                variant="outlined"
-                label="Phone"
+              <input
+                className="phone-input"
+                type="tel"
                 value={formData.phone}
                 onChange={(e) =>
                   setFormData({ ...formData, phone: e.target.value })
                 }
-                style={{ marginBottom: '16px' }}
               />
             ) : (
               `Phone: ${profile.phone}`
             )}
-          </Typography>
-          <Typography
-            variant="body1"
-            color="textSecondary"
-            style={{ marginBottom: '16px' }}
-          >
+          </p>
+          <p className="join-date">
             Joined: {new Date(profile.joinDate).toLocaleDateString()}
-          </Typography>
+          </p>
           {isEditing ? (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleSave}
-              style={{
-                marginTop: '16px',
-                width: '100%',
-                padding: '12px',
-                fontSize: '16px',
-              }}
-            >
+            <button className="save-button" onClick={handleSave}>
               Save Changes
-            </Button>
+            </button>
           ) : (
-            <Button
-              variant="contained"
-              color="primary"
-              onClick={handleEdit}
-              style={{
-                marginTop: '16px',
-                background: '#00d46a',
-                width: '100%',
-                padding: '12px',
-                fontSize: '16px',
-              }}
-            >
+            <button className="editProfile" onClick={handleEdit}>
               Edit Profile
-            </Button>
+            </button>
           )}
-        </CardContent>
-      </Card>
+        </div>
+      </div>
 
-      <Button
-        variant="contained"
-        color="error"
-        onClick={handleLogout}
-        style={{
-          width: '100%',
-          padding: '12px',
-          fontSize: '16px',
-        }}
-      >
+      <button className="logoutButton" onClick={handleLogout}>
         Logout
-      </Button>
+      </button>
     </div>
   );
 };
