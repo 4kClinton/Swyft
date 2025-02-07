@@ -13,20 +13,45 @@ import 'react-toastify/dist/ReactToastify.css';
 import profile from '../assets/profile.jpeg';
 import '../Styles/Navbar.css';
 
+// import { deleteUser } from '../Redux/Reducers/UserSlice.js';
 
-import { deleteUser } from '../Redux/Reducers/UserSlice.js';
-import { useDispatch } from 'react-redux';
-import Cookies from 'js-cookie';
-
+// import Cookies from 'js-cookie';
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [touchStartX, setTouchStartX] = useState(0);
 
-  // const navigate = useNavigate();
   const theUser = useSelector((state) => state.user.value);
-  // const dispatch = useDispatch();
 
+  useEffect(() => {
+    // Close sidebar when clicking outside
+    const handleClickOutside = (event) => {
+      if (
+        isOpen &&
+        !event.target.closest('.sidebar') &&
+        !event.target.closest('.icon-button')
+      ) {
+        setIsOpen(false);
+      }
+    };
+
+    document.addEventListener('mousedown', handleClickOutside);
+    return () => document.removeEventListener('mousedown', handleClickOutside);
+  }, [isOpen]);
+
+  // Handle swipe to close
+  const handleTouchStart = (event) => {
+    setTouchStartX(event.touches[0].clientX);
+  };
+
+  const handleTouchMove = (event) => {
+    const touchEndX = event.touches[0].clientX;
+    if (touchStartX - touchEndX > 50) {
+      // If swiping left, close the sidebar
+      setIsOpen(false);
+    }
+  };
   useEffect(() => {
     const loginStatus = theUser.name;
     if (loginStatus) {
@@ -37,17 +62,6 @@ const Navbar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
-
-
-  const handleLogout = () => {
-    Cookies.remove('authToken'); // Correct storage removal
-    // setUser(null); // Clear the user in the context
-    dispatch(deleteUser());
-    setIsLoggedIn(false); // Update the login status in state
-    navigate('/login'); // Redirect to the login page
-    toast.success('Logged out successfully!');
-  };
-
 
   return (
     <div>
@@ -69,7 +83,15 @@ const Navbar = () => {
         {isOpen ? <CloseIcon /> : <MenuIcon />}
       </div>
 
-      <div className={`sidebar ${isOpen ? 'show-sidebar' : ''}`}>
+      {isOpen && (
+        <div className="nav-overlay" onClick={() => setIsOpen(false)}></div>
+      )}
+
+      <div
+        className={`sidebar ${isOpen ? 'show-sidebar' : ''}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+      >
         <div className="cards">
           <div className="card">
             <Link
