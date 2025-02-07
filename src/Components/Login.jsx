@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -98,6 +98,12 @@ const Login = () => {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const token = Cookies.get('authToken');
+    if (token) {
+      navigate('/dash');
+    }
+  }, []);
 
   return (
     <div className="login-component">
