@@ -46,13 +46,16 @@ const SignUp = () => {
 
     try {
       // Make a POST request to your Express server
-      const response = await fetch('http://127.0.0.1:5000/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(signupData),
-      });
+      const response = await fetch(
+        'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(signupData),
+        }
+      );
 
       const responseData = await response.json();
 
