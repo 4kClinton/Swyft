@@ -90,7 +90,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isOpen]);
 
-  const toggleDash = () => setIsOpen(!isOpen);
+  // const toggleDash = () => setIsOpen(!isOpen);
   const handleOptionChange = (vehicle) => setSelectedOption(vehicle);
   const handleLoaderChange = (e) => setIncludeLoader(e.target.checked);
   const handleNumLoadersChange = (e) => {
@@ -106,16 +106,18 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   };
 
   const handleTouchEnd = () => {
-    const swipeDistance = startY - endY; // Calculate swipe distance
-    const threshold = 50; // Minimum swipe distance to trigger action
+    if (startY === null || endY === null) return; // Ignore if values are not set
 
-    if (swipeDistance > threshold) {
-      // Swipe up
-      setIsOpen(true);
-    } else if (swipeDistance < -threshold) {
-      // Swipe down
-      setIsOpen(false);
+    const swipeDistance = startY - endY;
+    const threshold = 50; // Minimum movement required to trigger swipe
+
+    if (Math.abs(swipeDistance) >= threshold) {
+      setIsOpen(swipeDistance > 0); // Swipe up opens, Swipe down closes
     }
+
+    // Reset values to prevent false triggers
+    setStartY(null);
+    setEndY(null);
   };
 
   /*   const handleScheduleOrder = () => {
@@ -152,6 +154,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     if (!theUser || !theUser.id || !theUser.name) {
       setErrorMessage('User details are missing. Please log in again.');
+      // navigate("/")
       return;
     }
 
@@ -262,7 +265,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   if (order?.id) {
     return (
       <div ref={dashRef} className={`Dash ${isOpen ? 'open' : ''}`}>
-        <div className="notch" onClick={toggleDash}>
+        <div className="notch">
           <div className="notch-indicator"></div>
         </div>
         <h2 className="catch">Current Order Details</h2>
@@ -312,7 +315,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
     >
-      <div className="notch" onClick={toggleDash}>
+      <div className="notch">
         <div className="notch-indicator"></div>
       </div>
 
@@ -321,9 +324,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         message="Click to Open"
         onDismiss={() => setShowPopup(true)}
       /> */}
-      <h2 className="catch" onClick={toggleDash}>
-        Which means do you prefer?
-      </h2>
+      <h2 className="catch">Which means do you prefer?</h2>
       <div className="dash-content">
         {Object.entries(calculatedCosts)
           .filter(([vehicle]) => vehicle !== 'flatbed') // Exclude "flatbed" option
@@ -393,7 +394,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         >
           {isLoading ? (
             <>
-              Placing Order...
+              Finding Driver...
               <span className="order-spinner" />
             </>
           ) : (

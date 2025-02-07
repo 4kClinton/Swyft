@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
   Button,
@@ -12,9 +12,12 @@ import { useDispatch } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
 import axios from 'axios';
 
-import '../Styles/Login.css';
-import introPic from '../assets/loaders-swyft.png';
 import Cookies from 'js-cookie';
+
+import '../Styles/Login.css';
+
+import introPic from '../assets/loaders-swyft.png';
+// import Cookies from 'js-cookie';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -22,11 +25,12 @@ const Login = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
+  const [otp, setOtp] = useState('');
+  const [step, setStep] = useState(1); // 1: Login, 2: OTP Verification
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -36,12 +40,36 @@ const Login = () => {
     setLoading(true);
     setError(null);
     setSuccess(null);
-    const sanitizedEmail = email.trim().toLowerCase();
 
     try {
       const response = await axios.post(
-        'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/login',
-        { email: sanitizedEmail, password },
+        ' https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/login',
+        { email: email.trim().toLowerCase(), password },
+        { headers: { 'Content-Type': 'application/json' } }
+      );
+
+      setSuccess(response.data.message || 'OTP sent to your email');
+      setStep(2); // Move to OTP verification step
+    } catch (err) {
+      console.error(err.response);
+      setError(
+        err.response?.data?.error || 'An error occurred. Please try again.'
+      );
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtp = async (event) => {
+    event.preventDefault();
+    setLoading(true);
+    setError(null);
+    setSuccess(null);
+
+    try {
+      const response = await axios.post(
+        ' https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/verify-otp',
+        { email, otp },
         { headers: { 'Content-Type': 'application/json' } }
       );
 
@@ -59,19 +87,23 @@ const Login = () => {
       Cookies.set('status', 'user logged in!', { expires: 7 });
 
       setSuccess(message || 'Login successful!');
+
       setTimeout(() => {
-        navigate('/');
+        navigate('/dash');
       }, 3000);
     } catch (err) {
       console.error(err.response);
-
-      const errorMessage =
-        err.response?.data?.error || 'An error occurred. Please try again.';
-      setError(errorMessage);
+      setError(err.response?.data?.error || 'Invalid OTP. Please try again.');
     } finally {
       setLoading(false);
     }
   };
+  useEffect(() => {
+    const token = Cookies.get('authToken');
+    if (token) {
+      navigate('/dash');
+    }
+  }, []);
 
   return (
     <div className="login-component">
@@ -86,59 +118,81 @@ const Login = () => {
             </Typography>
           </div>
         )}
-        <form onSubmit={logIn}>
-          <input
-            placeholder="Email"
-            type="email"
-            className="login-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <Box className="input-container">
+
+        {step === 1 ? (
+          <form onSubmit={logIn}>
             <input
-              placeholder="Password"
-              type={showPassword ? 'text' : 'password'}
+              placeholder="Email"
+              type="email"
               className="login-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
               required
             />
-            <IconButton
-              aria-label="toggle password visibility"
-              onClick={togglePasswordVisibility}
-              className="password-toggle"
-            >
-              {showPassword ? <VisibilityOff /> : <Visibility />}
-            </IconButton>
-          </Box>
-
-          <button
-            color="success"
-            type="submit"
-            className="login-button"
-            disabled={loading}
-          >
-            {loading ? (
-              <CircularProgress
-                className="login-loader"
-                size={34}
-                color="#fff"
+            <Box className="input-container">
+              <input
+                placeholder="Password"
+                type={showPassword ? 'text' : 'password'}
+                className="login-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
               />
-            ) : (
-              'Log In'
-            )}
-          </button>
-        </form>
 
-        {/* Pass the necessary props to GoogleLogin  */}
-        {/* <GoogleLogin
-          setLoading={setLoading}
-          setError={setError}
-          dispatch={dispatch}
-          addUser={addUser}
-          navigate={navigate}
-        /> */}
+              <IconButton
+                aria-label="toggle password visibility"
+                onClick={togglePasswordVisibility}
+                className="password-toggle"
+              >
+                {showPassword ? <VisibilityOff /> : <Visibility />}
+              </IconButton>
+            </Box>
+
+            <button
+              type="submit"
+              className="login-button"
+              color="success"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress
+                  className="login-loader"
+                  size={34}
+                  color="#fff"
+                />
+              ) : (
+                'Log In'
+              )}
+            </button>
+          </form>
+        ) : (
+          <form onSubmit={verifyOtp}>
+            <input
+              placeholder="Enter OTP"
+              type="text"
+              className="login-input"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+            <button
+              type="submit"
+              color="success"
+              disabled={loading}
+              className="login-button"
+            >
+              {loading ? (
+                <CircularProgress
+                  className="login-loader"
+                  size={34}
+                  color="#fff"
+                />
+              ) : (
+                'Verify OTP'
+              )}
+            </button>
+          </form>
+        )}
 
         <Button
           onClick={() => navigate('/signup')}

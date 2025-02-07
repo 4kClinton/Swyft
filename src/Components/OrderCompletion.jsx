@@ -17,7 +17,7 @@ const OrderCompletion = () => {
     } else {
       // Handle case where order is not found
       console.error('No order data found in localStorage');
-      navigate('/');
+      navigate('/dash');
     }
   }, [navigate]);
 

@@ -8,7 +8,7 @@ const PrivateRoute = ({ children }) => {
 
   // Check if token exists
   if (!token) {
-    return <Navigate to="/login" />;
+    return <Navigate to="/" />;
   }
 
   try {
@@ -22,7 +22,7 @@ const PrivateRoute = ({ children }) => {
     }
   } catch (error) {
     console.error('Error decoding token:', error);
-    return <Navigate to="/login" />; // Redirect on decode error
+    return <Navigate to="/" />; // Redirect on decode error
   }
 
   // Render children if the token is valid
