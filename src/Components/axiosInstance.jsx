@@ -2,7 +2,8 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://127.0.0.1:5000/', // Backend URL
+  baseURL:
+    'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/', // Backend URL
   withCredentials: true, // Important for sending cookies
 });
 
@@ -27,7 +28,7 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          'http://127.0.0.1:5000/',
+          'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/',
           {},
           { withCredentials: true }
         );
