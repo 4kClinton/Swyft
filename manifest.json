@@ -10,7 +10,8 @@
     {
       "src": "src/assets/Icon1.png",
       "sizes": "192x192",
-      "type": "image/png"
+      "type": "image/png",
+      "purpose": "any "
     },
     {
       "src": "src/assets/Picture4.png",
