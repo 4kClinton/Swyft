@@ -9,25 +9,25 @@
   "icons": [
     {
       "src": "/icons/icon-192x192.png",
-      "sizes": "192x192",
+      "sizes": "4320x4320",
       "type": "image/png"
     },
     {
-      "src": "/icons/icon-512x512.png",
-      "sizes": "512x512",
+      "src": "src/assets/swyft-logo.png",
+      "sizes": "500x500",
       "type": "image/png"
     }
   ],
   "screenshots": [
     {
-      "src": "src/assets/swyft-logo.png",
-      "sizes": "1280x720",
+      "src": "src/assets/Picture2.png",
+      "sizes": "320x568",
       "type": "image/png",
       "form_factor": "wide",
       "label": "Swyft App Home"
     },
     {
-      "src": "src/assets/swyft-logo.png",
+      "src": "src/assets/Picture2.png",
       "sizes": "320x568",
       "type": "image/png",
       "form_factor": "narrow",
