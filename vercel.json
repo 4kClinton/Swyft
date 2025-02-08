@@ -1,8 +1,18 @@
 {
+  "headers": [
+    {
+      "source": "/manifest.json",
+      "headers": [{ "key": "Content-Type", "value": "application/json" }]
+    }
+  ],
   "rewrites": [
     {
-      "source":"/sw.js",
-      "destination":"sw.js"
+      "source": "/sw.js",
+      "destination": "/sw.js"
+    },
+    {
+      "source": "/manifest.json",
+      "destination": "/manifest.json"
     },
     {
       "source": "/:path*",
