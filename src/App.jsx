@@ -101,14 +101,11 @@ function App() {
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
-      fetch(
-        'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/check_session',
-        {
-          headers: {
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      fetch('http://127.0.0.1:5000/check_session', {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to verify token');
@@ -146,16 +143,13 @@ function App() {
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
-      fetch(
-        'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/orders',
-        {
-          method: 'GET',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      )
+      fetch('http://127.0.0.1:5000/orders', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+      })
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch rides history');
@@ -182,16 +176,13 @@ function App() {
 
   const handleOrderAccepted = async (payload) => {
     const token = Cookies.get('authTokencl1');
-    fetch(
-      `https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/driver/${payload.new.driver_id}`,
-      {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      }
-    )
+    fetch(`http://127.0.0.1:5000/driver/${payload.new.driver_id}`, {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    })
       .then((response) => {
         if (!response.ok) {
           throw new Error('Failed to fetch driver data');

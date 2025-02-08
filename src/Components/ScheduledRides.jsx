@@ -12,14 +12,11 @@ function ScheduledRides() {
   useEffect(() => {
     const scheduleRide = async () => {
       try {
-        const response = await fetch(
-          'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/schedule',
-          {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify(orderData),
-          }
-        );
+        const response = await fetch('http://127.0.0.1:5000/schedule', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(orderData),
+        });
 
         if (!response.ok) {
           const errorData = await response.json();

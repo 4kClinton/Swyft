@@ -31,21 +31,18 @@ const CancelOrderPopup = ({ onClose }) => {
   const handleCancelOrder = () => {
     const token = Cookies.get('authTokencl1');
     setIsLoading(true);
-    fetch(
-      `https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/orders/${order.id}`,
-      {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          status: 'cancelled',
-          cancellation_reason:
-            selectedReason === 'Other' ? otherReason : selectedReason,
-        }),
-      }
-    )
+    fetch(`http://127.0.0.1:5000/orders/${order.id}`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+      body: JSON.stringify({
+        status: 'cancelled',
+        cancellation_reason:
+          selectedReason === 'Other' ? otherReason : selectedReason,
+      }),
+    })
       .then((response) => {
         if (response.ok) {
           dispatch(deleteOrder());

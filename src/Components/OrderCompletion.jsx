@@ -39,7 +39,7 @@ const OrderCompletion = () => {
 
     try {
       const response = await fetch(
-        `https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/rating/driver/${order.driver_id}`,
+        `http://127.0.0.1:5000/rating/driver/${order.driver_id}`,
         {
           method: 'POST',
           headers: {
