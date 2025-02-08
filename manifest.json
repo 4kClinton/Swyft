@@ -17,5 +17,21 @@
       "sizes": "512x512",
       "type": "image/png"
     }
+  ],
+  "screenshots": [
+    {
+      "src": "src/assets/swyft-logo.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Swyft App Home"
+    },
+    {
+      "src": "src/assets/swyft-logo.png",
+      "sizes": "320x568",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Swyft App Home (Mobile)"
+    }
   ]
 }
