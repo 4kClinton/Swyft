@@ -2,7 +2,7 @@
   "name": "Swyft",
   "short_name": "Swyft",
   "description": "Bulk transportation & moving services",
-  "start_url": "/index.html",
+  "start_url": "/",
   "display": "standalone",
   "background_color": "#ffffff",
   "theme_color": "#000000",
