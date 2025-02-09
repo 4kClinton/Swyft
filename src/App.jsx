@@ -144,7 +144,9 @@ function App() {
           dispatch(saveOrders(data));
           const currentOrder = data.filter(
             (order) =>
-              order.status !== 'completed' && order.status !== 'cancelled'
+              order.status !== 'completed' &&
+              order.status !== 'cancelled' &&
+              order.status != 'Pending'
           );
           dispatch(saveOrder(currentOrder[0]));
           if (currentOrder.length > 0) {
