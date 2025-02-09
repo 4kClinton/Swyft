@@ -151,6 +151,8 @@ function App() {
           );
           dispatch(saveOrder(currentOrder[0]));
           if (currentOrder.length > 0) {
+            console.log(currentOrder);
+
             fetch(
               `https://swyft-backend-client-nine.vercel.app/driver/${currentOrder[0]?.driver_id}`,
               {
