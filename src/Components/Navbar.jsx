@@ -12,6 +12,7 @@ import { useSelector } from 'react-redux';
 import 'react-toastify/dist/ReactToastify.css';
 import profile from '../assets/profile.jpeg';
 import '../Styles/Navbar.css';
+import { HomeIcon } from 'lucide-react';
 
 // import { deleteUser } from '../Redux/Reducers/UserSlice.js';
 
@@ -151,6 +152,23 @@ const Navbar = () => {
             <div className="card">
               <h3>Account Options</h3>
               <ul className="menu-options">
+                <Link
+                  onClick={toggleSidebar}
+                  to="/dash"
+                  style={{
+                    backgroundColor: 'var(--primary-color)',
+                    padding: '10px',
+                    borderRadius: '10px',
+                    textDecoration: 'none',
+                    color: 'inherit',
+                    display: 'flex',
+                    alignItems: 'center',
+                  }}
+                >
+                  <HomeIcon style={{ color: '#18b700', marginRight: '8px' }} />
+                  Home
+                </Link>
+
                 <Link
                   onClick={toggleSidebar}
                   to="/ridesHistory"

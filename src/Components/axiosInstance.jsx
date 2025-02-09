@@ -31,8 +31,7 @@ axiosInstance.interceptors.response.use(
           {},
           { withCredentials: true }
         );
-        Cookies.set('authToken', data.access_token, {
-          expires: 7,
+        Cookies.set('authTokencl1', data.access_token, {
           secure: true,
           sameSite: 'Strict',
         }); // Update Access Token

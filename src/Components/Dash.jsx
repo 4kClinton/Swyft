@@ -91,7 +91,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   }, [isOpen]);
 
   // const toggleDash = () => setIsOpen(!isOpen);
-  const handleOptionChange = (vehicle) => setSelectedOption(vehicle);
+  const handleOptionChange = (vehicle) => {
+    if (isOpen === false) {
+      setIsOpen(true);
+    }
+
+    setSelectedOption(vehicle);
+  };
   const handleLoaderChange = (e) => setIncludeLoader(e.target.checked);
   const handleNumLoadersChange = (e) => {
     const value = parseInt(e.target.value);
@@ -173,7 +179,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     setIsLoading(true); // Start loading state
 
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
 
     try {
       const response = await fetch(
@@ -216,7 +222,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       if (!navigated) {
         navigate('/driverDetails');
         // Set the item in localStorage
-        Cookies.set('NavigateToDriverDetails', 'true', { expires: 7 });
+        Cookies.set('NavigateToDriverDetails', 'true');
       }
     }
     if (!order?.id) {
@@ -270,7 +276,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
   if (order?.id) {
     return (
-      <div ref={dashRef} className={`Dash ${isOpen ? 'open' : ''}`}>
+      <div
+        ref={dashRef}
+        className={`Dash ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <div className="notch">
           <div className="notch-indicator"></div>
         </div>

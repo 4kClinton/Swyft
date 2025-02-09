@@ -3,23 +3,26 @@ import Ratings from './Rating';
 import '../Styles/orderCompletion.css';
 import { useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
+import { useSelector } from 'react-redux';
 
 const OrderCompletion = () => {
   const [rating, setRating] = useState(0);
-  const [order, setOrder] = useState(null); // Add order state
+
   const [comment, setComment] = useState('');
+  const [latestOrder, setLatestOrder] = useState({});
   const navigate = useNavigate();
+  const orders = useSelector((state) => state.ordersHistory.value);
 
   useEffect(() => {
-    const storedOrder = Cookies.get('orderData');
-    if (storedOrder) {
-      setOrder(JSON.parse(storedOrder));
-    } else {
-      // Handle case where order is not found
-      console.error('No order data found in localStorage');
+    if (!orders[0]) {
       navigate('/dash');
+    } else {
+      const sortedOrders = [...orders].sort(
+        (a, b) => new Date(b.time).getTime() - new Date(a.time).getTime()
+      );
+      setLatestOrder(sortedOrders[0]);
     }
-  }, [navigate]);
+  }, [orders]);
 
   const handleRatingChange = (newRating) => {
     setRating(newRating);
@@ -35,11 +38,11 @@ const OrderCompletion = () => {
       return;
     }
 
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
 
     try {
       const response = await fetch(
-        `https://swyft-backend-client-nine.vercel.app/rating/driver/${order.driver_id}`,
+        `https://swyft-backend-client-nine.vercel.app/rating/driver/${latestOrder.driver_id}`,
         {
           method: 'POST',
           headers: {
@@ -56,15 +59,13 @@ const OrderCompletion = () => {
         throw new Error('Failed to submit rating');
       }
 
-      Cookies.remove('orderData');
-      Cookies.remove('driverData');
       navigate('/');
     } catch (error) {
       console.error('Error submitting rating:', error);
     }
   };
 
-  if (!order) {
+  if (!latestOrder) {
     return <div>Loading...</div>;
   }
 
@@ -75,13 +76,14 @@ const OrderCompletion = () => {
 
       <div className="order-details">
         <p>
-          <strong>Vehicle:</strong> {order.vehicle_type}
+          <strong>Vehicle: </strong> {latestOrder.vehicle_type}
+        </p>
+
+        <p>
+          <strong>Distance: </strong> {latestOrder.distance} km
         </p>
         <p>
-          <strong>Driver:</strong> {order.driver_name}
-        </p>
-        <p>
-          <strong>Distance:</strong> {order.distance} km
+          <strong>Cost: </strong>Ksh. {latestOrder.total_cost}
         </p>
       </div>
 

@@ -76,16 +76,15 @@ const Login = () => {
 
       const { access_token, user, message } = response.data;
 
-      Cookies.set('authToken', access_token, {
-        expires: 7,
+      Cookies.set('authTokencl1', access_token, {
         secure: true,
         sameSite: 'Strict',
       }); // Set cookie with options
       dispatch(addUser(user));
-      Cookies.set('message', message, { expires: 7 });
+      Cookies.set('message', message);
 
-      Cookies.set('user', JSON.stringify(user), { expires: 7 });
-      Cookies.set('status', 'user logged in!', { expires: 7 });
+      Cookies.set('user', JSON.stringify(user));
+      Cookies.set('status', 'user logged in!');
 
       setSuccess(message || 'Login successful!');
 

@@ -24,7 +24,7 @@ const Profile = () => {
   }, [user]);
 
   function handleLogout() {
-    Cookies.remove('authToken');
+    Cookies.remove('authTokencl1');
     window.location.href = '/';
   }
 
@@ -38,7 +38,7 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
     try {
       const response = await fetch(
         'https://swyft-backend-client-nine.vercel.app/customer/profile',

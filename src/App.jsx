@@ -29,6 +29,7 @@ function App() {
 
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.user.value);
+  const [updateOrders, setUpdateOrders] = useState(false);
 
   const navigate = useNavigate();
 
@@ -99,7 +100,7 @@ function App() {
   }, [customer.id, dispatch]);
 
   useEffect(() => {
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
     if (token) {
       fetch('https://swyft-backend-client-nine.vercel.app/check_session', {
         headers: {
@@ -115,22 +116,6 @@ function App() {
 
         .then((userData) => {
           dispatch(addUser(userData));
-
-          const storedDriverData = Cookies.get('driverData');
-          const storedOrderData = Cookies.get('orderData');
-
-          const orderData = JSON.parse(storedOrderData);
-
-          if (
-            orderData?.status !== 'completed' ||
-            orderData?.status !== 'cancelled'
-          ) {
-            dispatch(saveDriver(JSON.parse(storedDriverData)));
-            dispatch(saveOrder(orderData));
-          } else {
-            Cookies.remove('driverData');
-            Cookies.remove('orderData');
-          }
         })
 
         .catch((error) => {
@@ -140,7 +125,7 @@ function App() {
   }, [dispatch]);
 
   useEffect(() => {
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
     if (token) {
       fetch('https://swyft-backend-client-nine.vercel.app/orders', {
         method: 'GET',
@@ -157,13 +142,39 @@ function App() {
         })
         .then((data) => {
           dispatch(saveOrders(data));
+          const currentOrder = data.filter(
+            (order) =>
+              order.status !== 'completed' && order.status !== 'cancelled'
+          );
+          dispatch(saveOrder(currentOrder[0]));
+          if (currentOrder.length > 0) {
+            fetch(
+              `https://swyft-backend-client-nine.vercel.app/driver/${currentOrder[0]?.driver_id}`,
+              {
+                method: 'GET',
+                headers: {
+                  'Content-Type': 'application',
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            )
+              .then((response) => {
+                if (!response.ok) {
+                  throw new Error('Failed to fetch customer data');
+                }
+                return response.json();
+              })
+              .then((driverData) => {
+                dispatch(saveDriver(driverData));
+              });
+          }
         })
         .catch((error) => {
           console.error('Error fetching rides history:', error);
         });
     }
     //eslint-disable-next-line
-  }, []);
+  }, [updateOrders]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -174,7 +185,7 @@ function App() {
   }, []);
 
   const handleOrderAccepted = async (payload) => {
-    const token = Cookies.get('authToken');
+    const token = Cookies.get('authTokencl1');
     fetch(
       `https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,
       {
@@ -194,8 +205,7 @@ function App() {
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
-        Cookies.set('driverData', JSON.stringify(driverData), { expires: 7 });
-        Cookies.set('orderData', JSON.stringify(payload.new), { expires: 7 });
+
         // Show customer an alert or update UI
       })
       .catch((error) => {
@@ -218,6 +228,7 @@ function App() {
   const handleRideCompleted = () => {
     dispatch(deleteOrder());
     dispatch(removeDriver());
+    setUpdateOrders((prev) => !prev);
     Cookies.remove('NavigateToDriverDetails');
 
     // Navigate to the Rating Page after ride completion

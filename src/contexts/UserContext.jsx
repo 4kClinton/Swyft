@@ -30,8 +30,7 @@ export const UserProvider = ({ children }) => {
   }, []);
 
   const logIn = (accessToken) => {
-    Cookies.set('authToken', accessToken, {
-      expires: 7,
+    Cookies.set('authTokencl1', accessToken, {
       secure: true,
       sameSite: 'Strict',
     });

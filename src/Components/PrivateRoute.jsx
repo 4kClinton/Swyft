@@ -19,7 +19,6 @@ const PrivateRoute = ({ children }) => {
     if (Date.now() >= exp * 1000) {
       Cookies.remove('accessToken'); // Clear the token from storage
       return <Navigate to="/login" />;
-
     }
   } catch (error) {
     console.error('Error decoding token:', error);

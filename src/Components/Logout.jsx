@@ -7,7 +7,6 @@ const Logout = () => {
       await axiosInstance.post('/logout');
       Cookies.remove('accessToken'); // Clear tokens
       window.location.href = '/login';
-
     } catch (err) {
       console.error('Logout failed', err);
     }
