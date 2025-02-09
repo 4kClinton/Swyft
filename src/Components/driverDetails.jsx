@@ -22,13 +22,16 @@ const DriverDetails = () => {
   useEffect(() => {
     if (order?.status === 'Accepted' && !driver?.id) {
       const token = Cookies.get('authTokencl1');
-      fetch(`http://127.0.0.1:5000/driver/${order.driver_id}`, {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-      })
+      fetch(
+        `https://swyft-backend-client-nine.vercel.app/driver/${order.driver_id}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      )
         .then((response) => {
           if (!response.ok) {
             throw new Error('Failed to fetch driver data');
@@ -37,7 +40,7 @@ const DriverDetails = () => {
         })
         .then((driverData) => {
           dispatch(saveDriver(driverData));
-          Cookies.set('driverData', JSON.stringify(driverData), { expires: 7 });
+          Cookies.set('driverData', JSON.stringify(driverData));
         })
         .catch((error) => {
           console.error('Error fetching driver data:', error);

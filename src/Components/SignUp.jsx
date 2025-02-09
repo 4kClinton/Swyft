@@ -46,13 +46,16 @@ const SignUp = () => {
 
     try {
       // Make a POST request to your Express server
-      const response = await fetch('http://127.0.0.1:5000/signup', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(signupData),
-      });
+      const response = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/signup',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify(signupData),
+        }
+      );
 
       const responseData = await response.json();
 
@@ -72,10 +75,9 @@ const SignUp = () => {
         phone: phoneNumber,
         email,
       };
-      Cookies.set('user', JSON.stringify(userData), { expires: 7 });
+      Cookies.set('user', JSON.stringify(userData));
 
       Cookies.set('authTokencl1', responseData.access_token, {
-        expires: 7,
         secure: true,
         sameSite: 'Strict',
       }); // Set cookie with options

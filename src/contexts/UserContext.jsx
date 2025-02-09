@@ -31,7 +31,6 @@ export const UserProvider = ({ children }) => {
 
   const logIn = (accessToken) => {
     Cookies.set('authTokencl1', accessToken, {
-      expires: 7,
       secure: true,
       sameSite: 'Strict',
     });

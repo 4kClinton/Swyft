@@ -44,7 +44,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        ' http://127.0.0.1:5000/login',
+        ' https://swyft-backend-client-nine.vercel.app/login',
         { email: email.trim().toLowerCase(), password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -69,7 +69,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        ' http://127.0.0.1:5000/verify-otp',
+        ' https://swyft-backend-client-nine.vercel.app/verify-otp',
         { email, otp },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -77,15 +77,14 @@ const Login = () => {
       const { access_token, user, message } = response.data;
 
       Cookies.set('authTokencl1', access_token, {
-        expires: 7,
         secure: true,
         sameSite: 'Strict',
       }); // Set cookie with options
       dispatch(addUser(user));
-      Cookies.set('message', message, { expires: 7 });
+      Cookies.set('message', message);
 
-      Cookies.set('user', JSON.stringify(user), { expires: 7 });
-      Cookies.set('status', 'user logged in!', { expires: 7 });
+      Cookies.set('user', JSON.stringify(user));
+      Cookies.set('status', 'user logged in!');
 
       setSuccess(message || 'Login successful!');
 

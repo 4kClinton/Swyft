@@ -22,7 +22,6 @@ import Cookies from 'js-cookie';
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
-  const user = useSelector((state) => state.user.value);
 
   const navigate = useNavigate();
 
@@ -53,12 +52,6 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     lorry: 310,
     flatbed: 350,
   };
-
-  useEffect(() => {
-    if (!user?.id) {
-      navigate('/');
-    }
-  }, [user]);
 
   useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
@@ -98,7 +91,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   }, [isOpen]);
 
   // const toggleDash = () => setIsOpen(!isOpen);
-  const handleOptionChange = (vehicle) => setSelectedOption(vehicle);
+  const handleOptionChange = (vehicle) => {
+    if (isOpen === false) {
+      setIsOpen(true);
+    }
+
+    setSelectedOption(vehicle);
+  };
   const handleLoaderChange = (e) => setIncludeLoader(e.target.checked);
   const handleNumLoadersChange = (e) => {
     const value = parseInt(e.target.value);
@@ -183,14 +182,17 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     const token = Cookies.get('authTokencl1');
 
     try {
-      const response = await fetch('http://127.0.0.1:5000/orders', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(orderData),
-      });
+      const response = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/orders',
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(orderData),
+        }
+      );
 
       if (!response.ok) {
         const errorResult = await response.json();
@@ -220,7 +222,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       if (!navigated) {
         navigate('/driverDetails');
         // Set the item in localStorage
-        Cookies.set('NavigateToDriverDetails', 'true', { expires: 7 });
+        Cookies.set('NavigateToDriverDetails', 'true');
       }
     }
     if (!order?.id) {
@@ -266,9 +268,19 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowCancelPopup(false);
   };
 
+  useEffect(() => {
+    if (!theUser?.id) {
+      navigate('/');
+    }
+  }, [theUser]);
+
   if (order?.id) {
     return (
-      <div ref={dashRef} className={`Dash ${isOpen ? 'open' : ''}`}>
+      <div
+        ref={dashRef}
+        className={`Dash ${isOpen ? 'open' : ''}`}
+        onClick={() => setIsOpen(!isOpen)}
+      >
         <div className="notch">
           <div className="notch-indicator"></div>
         </div>

@@ -15,7 +15,6 @@ const Profile = () => {
   const [error, setError] = useState(null); // Error state
   const [isEditing, setIsEditing] = useState(false); // Editing state
   const [formData, setFormData] = useState({ name: '', email: '', phone: '' }); // Form data for editing
-  console.log(user);
 
   useEffect(() => {
     setProfile(user);
@@ -41,14 +40,17 @@ const Profile = () => {
   const handleSave = async () => {
     const token = Cookies.get('authTokencl1');
     try {
-      const response = await fetch('http://127.0.0.1:5000/customer/profile', {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify(formData),
-      });
+      const response = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/customer/profile',
+        {
+          method: 'PUT',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+          },
+          body: JSON.stringify(formData),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Failed to save changes');

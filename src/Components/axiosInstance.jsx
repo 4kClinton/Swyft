@@ -2,7 +2,7 @@ import axios from 'axios';
 import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
-  baseURL: 'http://127.0.0.1:5000/', // Backend URL
+  baseURL: 'https://swyft-backend-client-nine.vercel.app/', // Backend URL
   withCredentials: true, // Important for sending cookies
 });
 
@@ -27,12 +27,11 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          'http://127.0.0.1:5000/',
+          'https://swyft-backend-client-nine.vercel.app/',
           {},
           { withCredentials: true }
         );
         Cookies.set('authTokencl1', data.access_token, {
-          expires: 7,
           secure: true,
           sameSite: 'Strict',
         }); // Update Access Token
