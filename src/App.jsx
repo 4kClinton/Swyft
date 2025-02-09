@@ -146,7 +146,8 @@ function App() {
             (order) =>
               order.status !== 'completed' &&
               order.status !== 'cancelled' &&
-              order.status != 'Pending'
+              order.status != 'Pending' &&
+              order.status != 'Declined'
           );
           dispatch(saveOrder(currentOrder[0]));
           if (currentOrder.length > 0) {
