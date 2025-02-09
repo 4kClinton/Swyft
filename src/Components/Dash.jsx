@@ -262,6 +262,12 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowCancelPopup(false);
   };
 
+  useEffect(() => {
+    if (!theUser?.id) {
+      navigate('/');
+    }
+  }, [theUser]);
+
   if (order?.id) {
     return (
       <div ref={dashRef} className={`Dash ${isOpen ? 'open' : ''}`}>

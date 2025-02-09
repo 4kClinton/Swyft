@@ -47,7 +47,7 @@ const SignUp = () => {
     try {
       // Make a POST request to your Express server
       const response = await fetch(
-        'https://swyft-backend-client-git-nelson-4kclintons-projects.vercel.app/signup',
+        'https://swyft-backend-client-nine.vercel.app/signup',
         {
           method: 'POST',
           headers: {
