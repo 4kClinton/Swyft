@@ -324,6 +324,20 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         message="Click to Open"
         onDismiss={() => setShowPopup(true)}
       /> */}
+
+      {/* <div className="classicOptions">
+        <div className="movepicDiv">
+          <img className="movePic" src={movePic} alt="" />
+          <p className="productTitle">Swyft Move</p>
+          <span>Book Movers</span>
+        </div>
+        <div className="movepicDiv">
+          <img className="movePic" src={movePic} alt="" />
+          <p className="productTitle">Swyft Move</p>
+          <span>Book Movers</span>
+        </div>
+      </div> */}
+
       <h2 className="catch">Which means do you prefer?</h2>
       <div className="dash-content">
         {Object.entries(calculatedCosts)
