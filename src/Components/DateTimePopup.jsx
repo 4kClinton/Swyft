@@ -126,13 +126,13 @@ const styles = {
     textAlign: 'center',
     zIndex: 10002, // Ensure the popup content is on top of overlay
     position: 'relative',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   heading: {
     fontSize: '1.5em',
     color: '#333',
     marginBottom: '20px',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   input: {
     width: '100%',
@@ -153,7 +153,7 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   closeButton: {
     marginTop: '10px',
@@ -165,23 +165,23 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   confirmation: {
     textAlign: 'center',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   confirmHeading: {
     fontSize: '1.2em',
     color: '#333',
     marginBottom: '10px',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   text: {
     fontSize: '1em',
     color: '#666',
     margin: '5px 0',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
   backButton: {
     marginTop: '10px',
@@ -193,6 +193,6 @@ const styles = {
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',
-    fontFamily: 'Montserat',
+    fontFamily: 'Montserrat',
   },
 };
