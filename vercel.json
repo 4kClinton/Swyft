@@ -1,5 +1,6 @@
 {
   "headers": [
+
     {
       "source": "/manifest.json",
       "headers": [{ "key": "Content-Type", "value": "application/json" }]
@@ -16,8 +17,8 @@
       "destination": "/manifest.json"
     },
     {
-      "source": "/:path*",
-      "destination": "/index.html"
+      "source": "/(.*)",
+      "destination": "/"
     }
   ]
 }
