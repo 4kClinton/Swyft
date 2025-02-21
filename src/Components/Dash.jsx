@@ -53,11 +53,26 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     flatbed: 350,
   };
 
+  const decayFactor = 0.005;
+  const floorRate = 50;
+  const shortDistanceRate = 230;
+
+  const calculateRate = (baseRate, distance) => {
+    if (distance < 5) {
+      return shortDistanceRate;
+    } else if (distance < 10) {
+      return baseRate * 1, 2;
+    } else {
+      return Math.max(baseRate * Math.exp(-decayFactor * distance), floorRate);
+    }
+  };
+
   useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
-      (acc, [vehicle, rate]) => {
+      (acc, [vehicle, baseRate]) => {
+        const adjustedRate = calculateRate(baseRate, distance);
         // Calculate base cost
-        let calculatedCost = rate * distance;
+        let calculatedCost = adjustedRate * distance;
 
         // Apply specific minimum logic for flatbed
         if (vehicle === 'flatbed') {
