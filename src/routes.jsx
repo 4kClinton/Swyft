@@ -2,7 +2,7 @@ import App from './App';
 import Map from './Components/Map';
 import Login from './Components/Login';
 import Signup from './Components/SignUp';
-
+import OrderConfirmation from './Components/OrderDetailsConfirmation.jsx';
 import RidesHistory from './Components/MyRides';
 
 import ScheduledRides from './Components/ScheduledRides';
@@ -29,6 +29,7 @@ const routes = [
       { path: '/track', element: <TripTracker /> },
       { path: '/findhouse', element: <FindHouse /> },
       { path: '/rate-driver', element: <OrderCompletion /> },
+      { path: '/confirmOrder', element: <OrderConfirmation /> },
     ],
   },
 ];

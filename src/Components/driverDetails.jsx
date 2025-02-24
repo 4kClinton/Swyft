@@ -3,7 +3,8 @@ import profilePic from '../assets/profilePic.jpeg';
 import pickup from '../assets/pickup.png';
 import miniTruck from '../assets/miniTruck.png';
 import flatbed from '../assets/flatbed.png';
-import lorry from '../assets/lorry.png';
+
+import Van from '../assets/van.jpg';
 import { FaPhoneAlt } from 'react-icons/fa'; // Importing the phone icon
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
 import { useDispatch, useSelector } from 'react-redux';
@@ -66,8 +67,8 @@ const DriverDetails = () => {
         return miniTruck;
       case 'flatbed':
         return flatbed;
-      case 'lorry':
-        return lorry;
+      case 'van':
+        return Van;
       default:
         return null; // Or return a default image
     }
@@ -106,7 +107,7 @@ const DriverDetails = () => {
             style={{ marginRight: '20px', color: '#ffff' }}
           />
           <h2 className="phoneNumber" style={{ color: '#ffff' }}>
-            {driver.phone}
+            Call Driver
           </h2>
         </a>
       </div>

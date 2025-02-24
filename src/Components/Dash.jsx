@@ -10,9 +10,16 @@ import SuccessPopup from './SuccessPopup'; // New SuccessPopup
 import {
   FaTruckPickup,
   FaTruck,
-  FaTruckMoving,
+  FaShuttleVan,
   FaCheckCircle,
 } from 'react-icons/fa';
+
+import { GiTowTruck } from 'react-icons/gi';
+// import { MdLocalShipping } from "react-icons/md";
+import { PiTruck } from 'react-icons/pi'; // For larger trucks
+
+import { PiVan } from 'react-icons/pi'; // For TukTuk - Pickup
+
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CancelOrderPopup from './CancelOrderPopup';
@@ -38,6 +45,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [startY, setStartY] = useState(0);
   const [endY, setEndY] = useState(0);
   const order = useSelector((state) => state.currentOrder.value);
+  const Price = selectedOption ? calculatedCosts[selectedOption] : 0;
 
   const theUser = useSelector((state) => state.user.value);
 
@@ -49,8 +57,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const rates = {
     pickup: 160,
     miniTruck: 230,
-    lorry: 310,
+    van: 280,
     flatbed: 350,
+    'Car Rescue': 400,
+    tukTuk: 100,
+    '10 Tonne Lorry': 500,
+    '18 Tonne Lorry': 600,
+    Tipper: 850,
   };
 
   const decayFactor = 0.005;
@@ -84,7 +97,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
         // Add loader costs if applicable
         acc[vehicle] = Math.round(
-          calculatedCost + (includeLoader ? 300 * numLoaders : 0)
+          calculatedCost + (includeLoader ? 600 * numLoaders : 0)
         );
 
         return acc;
@@ -118,6 +131,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     const value = parseInt(e.target.value);
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
+
   const handleTouchStart = (e) => {
     setStartY(e.touches[0].clientY); // Capture the starting Y position
   };
@@ -130,9 +144,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     if (startY === null || endY === null) return; // Ignore if values are not set
 
     const swipeDistance = startY - endY;
-    const threshold = 50; // Minimum movement required to trigger swipe
+    const threshold = 120; // Adjusted for taller Dash (increase if needed)
+    const deadZone = 30; // Ignores minor accidental swipes
 
-    if (Math.abs(swipeDistance) >= threshold) {
+    if (
+      Math.abs(swipeDistance) > deadZone &&
+      Math.abs(swipeDistance) >= threshold
+    ) {
       setIsOpen(swipeDistance > 0); // Swipe up opens, Swipe down closes
     }
 
@@ -141,6 +159,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setEndY(null);
   };
 
+  console.log(calculatedCosts);
   /*   const handleScheduleOrder = () => {
     if (!scheduleDateTime) {
       setErrorMessage('Please select a date and time for scheduling.');
@@ -175,59 +194,26 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
     if (!theUser || !theUser.id || !theUser.name) {
       setErrorMessage('User details are missing. Please log in again.');
-      // navigate("/")
       return;
     }
 
     // Construct the order data including user details
     const orderData = {
-      id: theUser.id, // User ID
+      id: theUser.id,
       vehicle: selectedOption,
-      distance,
+      distance: parseFloat(distance).toFixed(3), // Round distance
       loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
-      totalCost: calculatedCosts[selectedOption],
+      loaderCost: includeLoader ? numLoaders * 600 : 0,
+      totalCost: Price,
       userLocation,
       destination,
       time: new Date().toLocaleString(),
     };
 
-    setIsLoading(true); // Start loading state
-
-    const token = Cookies.get('authTokencl1');
-
-    try {
-      const response = await fetch(
-        'https://swyft-backend-client-nine.vercel.app/orders',
-        {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: `Bearer ${token}`,
-          },
-          body: JSON.stringify(orderData),
-        }
-      );
-
-      if (!response.ok) {
-        const errorResult = await response.json();
-        throw new Error(
-          errorResult.error || 'Failed to place order, server error'
-        );
-      }
-
-      setShowSuccessPopup(true);
-
-      resetDash();
-
-      // Reset the dashboard after a successful order
-    } catch (error) {
-      setIsLoading(false);
-      setShowSuccessPopup(false);
-      console.error('Error while placing order:', error);
-      setErrorMessage(error.message); // Show error message
-    }
+    // Navigate to OrderConfirmation and pass orderData
+    navigate('/confirmOrder', { state: { orderData } });
   };
+
   useEffect(() => {
     if (order?.status === 'Accepted') {
       //check if the driver details has been shown before
@@ -253,14 +239,14 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     //eslint-disable-next-line
   }, [order]);
 
-  const resetDash = () => {
-    // setSelectedOption("");
-    setIncludeLoader(false);
-    setNumLoaders(1);
-    setCalculatedCosts(0);
-    setErrorMessage('');
-    setScheduleDateTime('');
-  };
+  // const resetDash = () => {
+  //   // setSelectedOption("");
+  //   setIncludeLoader(false);
+  //   setNumLoaders(1);
+  //   setCalculatedCosts(0);
+  //   setErrorMessage('');
+  //   setScheduleDateTime('');
+  // };
 
   const goBackToDash = () => {
     // resetDash();
@@ -283,11 +269,15 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowCancelPopup(false);
   };
 
-  useEffect(() => {
-    if (!theUser?.id) {
-      navigate('/');
-    }
-  }, [theUser]);
+  useEffect(
+    () => {
+      if (!theUser?.id) {
+        navigate('/');
+      }
+    },
+    [theUser],
+    [navigate]
+  );
 
   if (order?.id) {
     return (
@@ -369,15 +359,81 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         </div>
       </div> */}
 
-      <h2 className="catch">Which means do you prefer?</h2>
+      <h2 className="catch">What’s Your Load Today?</h2>
       <div className="dash-content">
+        {/* Mini Cargo */}
+        <h2>Mini Cargo</h2>
         {Object.entries(calculatedCosts)
-          .filter(([vehicle]) => vehicle !== 'flatbed') // Exclude "flatbed" option
+          .filter(([vehicle]) => ['pickup', 'tukTuk'].includes(vehicle))
           .map(([vehicle, cost]) => {
             const Icon = {
               pickup: FaTruckPickup,
+              tukTuk: PiVan,
+            }[vehicle];
+            return (
+              <label
+                key={vehicle}
+                className="Option"
+                onClick={() => handleOptionChange(vehicle)}
+              >
+                <div
+                  className={`checkbox ${
+                    selectedOption === vehicle ? 'selected' : ''
+                  }`}
+                >
+                  <Icon size={24} />
+                </div>
+                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{' '}
+                {distance > 0 ? cost : '0'}
+              </label>
+            );
+          })}
+
+        {/* Medium Cargo */}
+        <h2>Medium Cargo</h2>
+        {Object.entries(calculatedCosts)
+          .filter(([vehicle]) => ['miniTruck', 'van'].includes(vehicle))
+          .map(([vehicle, cost]) => {
+            const Icon = {
               miniTruck: FaTruck,
-              lorry: FaTruckMoving,
+              van: FaShuttleVan,
+            }[vehicle];
+            return (
+              <label
+                key={vehicle}
+                className="Option"
+                onClick={() => handleOptionChange(vehicle)}
+              >
+                <div
+                  className={`checkbox ${
+                    selectedOption === vehicle ? 'selected' : ''
+                  }`}
+                >
+                  <Icon size={24} />
+                </div>
+                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{' '}
+                {distance > 0 ? cost : '0'}
+              </label>
+            );
+          })}
+
+        {/* Bulk Cargo */}
+        <h2>Bulk Cargo</h2>
+        {Object.entries(calculatedCosts)
+          .filter(([vehicle]) =>
+            [
+              'Car Rescue',
+              '10 Tonne Lorry',
+              '18 Tonne Lorry',
+              'Tipper',
+            ].includes(vehicle)
+          )
+          .map(([vehicle, cost]) => {
+            const Icon = {
+              'Car Rescue': GiTowTruck,
+              '10 Tonne Lorry': PiTruck,
+              '18 Tonne Lorry': PiTruck,
+              Tipper: PiTruck,
             }[vehicle];
             return (
               <label
@@ -408,7 +464,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             checked={includeLoader}
             onChange={handleLoaderChange}
           />
-          Need a loader for unloading? (Ksh 300 per loader)
+          Need a loader for unloading? (Ksh 600 per loader)
         </label>
         {includeLoader && (
           <input
@@ -427,6 +483,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
       <div className="order-group">
         {/* Confirm and Schedule */}
+
         <button
           className="order-button"
           onClick={confirmOrder}
