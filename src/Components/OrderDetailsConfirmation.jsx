@@ -1,5 +1,6 @@
 import '../Styles/OrderDetailsConfirmation.css';
 import { useState, useEffect } from 'react';
+import { CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
 import Cookies from 'js-cookie';
 
@@ -41,12 +42,9 @@ export default function OrderConfirmation() {
   // Use isFindingDriver to render the FindDriver component
   const [isFindingDriver, setIsFindingDriver] = useState(false);
 
-  const [destinationAddress, setDestinationAddress] = useState(
-    'Fetching address...'
-  );
-  const [userLocationAddress, setUserLocationAddress] = useState(
-    'Fetching address...'
-  );
+  // Initialize address states to null so we can conditionally render the loader
+  const [destinationAddress, setDestinationAddress] = useState(null);
+  const [userLocationAddress, setUserLocationAddress] = useState(null);
 
   // Retrieve order details from state
   const orderData = location.state?.orderData;
@@ -181,11 +179,12 @@ export default function OrderConfirmation() {
   // List of package options
   const packageOptions = [
     'Furniture',
-    'Perishable goods',
+    'Household items',
     'Crates or boxes',
+    'Construction Materials',
+    'Perishable goods',
     'Container',
     'Medical Supplies',
-    'Household items',
     'Other',
   ];
 
@@ -237,9 +236,13 @@ export default function OrderConfirmation() {
                     display: 'inline-block',
                   }}
                 ></span>
-                <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
-                  {userLocationAddress.split(' ').slice(0, 7).join(' ')}
-                </p>
+                {userLocationAddress ? (
+                  <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
+                    {userLocationAddress.split(' ').slice(0, 7).join(' ')}
+                  </p>
+                ) : (
+                  <CircularProgress size={20} />
+                )}
               </div>
               <div
                 style={{
@@ -273,9 +276,13 @@ export default function OrderConfirmation() {
                     display: 'inline-block',
                   }}
                 ></span>
-                <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
-                  {destinationAddress.split(' ').slice(0, 6).join(' ')}
-                </p>
+                {destinationAddress ? (
+                  <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
+                    {destinationAddress.split(' ').slice(0, 6).join(' ')}
+                  </p>
+                ) : (
+                  <CircularProgress size={20} />
+                )}
               </div>
             </div>
           </div>
