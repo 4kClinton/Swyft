@@ -2,11 +2,26 @@ import { useState, useEffect, useRef, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../Styles/findDriver.css';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteOrder } from '../Redux/Reducers/CurrentOrderSlice';
+import { removeDriver } from '../Redux/Reducers/DriverDetailsSlice';
+import Cookies from 'js-cookie';
+``;
 
 const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   const navigate = useNavigate();
   const [noDriverFound, setNoDriverFound] = useState(false);
   const [showPopup, setShowPopup] = useState(false);
+  const driver = useSelector((state) => state.driverDetails.value);
+  const order = useSelector((state) => state.currentOrder.value);
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    if (driver?.id) {
+      if (noDriverTimerRef.current) clearTimeout(noDriverTimerRef.current);
+      onDriverFound();
+    }
+  }, [driver]);
 
   // Refs to store timers so they can be cleared if needed.
   const driverTimerRef = useRef(null);
@@ -21,23 +36,37 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
     setNoDriverFound(false);
     setShowPopup(false);
 
-    // Simulate driver found after 5 seconds.
-    driverTimerRef.current = setTimeout(() => {
-      if (!noDriverFound && onDriverFound) {
-        // Clear the no-driver timer to prevent later error triggers.
-        if (noDriverTimerRef.current) clearTimeout(noDriverTimerRef.current);
-        onDriverFound();
-      }
-    }, 5000);
-
-    // After 10 seconds, assume no driver is found.
+    // After 30 seconds, assume no driver is found.
     noDriverTimerRef.current = setTimeout(() => {
-      setNoDriverFound(true);
-      setShowPopup(true);
-      if (onDriverNotFound) {
-        onDriverNotFound('No drivers available. Please try again later.');
-      }
-    }, 10000);
+      const token = Cookies.get('authTokencl1');
+
+      fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
+        method: 'PUT',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify({
+          status: 'cancelled',
+          cancellation_reason: 'Took too long',
+        }),
+      })
+        .then((response) => {
+          if (response.ok) {
+            dispatch(deleteOrder());
+            dispatch(removeDriver());
+            setNoDriverFound(true);
+            setShowPopup(true);
+            Cookies.remove('NavigateToDriverDetails');
+            if (onDriverNotFound) {
+              onDriverNotFound('No drivers available. Please try again later.');
+            }
+          }
+        })
+        .catch((error) => {
+          console.error('Error canceling order:', error);
+        });
+    }, 1000);
   }, [noDriverFound, onDriverFound, onDriverNotFound]);
 
   useEffect(() => {
@@ -72,7 +101,10 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
         )}
         <h2>Finding a Driver...</h2>
         {showPopup && (
-          <div className="popup">
+          <div
+            className="popup"
+            style={{ display: showPopup ? 'block' : 'none' }}
+          >
             <h3>No Drivers Found</h3>
             <p>We are sorry, but no drivers are currently available.</p>
             <div className="popup-buttons">

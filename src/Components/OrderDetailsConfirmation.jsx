@@ -2,6 +2,7 @@ import '../Styles/OrderDetailsConfirmation.css';
 import { useState, useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+
 import Cookies from 'js-cookie';
 
 // Import vehicle images
@@ -23,8 +24,11 @@ import DialogContent from '@mui/material/DialogContent';
 import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import ErrorIcon from '@mui/icons-material/ErrorOutline';
+import { useDispatch, useSelector } from 'react-redux';
+import { deleteOrder } from '../Redux/Reducers/CurrentOrderSlice';
 
 export default function OrderConfirmation() {
+  const dispatch = useDispatch();
   const location = useLocation();
   const navigate = useNavigate();
 
@@ -46,15 +50,15 @@ export default function OrderConfirmation() {
   const [destinationAddress, setDestinationAddress] = useState(null);
   const [userLocationAddress, setUserLocationAddress] = useState(null);
 
-  // Retrieve order details from state
-  const orderData = location.state?.orderData;
-
+  const orderData = useSelector((state) => state.currentOrder.value);
   // Reset order data when user leaves the page
   useEffect(() => {
     return () => {
       location.state = null;
     };
   }, [location]);
+
+  useEffect(() => {}, []);
 
   // Fetch addresses using coordinates from orderData
   useEffect(() => {
@@ -192,8 +196,7 @@ export default function OrderConfirmation() {
   if (isFindingDriver) {
     return (
       <FindDriver
-        onDriverFound={(driverDetails) => {
-          console.log('Received driver details:', driverDetails);
+        onDriverFound={() => {
           navigate('/driverDetails');
           location.state = null;
         }}
@@ -441,6 +444,18 @@ export default function OrderConfirmation() {
 
         {/* Buttons */}
         <div className="buttons" style={{ marginTop: '1rem' }}>
+          <button
+            onClick={() => {
+              navigate('/');
+              dispatch(deleteOrder());
+            }}
+            disabled={isLoading}
+            className="button"
+            style={{ backgroundColor: 'red' }}
+          >
+            Cancel
+          </button>
+
           <button
             onClick={handleConfirmOrder}
             disabled={isLoading}

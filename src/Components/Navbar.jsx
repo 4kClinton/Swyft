@@ -22,6 +22,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const [touchStartX, setTouchStartX] = useState(0);
+  const hideNavbarPages = ['/confirmOrder'];
 
   const theUser = useSelector((state) => state.user.value);
 
@@ -63,6 +64,9 @@ const Navbar = () => {
   const toggleSidebar = () => {
     setIsOpen(!isOpen);
   };
+  if (hideNavbarPages.includes(window.location.pathname)) {
+    return null;
+  }
 
   return (
     <div>

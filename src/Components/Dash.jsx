@@ -20,15 +20,17 @@ import { PiTruck } from 'react-icons/pi'; // For larger trucks
 
 import { PiVan } from 'react-icons/pi'; // For TukTuk - Pickup
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CancelOrderPopup from './CancelOrderPopup';
 import Cookies from 'js-cookie';
+import { saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
 
 //eslint-disable-next-line
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -205,6 +207,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       destination,
       time: new Date().toLocaleString(),
     };
+    dispatch(saveOrder(orderData));
 
     // Navigate to OrderConfirmation and pass orderData
     navigate('/confirmOrder', { state: { orderData } });
