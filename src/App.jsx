@@ -62,6 +62,7 @@ function App() {
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'orders' },
         (payload) => {
+          console.log(payload);
           if (payload?.new?.customer_id === customer.id) {
             supabaseOrderId = payload.new.id;
           }
@@ -71,6 +72,8 @@ function App() {
         'postgres_changes',
         { event: 'DELETE', schema: 'public', table: 'orders' },
         (payload) => {
+          console.log(payload);
+
           if (payload?.old?.id === supabaseOrderId) {
             toast.error(
               'No driver found for your order. Please try again later.',

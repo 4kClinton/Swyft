@@ -75,7 +75,7 @@ const DriverDetails = () => {
   };
 
   return (
-    <div className="container">
+    <div className="containerDriverDetails">
       <div className="driverInfo">
         <img
           src={driver.profilePicture || profilePic}
@@ -83,9 +83,18 @@ const DriverDetails = () => {
           className="driverImage"
         />
         <div className="textContainer">
-          <h2 className="name">{driver.name}</h2>
-          <p className="numberPlate">{driver.license_plate}</p>
-          <p className="carType">{driver.car_type}</p>
+          <h2 className="name">Name: {driver.name}</h2>
+          <p className="numberPlate">
+            {' '}
+            License plate:{' '}
+            <span style={{ fontWeight: 'bold' }}>
+              {driver.license_plate}{' '}
+            </span>{' '}
+          </p>
+          <p className="carType">
+            Car Type:{' '}
+            <span style={{ fontWeight: 'bold' }}>{driver.car_type}</span>
+          </p>
         </div>
       </div>
 
