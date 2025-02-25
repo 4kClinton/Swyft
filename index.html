@@ -8,20 +8,25 @@
       rel="stylesheet"
     />
     <!-- Apple Touch Icon -->
-    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png">
+    <link rel="apple-touch-icon" sizes="180x180" href="/icons/apple-touch-icon.png" />
+    <link rel="manifest" href="/manifest.json" />
 
     <!-- Fullscreen Mode (Removes Safari Bottom Bar) -->
-    <meta name="mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Swyft">
-
+    <meta name="mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <meta name="apple-mobile-web-app-title" content="Swyft" />
 
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Swyft</title>
-    <link rel="manifest" href="/public/manifest.json">
+
+    <!-- If manifest.json is in public/ folder, reference it as /manifest.json -->
+    <link rel="manifest" href="/manifest.json" />
   </head>
   <body>
     <div id="root"></div>
+    <!-- In dev, Vite handles /src/main.jsx automatically. In production, 
+         it will replace this with /assets/... 
+         So referencing /src/main.jsx is normal for Vite dev mode. -->
     <script type="module" src="/src/main.jsx"></script>
   </body>
 </html>
