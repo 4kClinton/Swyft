@@ -144,13 +144,9 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     if (startY === null || endY === null) return; // Ignore if values are not set
 
     const swipeDistance = startY - endY;
-    const threshold = 120; // Adjusted for taller Dash (increase if needed)
-    const deadZone = 30; // Ignores minor accidental swipes
+    const threshold = 50; // Minimum movement required to trigger swipe
 
-    if (
-      Math.abs(swipeDistance) > deadZone &&
-      Math.abs(swipeDistance) >= threshold
-    ) {
+    if (Math.abs(swipeDistance) >= threshold) {
       setIsOpen(swipeDistance > 0); // Swipe up opens, Swipe down closes
     }
 
