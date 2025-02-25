@@ -144,7 +144,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     if (startY === null || endY === null) return; // Ignore if values are not set
 
     const swipeDistance = startY - endY;
-    const threshold = 220; // Adjusted for taller Dash (increase if needed)
+    const threshold = 120; // Adjusted for taller Dash (increase if needed)
     const deadZone = 30; // Ignores minor accidental swipes
 
     if (
