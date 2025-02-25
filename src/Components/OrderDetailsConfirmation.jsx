@@ -196,8 +196,7 @@ export default function OrderConfirmation() {
   if (isFindingDriver) {
     return (
       <FindDriver
-        onDriverFound={(driverDetails) => {
-          console.log('Received driver details:', driverDetails);
+        onDriverFound={() => {
           navigate('/driverDetails');
           location.state = null;
         }}
