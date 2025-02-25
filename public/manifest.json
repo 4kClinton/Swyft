@@ -4,7 +4,7 @@
   "description": "Logistics & moving services",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "#ffffff",
+  "background_color": "#00d46a",
   "theme_color": "#00d46a",
   "icons": [
    
