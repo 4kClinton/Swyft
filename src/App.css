@@ -19,6 +19,10 @@ body,
   overflow: visible !important;
   z-index: auto !important;
 }
+html,
+body {
+  overscroll-behavior-y: none;
+}
 
 .logo {
   height: 6em;
