@@ -35,39 +35,25 @@
 
 /* Dashboard Container */
 .Dash {
-  font-family: Montserrat, sans-serif;
-  font-weight: 500;
-  font-size: small;
-  position: fixed;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
+    font-size: small;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    max-height: 800px;
+    background-color: var(--dash-background);
+    /* border-radius: 5vh; */
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    transition: transform 0.3sease;
+    transform: translateY(50%);
+    z-index: 1000;
+    overflow-y: auto;
+    padding-bottom: 20px;
+    box-shadow: 0 1px 20px 1px var(--dash-shadow);
 
-  /* Fixed position for the dash */
-  bottom: 0;
-
-  /* Align to the bottom */
-  left: 0;
-  width: 100%;
-  max-height: 570px;
-
-  /* Set a max height */
-  background-color: var(--dash-background);
-
-  /* border-radius: 5vh; */
-  border-top-left-radius: 25px;
-  border-top-right-radius: 25px;
-  transition: transform 0.3s ease;
-
-  /* Smooth transition for open/close */
-  transform: translateY(50%);
-
-  /* Hide by default */
-  z-index: 1000;
-  overflow-y: auto;
-
-  /* Enable vertical scrolling */
-  padding-bottom: 20px;
-
-  /* Optional: Add some padding at the bottom */
-  box-shadow: 0 1px 20px 1px var(--dash-shadow);
 }
 
 .confirm-dash {
@@ -85,6 +71,7 @@
 }
 
 .Dash.open {
+    overflow-y: auto;
   transform: translateY(0);
 
   /* Show when open */
