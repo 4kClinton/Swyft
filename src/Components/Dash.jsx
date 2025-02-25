@@ -144,7 +144,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     if (startY === null || endY === null) return; // Ignore if values are not set
 
     const swipeDistance = startY - endY;
-    const threshold = 40; // Minimum movement required to trigger swipe
+    const threshold = 45; // Minimum movement required to trigger swipe
 
     if (Math.abs(swipeDistance) >= threshold) {
       setIsOpen(swipeDistance > 0); // Swipe up opens, Swipe down closes
