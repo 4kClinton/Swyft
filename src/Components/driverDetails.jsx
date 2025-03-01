@@ -3,7 +3,6 @@ import profilePic from '../assets/profilePic.jpeg';
 import pickup from '../assets/pickup.png';
 import miniTruck from '../assets/miniTruck.png';
 import flatbed from '../assets/flatbed.png';
-
 import Van from '../assets/van.jpg';
 import { FaPhoneAlt } from 'react-icons/fa'; // Importing the phone icon
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
@@ -11,8 +10,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { saveDriver } from '../Redux/Reducers/DriverDetailsSlice';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
-
-// Sample data for the driver
+import CircularProgress from '@mui/material/CircularProgress'; // Import MUI Circular Progress
+import Box from '@mui/material/Box'; // Import Box for centering
 
 const DriverDetails = () => {
   const navigate = useNavigate(); // Hook to navigate
@@ -47,15 +46,25 @@ const DriverDetails = () => {
           console.error('Error fetching driver data:', error);
         });
     }
-    //eslint-disable-next-line
-  }, [order]);
+  }, [order, dispatch, driver?.id]);
 
   const handleGoHome = () => {
     navigate('/dash'); // Navigate to the home page
   };
 
   if (!driver?.id) {
-    return null;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+          height: '100vh',
+        }}
+      >
+        <CircularProgress size={60} />
+      </Box>
+    );
   }
 
   // Determine the car image based on car type

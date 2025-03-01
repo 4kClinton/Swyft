@@ -70,7 +70,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
             <div className="pulse"></div>
           </div>
         )}
-        <h2>Finding a Driver...</h2>
+        <h2 className="finder">Finding a Driver...</h2>
         {showPopup && (
           <div className="popup">
             <h3>No Drivers Found</h3>
