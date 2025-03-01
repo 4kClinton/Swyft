@@ -1,11 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
+import PropTypes from 'prop-types';
 import '../Styles/Dash.css';
 
 import ConfirmationPopup from './ConfirmationPopup';
 import DateTimePopup from './DateTimePopup';
 import LoaderPopup from './LoaderPopup';
-import ErrorPopup from './ErrorPopup'; // New ErrorPopup
-import SuccessPopup from './SuccessPopup'; // New SuccessPopup
+import ErrorPopup from './ErrorPopup';
+import SuccessPopup from './SuccessPopup';
 
 import {
   FaTruckPickup,
@@ -15,17 +16,14 @@ import {
 } from 'react-icons/fa';
 
 import { GiTowTruck } from 'react-icons/gi';
-// import { MdLocalShipping } from "react-icons/md";
-import { PiTruck } from 'react-icons/pi'; // For larger trucks
-
-import { PiVan } from 'react-icons/pi'; // For TukTuk - Pickup
+import { PiTruck } from 'react-icons/pi';
+import { PiVan } from 'react-icons/pi';
 
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CancelOrderPopup from './CancelOrderPopup';
 import Cookies from 'js-cookie';
 
-//eslint-disable-next-line
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
@@ -41,61 +39,67 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const [errorMessage, setErrorMessage] = useState('');
   const [scheduleDateTime, setScheduleDateTime] = useState('');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
-  const [startY, setStartY] = useState(0);
-  const [endY, setEndY] = useState(0);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+
+  // States for gradual dragging:
+  const [startY, setStartY] = useState(null);
+  const [offsetY, setOffsetY] = useState(0);
+
   const order = useSelector((state) => state.currentOrder.value);
   const Price = selectedOption ? calculatedCosts[selectedOption] : 0;
-
   const theUser = useSelector((state) => state.user.value);
-
   const [isLoading, setIsLoading] = useState(false);
 
   const dashRef = useRef(null);
 
-  // Rate and distance calculations
   const rates = {
-    pickup: 160,
-    miniTruck: 230,
-    van: 280,
+    pickup: 220,
+    miniTruck: 270,
+    van: 300,
     flatbed: 350,
     'Car Rescue': 400,
     tukTuk: 100,
     '10 Tonne Lorry': 500,
     '18 Tonne Lorry': 600,
-    Tipper: 850,
+    Tipper: 950,
   };
 
   const decayFactor = 0.005;
   const floorRate = 50;
-  const shortDistanceRate = 230;
 
   const calculateRate = (baseRate, distance) => {
-    if (distance < 5) {
-      return shortDistanceRate;
+    if (distance < 2) {
+      return baseRate * 3.5;
+    } else if (distance < 3) {
+      return baseRate * 3;
+    } else if (distance < 5) {
+      return baseRate * 2.5;
     } else if (distance < 10) {
-      return baseRate * 1, 2;
+      return baseRate * 1.2;
     } else {
       return Math.max(baseRate * Math.exp(-decayFactor * distance), floorRate);
     }
   };
 
+  // Example Usage:
+  console.log(calculateRate(rates.pickup, 1.5)); // 770
+  console.log(calculateRate(rates.pickup, 2.5)); // 660
+  console.log(calculateRate(rates.pickup, 4)); // 550
+  console.log(calculateRate(rates.pickup, 8)); // 264
+  console.log(calculateRate(rates.pickup, 15)); // Uses decay formula
+
   useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
       (acc, [vehicle, baseRate]) => {
         const adjustedRate = calculateRate(baseRate, distance);
-        // Calculate base cost
         let calculatedCost = adjustedRate * distance;
 
-        // Apply specific minimum logic for flatbed
         if (vehicle === 'flatbed') {
           calculatedCost = Math.max(calculatedCost, 3500);
         }
 
-        // Enforce minimum cost of 1000 for all vehicles
         calculatedCost = Math.max(calculatedCost, 1000);
 
-        // Add loader costs if applicable
         acc[vehicle] = Math.round(
           calculatedCost + (includeLoader ? 600 * numLoaders : 0)
         );
@@ -118,68 +122,67 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     return () => document.removeEventListener('click', handleClickOutside);
   }, [isOpen]);
 
-  // const toggleDash = () => setIsOpen(!isOpen);
   const handleOptionChange = (vehicle) => {
-    if (isOpen === false) {
+    if (!isOpen) {
       setIsOpen(true);
     }
-
     setSelectedOption(vehicle);
   };
+
   const handleLoaderChange = (e) => setIncludeLoader(e.target.checked);
   const handleNumLoadersChange = (e) => {
     const value = parseInt(e.target.value);
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
 
+  // Touch handlers for gradual dragging
+  const panelHeight = 300;
+
   const handleTouchStart = (e) => {
-    setStartY(e.touches[0].clientY); // Capture the starting Y position
+    setStartY(e.touches[0].clientY);
   };
 
   const handleTouchMove = (e) => {
-    setEndY(e.touches[0].clientY); // Update the Y position as the user swipes
+    if (startY !== null) {
+      const currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+      setOffsetY(deltaY);
+    }
   };
 
   const handleTouchEnd = () => {
-    if (startY === null || endY === null) return; // Ignore if values are not set
+    const closedPosition = panelHeight;
+    const baseTranslate = isOpen ? 0 : closedPosition;
+    const finalTranslate = baseTranslate + offsetY;
 
-    const swipeDistance = startY - endY;
-    const threshold = 45; // Minimum movement required to trigger swipe
-
-    if (Math.abs(swipeDistance) >= threshold) {
-      setIsOpen(swipeDistance > 0); // Swipe up opens, Swipe down closes
+    if (finalTranslate < closedPosition / 2) {
+      setIsOpen(true);
+    } else {
+      setIsOpen(false);
     }
 
-    // Reset values to prevent false triggers
+    setOffsetY(0);
     setStartY(null);
-    setEndY(null);
+  };
+
+  const closedPosition = panelHeight;
+  const baseTranslate = isOpen ? 0 : closedPosition;
+  const translateY =
+    startY !== null
+      ? Math.min(Math.max(baseTranslate + offsetY, 0), closedPosition)
+      : baseTranslate;
+
+  const dashStyle = {
+    transform: `translateY(${translateY}px)`,
+    transition: startY !== null ? 'none' : 'transform 0.3s ease-out',
   };
 
   console.log(calculatedCosts);
-  /*   const handleScheduleOrder = () => {
-    if (!scheduleDateTime) {
-      setErrorMessage('Please select a date and time for scheduling.');
-      return;
-    }
-
-    const alertTime = new Date(scheduleDateTime).getTime();
-    const currentTime = Date.now();
-    const delay = alertTime - currentTime;
-
-    if (delay > 0) {
-      setTimeout(() => setShowSuccessPopup(true), delay); // Show success popup
-      setShowSuccessPopup(true);
-    } else {
-      setErrorMessage('Please select a future date and time.');
-    }
-    setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
-  }; */
 
   const confirmOrder = async () => {
     Cookies.remove('driverData');
 
-    //eslint-disable-next-line
-    if (!destination.length < 0) {
+    if (destination.length === 0) {
       setErrorMessage('Please enter a destination location.');
       return;
     }
@@ -187,17 +190,15 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       setErrorMessage('Please select a vehicle.');
       return;
     }
-
     if (!theUser || !theUser.id || !theUser.name) {
       setErrorMessage('User details are missing. Please log in again.');
       return;
     }
 
-    // Construct the order data including user details
     const orderData = {
       id: theUser.id,
       vehicle: selectedOption,
-      distance: parseFloat(distance).toFixed(3), // Round distance
+      distance: parseFloat(distance).toFixed(3),
       loaders: includeLoader ? numLoaders : 0,
       loaderCost: includeLoader ? numLoaders * 600 : 0,
       totalCost: Price,
@@ -206,53 +207,33 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       time: new Date().toLocaleString(),
     };
 
-    // Navigate to OrderConfirmation and pass orderData
     navigate('/confirmOrder', { state: { orderData } });
   };
 
   useEffect(() => {
     if (order?.status === 'Accepted') {
-      //check if the driver details has been shown before
       const navigated = Cookies.get('NavigateToDriverDetails');
-
-      // If the details haven't been shown yet, display it
       if (!navigated) {
         navigate('/driverDetails');
-        // Set the item in localStorage
         Cookies.set('NavigateToDriverDetails', 'true');
       }
     }
     if (!order?.id) {
-      // Order is empty or deleted
       setShowSuccessPopup(false);
-
       setIsLoading(false);
     } else {
-      // Order exists
-      setIsLoading(true); // You can trigger loading if needed when order is being processed
+      setIsLoading(true);
     }
-
     //eslint-disable-next-line
   }, [order]);
 
-  // const resetDash = () => {
-  //   // setSelectedOption("");
-  //   setIncludeLoader(false);
-  //   setNumLoaders(1);
-  //   setCalculatedCosts(0);
-  //   setErrorMessage('');
-  //   setScheduleDateTime('');
-  // };
-
   const goBackToDash = () => {
-    // resetDash();
     setShowSuccessPopup(false);
     setShowDateTimePopup(false);
     setShowConfirmationPopup(false);
   };
 
   const handlePopupClose = () => {
-    // resetDash();
     setShowLoaderPopup(false);
     setErrorMessage('');
   };
@@ -265,22 +246,21 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowCancelPopup(false);
   };
 
-  useEffect(
-    () => {
-      if (!theUser?.id) {
-        navigate('/');
-      }
-    },
-    [theUser],
-    [navigate]
-  );
+  useEffect(() => {
+    if (!theUser?.id) {
+      navigate('/');
+    }
+  }, [theUser, navigate]);
 
   if (order?.id) {
     return (
       <div
         ref={dashRef}
-        className={`Dash ${isOpen ? 'open' : ''}`}
-        onClick={() => setIsOpen(!isOpen)}
+        className={`OrderDash ${isOpen ? 'open' : ''}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={dashStyle}
       >
         <div className="notch">
           <div className="notch-indicator"></div>
@@ -292,7 +272,6 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             {order.vehicle_type.charAt(0).toUpperCase() +
               order.vehicle_type.slice(1)}
           </p>
-
           <p className="order-detail-item">
             <strong>Loaders:</strong> {order.loaders}
           </p>
@@ -331,29 +310,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
+      style={dashStyle}
     >
       <div className="notch">
         <div className="notch-indicator"></div>
       </div>
-
-      {/* Vehicle Selection */}
-      {/* <PopupTutorial
-        message="Click to Open"
-        onDismiss={() => setShowPopup(true)}
-      /> */}
-
-      {/* <div className="classicOptions">
-        <div className="movepicDiv">
-          <img className="movePic" src={movePic} alt="" />
-          <p className="productTitle">Swyft Move</p>
-          <span>Book Movers</span>
-        </div>
-        <div className="movepicDiv">
-          <img className="movePic" src={movePic} alt="" />
-          <p className="productTitle">Swyft Move</p>
-          <span>Book Movers</span>
-        </div>
-      </div> */}
 
       <h2 className="catch">What’s Your Load Today?</h2>
       <div className="dash-content">
@@ -478,17 +439,15 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       </div>
 
       <div className="order-group">
-        {/* Confirm and Schedule */}
-
         <button
           className="order-button"
           onClick={confirmOrder}
-          disabled={isLoading} // Disable the button while loading
+          disabled={isLoading}
           style={{
             opacity: isLoading ? 0.7 : 1,
             width: '40vh',
             backgroundColor: '#00D46A',
-          }} // Optional styling for loading state
+          }}
         >
           {isLoading ? (
             <>
@@ -506,18 +465,6 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             </>
           )}
         </button>
-
-        {/* Schedule Button with FaRegClock */}
-        {/* <button className="order-button" onClick={handleSelectDateTime}>
-    Schedule Move
-    <FaRegClock
-      size={14}
-      className="check-icon"
-      style={{ marginLeft: "5px" }}
-    />
-  </button> */}
-
-        {/* Popups */}
         {errorMessage && (
           <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
         )}
@@ -534,6 +481,18 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       </div>
     </div>
   );
+};
+
+Dash.propTypes = {
+  distance: PropTypes.number,
+  userLocation: PropTypes.string,
+  destination: PropTypes.string,
+};
+
+Dash.defaultProps = {
+  distance: 0,
+  userLocation: '',
+  destination: '',
 };
 
 export default Dash;
