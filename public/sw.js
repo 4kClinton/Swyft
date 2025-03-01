@@ -32,11 +32,22 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch and Cache Strategy
+// Fetch and Cache Strategy with MIME Type Safeguard
 self.addEventListener("fetch", (event) => {
-  event.respondWith(
-    caches.match(event.request).then((response) => {
-      return response || fetch(event.request);
-    })
-  );
+  const acceptHeader = event.request.headers.get("accept") || "";
+  
+  // For HTML navigation requests, use cache first then network fallback.
+  if (acceptHeader.includes("text/html")) {
+    event.respondWith(
+      caches.match(event.request).then((response) => {
+        return response || fetch(event.request);
+      })
+    );
+  } else {
+    // For non-HTML requests (like JS modules), perform a network fetch.
+    // Optionally, fallback to cache if the network fails.
+    event.respondWith(
+      fetch(event.request).catch(() => caches.match(event.request))
+    );
+  }
 });
