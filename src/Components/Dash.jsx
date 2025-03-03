@@ -19,14 +19,16 @@ import { GiTowTruck } from 'react-icons/gi';
 import { PiTruck } from 'react-icons/pi';
 import { PiVan } from 'react-icons/pi';
 
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import CancelOrderPopup from './CancelOrderPopup';
 import Cookies from 'js-cookie';
+import { saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
 
 const Dash = ({ distance = 0, userLocation, destination }) => {
   const [showCancelPopup, setShowCancelPopup] = useState(false);
   const [isOpen, setIsOpen] = useState(false);
+  const dispatch = useDispatch();
 
   const navigate = useNavigate();
 
@@ -204,6 +206,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         destination,
         time: new Date().toLocaleString(),
       };
+      dispatch(saveOrder(orderData));
 
       navigate('/confirmOrder', { state: { orderData } });
     } catch (error) {
