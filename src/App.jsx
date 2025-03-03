@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Components/Navbar.jsx';
-
 import LoadingScreen from './Components/LoadingScreen.jsx';
-
 import './App.css';
-
 import { UserProvider } from './contexts/UserContext.jsx';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from './Redux/Reducers/UserSlice';
-
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { supabase } from './supabase.js';
@@ -20,17 +15,15 @@ import {
   saveDriver,
 } from './Redux/Reducers/DriverDetailsSlice.js';
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [showErrorPopup, setShowErrorPopup] = useState(false); // New state for error popup
 
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.user.value);
   const [updateOrders, setUpdateOrders] = useState(false);
-
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -57,7 +50,7 @@ function App() {
           }
         }
       )
-      //Save the supabase order id to delete the order if no driver is found
+      // Save the supabase order id to delete the order if no driver is found
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'orders' },
@@ -72,16 +65,8 @@ function App() {
         { event: 'DELETE', schema: 'public', table: 'orders' },
         (payload) => {
           if (payload?.old?.id === supabaseOrderId) {
-            toast.error(
-              'No driver found for your order. Please try again later.',
-              {
-                position: 'bottom-center',
-                autoClose: 5000,
-                onClose: () => {
-                  dispatch(deleteOrder());
-                },
-              }
-            );
+            // Instead of using toast.error, set the error popup to visible
+            setShowErrorPopup(true);
           }
         }
       )
@@ -96,7 +81,7 @@ function App() {
           .catch((error) => console.error('Error removing channel:', error));
       }
     };
-    //eslint-disable-next-line
+    // eslint-disable-next-line
   }, [customer.id, dispatch]);
 
   useEffect(() => {
@@ -113,11 +98,9 @@ function App() {
           }
           return response.json();
         })
-
         .then((userData) => {
           dispatch(addUser(userData));
         })
-
         .catch((error) => {
           console.error('Token verification failed:', error);
         });
@@ -146,8 +129,8 @@ function App() {
             (order) =>
               order.status !== 'completed' &&
               order.status !== 'cancelled' &&
-              order.status != 'Pending' &&
-              order.status != 'Declined'
+              order.status !== 'Pending' &&
+              order.status !== 'Declined'
           );
           dispatch(saveOrder(currentOrder[0]));
           if (currentOrder.length > 0) {
@@ -176,18 +159,17 @@ function App() {
           console.error('Error fetching rides history:', error);
         });
     }
-    //eslint-disable-next-line
+    // eslint-disable-next-line
   }, [updateOrders]);
 
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 2000);
-
     return () => clearTimeout(timer);
   }, []);
 
-  const handleOrderAccepted = async (payload) => {
+  const handleOrderAccepted = (payload) => {
     const token = Cookies.get('authTokencl1');
     fetch(
       `https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,
@@ -208,8 +190,7 @@ function App() {
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
-
-        // Show customer an alert or update UI
+        // You could update the UI here or show a different notification
       })
       .catch((error) => {
         console.error('Error fetching driver data:', error);
@@ -218,13 +199,11 @@ function App() {
 
   const handleArrivedAtCustomer = (payload) => {
     dispatch(saveOrder(payload.new)); // Update Redux state with new order data
-
     alert('Your driver has arrived at the customer location!');
   };
 
   const handleOnTheWayToDestination = (payload) => {
     dispatch(saveOrder(payload.new)); // Update Redux state with new order data
-
     alert('Your driver is on the way to the destination!');
   };
 
@@ -233,11 +212,16 @@ function App() {
     dispatch(removeDriver());
     setUpdateOrders((prev) => !prev);
     Cookies.remove('NavigateToDriverDetails');
-
     // Navigate to the Rating Page after ride completion
     navigate('/rate-driver');
-
     alert('The ride is completed! Thank you for using our service.');
+  };
+
+  // Handler for closing the error popup
+  const handleCloseErrorPopup = () => {
+    dispatch(deleteOrder());
+    setShowErrorPopup(false);
+    navigate('/dash');
   };
 
   return (
@@ -252,7 +236,16 @@ function App() {
           <SpeedInsights />
         </div>
       )}
-      <ToastContainer />
+
+      {/* Error Popup Modal */}
+      {showErrorPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <p>No driver found for your order. Please try again later.</p>
+            <button onClick={handleCloseErrorPopup}>Close</button>
+          </div>
+        </div>
+      )}
     </UserProvider>
   );
 }
