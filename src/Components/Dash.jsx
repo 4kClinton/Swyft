@@ -180,34 +180,35 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   console.log(calculatedCosts);
 
   const confirmOrder = async () => {
-    Cookies.remove('driverData');
+    try {
+      Cookies.remove('driverData');
 
-    if (destination.length === 0) {
-      setErrorMessage('Please enter a destination location.');
-      return;
-    }
-    if (!selectedOption) {
-      setErrorMessage('Please select a vehicle.');
-      return;
-    }
-    if (!theUser || !theUser.id || !theUser.name) {
-      setErrorMessage('User details are missing. Please log in again.');
-      return;
-    }
+      if (destination.length === 0) {
+        throw new Error('Please enter a destination location.');
+      }
+      if (!selectedOption) {
+        throw new Error('Please select a vehicle.');
+      }
+      if (!theUser || !theUser.id || !theUser.name) {
+        throw new Error('User details are missing. Please log in again.');
+      }
 
-    const orderData = {
-      id: theUser.id,
-      vehicle: selectedOption,
-      distance: parseFloat(distance).toFixed(3),
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 600 : 0,
-      totalCost: Price,
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
+      const orderData = {
+        id: theUser.id,
+        vehicle: selectedOption,
+        distance: parseFloat(distance).toFixed(3),
+        loaders: includeLoader ? numLoaders : 0,
+        loaderCost: includeLoader ? numLoaders * 600 : 0,
+        totalCost: Price,
+        userLocation,
+        destination,
+        time: new Date().toLocaleString(),
+      };
 
-    navigate('/confirmOrder', { state: { orderData } });
+      navigate('/confirmOrder', { state: { orderData } });
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
 
   useEffect(() => {
@@ -252,7 +253,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
   }, [theUser, navigate]);
 
-  if (order?.id) {
+  // Only render the "Current Order Details" if order and vehicle_type exist.
+  if (order?.id && order?.vehicle_type) {
     return (
       <div
         ref={dashRef}
