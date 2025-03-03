@@ -79,8 +79,8 @@ const Map = () => {
       const distanceElement = distanceMatrixResult.rows[0].elements[0];
 
       if (distanceElement && distanceElement.status === 'OK') {
-        const calculatedDistance = distanceElement.distance.value / 1000; // Convert to kilometers
-        setDistance(calculatedDistance); // Set the distance
+        const calculatedDistance = distanceElement.distance.value / 1000; // Convert to km
+        setDistance(parseFloat(calculatedDistance.toFixed(3))); // Set distance with 3 decimal places
 
         setDuration(distanceElement.duration.text);
       } else {

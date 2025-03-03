@@ -11,13 +11,9 @@ import { Visibility, VisibilityOff } from '@mui/icons-material';
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from '../Redux/Reducers/UserSlice';
 import axios from 'axios';
-
 import Cookies from 'js-cookie';
-
 import '../Styles/Login.css';
-
 import introPic from '../assets/loaders-swyft.png';
-// import Cookies from 'js-cookie';
 
 const Login = () => {
   const dispatch = useDispatch();
@@ -32,6 +28,34 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const user = useSelector((state) => state.user.value);
 
+  // States for Install Prompt
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(false);
+
+  // Capture the beforeinstallprompt event
+  useEffect(() => {
+    const handler = (e) => {
+      // Prevent the default mini-infobar from appearing
+      e.preventDefault();
+      setDeferredPrompt(e);
+      setShowInstallPopup(true);
+      console.log('beforeinstallprompt event captured');
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response to the install prompt: ${outcome}`);
+      // Clear the deferred prompt variable, since it can only be used once.
+      setDeferredPrompt(null);
+      setShowInstallPopup(false);
+    }
+  };
+
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -44,7 +68,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        ' https://swyft-backend-client-nine.vercel.app/login',
+        'https://swyft-backend-client-nine.vercel.app/login',
         { email: email.trim().toLowerCase(), password },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -69,7 +93,7 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        ' https://swyft-backend-client-nine.vercel.app/verify-otp',
+        'https://swyft-backend-client-nine.vercel.app/verify-otp',
         { email, otp },
         { headers: { 'Content-Type': 'application/json' } }
       );
@@ -79,10 +103,9 @@ const Login = () => {
       Cookies.set('authTokencl1', access_token, {
         secure: true,
         sameSite: 'Strict',
-      }); // Set cookie with options
+      });
       dispatch(addUser(user));
       Cookies.set('message', message);
-
       Cookies.set('user', JSON.stringify(user));
       Cookies.set('status', 'user logged in!');
 
@@ -98,11 +121,12 @@ const Login = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     if (user?.id) {
       navigate('/dash');
     }
-  }, [user]);
+  }, [user, navigate]);
 
   return (
     <div className="login-component">
@@ -137,7 +161,6 @@ const Login = () => {
                 onChange={(e) => setPassword(e.target.value)}
                 required
               />
-
               <IconButton
                 aria-label="toggle password visibility"
                 onClick={togglePasswordVisibility}
@@ -146,7 +169,6 @@ const Login = () => {
                 {showPassword ? <VisibilityOff /> : <Visibility />}
               </IconButton>
             </Box>
-
             <button
               type="submit"
               className="login-button"
@@ -206,6 +228,48 @@ const Login = () => {
           Create account
         </Button>
       </Box>
+
+      {/* Install Popup */}
+      {showInstallPopup && (
+        <div className="install-popup">
+          <Box
+            sx={{
+              position: 'fixed',
+              bottom: '20px',
+              left: '50%',
+              transform: 'translateX(-50%)',
+              backgroundColor: '#fff',
+              border: '1px solid #ccc',
+              borderRadius: '8px',
+              padding: '16px',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.2)',
+              zIndex: 1000,
+              textAlign: 'center',
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 1 }}>
+              Install Swyft?
+            </Typography>
+            <Typography variant="body2" sx={{ mb: 2 }}>
+              Get a better experience by installing our app.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleInstallClick}
+              sx={{ mr: 1 }}
+            >
+              Install
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => setShowInstallPopup(false)}
+            >
+              Close
+            </Button>
+          </Box>
+        </div>
+      )}
     </div>
   );
 };
