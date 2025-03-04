@@ -79,6 +79,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
 
   const handleGoHome = () => {
     navigate('/dash');
+    setTimeout(() => window.location.reload(), 100);
   };
 
   const handleRetry = () => {
