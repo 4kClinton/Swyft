@@ -1,9 +1,7 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Typography, Box, CircularProgress } from '@mui/material';
-
-import { v4 as uuidv4 } from 'uuid'; // Import uuid for generating unique IDs
-
+import { Typography, Box, CircularProgress, Button } from '@mui/material';
+import { v4 as uuidv4 } from 'uuid';
 import '../Styles/Login.css';
 import Cookies from 'js-cookie';
 
@@ -18,6 +16,32 @@ const SignUp = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // Install Prompt states
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(false);
+
+  // Capture the beforeinstallprompt event
+  useEffect(() => {
+    const handler = (e) => {
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handler);
+    return () => window.removeEventListener('beforeinstallprompt', handler);
+  }, []);
+
+  // Function to trigger the install prompt
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log(`User response to the install prompt: ${outcome}`);
+      setDeferredPrompt(null);
+      setShowInstallPopup(false);
+      navigate('/'); // Navigate after handling install
+    }
+  };
+
   // Sign-Up function to register customer data
   const signUp = async (event) => {
     event.preventDefault();
@@ -31,11 +55,9 @@ const SignUp = () => {
       return;
     }
 
-    // Generate a unique user ID
     const userId = uuidv4();
     const sanitizedEmail = email.trim().toLowerCase();
 
-    // Prepare signup data
     const signupData = {
       id: userId,
       name,
@@ -45,7 +67,6 @@ const SignUp = () => {
     };
 
     try {
-      // Make a POST request to your Express server
       const response = await fetch(
         'https://swyft-backend-client-nine.vercel.app/signup',
         {
@@ -60,12 +81,10 @@ const SignUp = () => {
       const responseData = await response.json();
 
       if (!response.ok) {
-        // Set error message from server
         setError(responseData.message || 'Sign-up failed. Please try again.');
         return;
       }
 
-      // Set success message from server
       setSuccess(responseData.message || 'Account created successfully!');
 
       // Save user data (excluding password) locally
@@ -76,14 +95,13 @@ const SignUp = () => {
         email,
       };
       Cookies.set('user', JSON.stringify(userData));
-
       Cookies.set('authTokencl1', responseData.access_token, {
         secure: true,
         sameSite: 'Strict',
-      }); // Set cookie with options
+      });
 
-      // Redirect to the home route on successful sign-up
-      setTimeout(() => navigate('/'), 3000); // Redirect after showing success message
+      // Instead of navigating immediately, show the install popup
+      setShowInstallPopup(true);
     } catch (err) {
       console.error('An error occurred during sign-up:', err);
       setError(err.message || 'An error occurred. Please try again.');
@@ -91,8 +109,6 @@ const SignUp = () => {
       setLoading(false);
     }
   };
-
-  // toLogin function defined outside of signUp function
 
   return (
     <div className="login-component">
@@ -148,51 +164,11 @@ const SignUp = () => {
           </button>
         </form>
 
-        {/* <Typography
-          variant="body2"
-          align="center"
-          sx={{ mt: 4, fontWeight: "bold" }}
-        >
-          Or sign up with
-        </Typography>
-        <Box
-          className="socials-container"
-          sx={{
-            display: "flex",
-            justifyContent: "space-between",
-            marginBottom: "10px",
-            mt: 2,
-          }}
-        >
-          <Button
-            className="social-icon"
-            color="primary"
-            startIcon={<Google />}
-            fullWidth
-            sx={{ mr: 1 }}
-          ></Button>
-          <Button
-            className="social-icon"
-            color="primary"
-            startIcon={<Twitter />}
-            fullWidth
-            sx={{ mx: 1 }}
-          ></Button>
-          <Button
-            className="social-icon"
-            color="primary"
-            startIcon={<GitHub />}
-            fullWidth
-            sx={{ ml: 1 }}
-          ></Button>
-        </Box> */}
-
         <Link
           to={'/login'}
-          variant="body2"
           className="existing-account"
-          sx={{
-            mt: 2,
+          style={{
+            marginTop: '2vh',
             marginBottom: '2vh',
             color: '#00D46A',
             fontSize: '15px',
@@ -204,6 +180,62 @@ const SignUp = () => {
           Already have an account? Log in
         </Link>
       </Box>
+
+      {/* Install Popup with Blur Overlay */}
+      {showInstallPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+              padding: '32px',
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
+              Install Swyft
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ mb: 2, fontFamily: 'Montserrat' }}
+            >
+              Get a better experience by installing our app.
+            </Typography>
+            <Button
+              variant="contained"
+              color="primary"
+              onClick={handleInstallClick}
+              sx={{ mr: 1 }}
+            >
+              Install
+            </Button>
+            <Button
+              variant="outlined"
+              onClick={() => {
+                setShowInstallPopup(false);
+                navigate('/');
+              }}
+            >
+              Close
+            </Button>
+          </Box>
+        </div>
+      )}
     </div>
   );
 };
