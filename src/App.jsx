@@ -35,48 +35,42 @@ function App() {
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(false);
 
-  // Listen for the 'beforeinstallprompt' event (fired by supported browsers)
+  // Capture the beforeinstallprompt event
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
-      // Prevent the mini-infobar or automatic prompt
+      console.log('🔥 beforeinstallprompt event fired');
       e.preventDefault();
-      // Store the event so we can call it later
       setDeferredPrompt(e);
     };
     window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
-
-    // Listen for a custom event from SignUp.jsx to show the install popup
-    const handleShowInstallPopup = () => {
-      // Only show the popup if we actually have a valid deferredPrompt
-      if (deferredPrompt) {
-        setShowInstallPopup(true);
-      }
-    };
-    window.addEventListener('show-install-popup', handleShowInstallPopup);
-
     return () => {
       window.removeEventListener(
         'beforeinstallprompt',
         handleBeforeInstallPrompt
       );
-      window.removeEventListener('show-install-popup', handleShowInstallPopup);
     };
+  }, []);
+
+  // Always show the install popup if not installed and a valid deferredPrompt exists
+  useEffect(() => {
+    const isStandalone = window.matchMedia(
+      '(display-mode: standalone)'
+    ).matches;
+    if (!isStandalone && deferredPrompt) {
+      setShowInstallPopup(true);
+    } else {
+      setShowInstallPopup(false);
+    }
   }, [deferredPrompt]);
 
-  // When user clicks "Install" in our custom popup
+  // When the user clicks "Install" in our custom popup
   const handleInstallClick = async () => {
     if (deferredPrompt) {
-      // Show the native install prompt
       deferredPrompt.prompt();
-
       const { outcome } = await deferredPrompt.userChoice;
       console.log('User response to the install prompt:', outcome);
-
-      // Clear so it won't prompt again
       setDeferredPrompt(null);
       setShowInstallPopup(false);
-
-      // Optionally navigate
       navigate('/');
     }
   };
@@ -84,11 +78,9 @@ function App() {
   // ----------------------
   // Orders & Session logic
   // ----------------------
-
   useEffect(() => {
     // Subscribe to changes in the 'orders' table
     let supabaseOrderId;
-
     const ordersChannel = supabase
       .channel('orders')
       .on(
@@ -109,7 +101,6 @@ function App() {
           }
         }
       )
-      // Save the supabase order id to delete the order if no driver is found
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'orders' },
@@ -124,14 +115,12 @@ function App() {
         { event: 'DELETE', schema: 'public', table: 'orders' },
         (payload) => {
           if (payload?.old?.id === supabaseOrderId) {
-            // Show error popup if no driver found
             setShowErrorPopup(true);
           }
         }
       )
       .subscribe();
 
-    // Cleanup the subscription on component unmount
     return () => {
       if (ordersChannel) {
         supabase
@@ -140,34 +129,23 @@ function App() {
           .catch((error) => console.error('Error removing channel:', error));
       }
     };
-    // eslint-disable-next-line
   }, [customer.id, dispatch]);
 
-  // Verify token & load user data
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
       fetch('https://swyft-backend-client-nine.vercel.app/check_session', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to verify token');
-          }
+          if (!response.ok) throw new Error('Failed to verify token');
           return response.json();
         })
-        .then((userData) => {
-          dispatch(addUser(userData));
-        })
-        .catch((error) => {
-          console.error('Token verification failed:', error);
-        });
+        .then((userData) => dispatch(addUser(userData)))
+        .catch((error) => console.error('Token verification failed:', error));
     }
   }, [dispatch]);
 
-  // Fetch orders history & driver data
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
@@ -179,9 +157,7 @@ function App() {
         },
       })
         .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch rides history');
-          }
+          if (!response.ok) throw new Error('Failed to fetch rides history');
           return response.json();
         })
         .then((data) => {
@@ -206,32 +182,24 @@ function App() {
               }
             )
               .then((response) => {
-                if (!response.ok) {
+                if (!response.ok)
                   throw new Error('Failed to fetch driver data');
-                }
                 return response.json();
               })
-              .then((driverData) => {
-                dispatch(saveDriver(driverData));
-              });
+              .then((driverData) => dispatch(saveDriver(driverData)));
           }
         })
-        .catch((error) => {
-          console.error('Error fetching rides history:', error);
-        });
+        .catch((error) =>
+          console.error('Error fetching rides history:', error)
+        );
     }
-    // eslint-disable-next-line
   }, [updateOrders]);
 
-  // Simulate loading screen for 2 seconds
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
+    const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  // Order status handlers
   const handleOrderAccepted = (payload) => {
     const token = Cookies.get('authTokencl1');
     fetch(
@@ -245,18 +213,14 @@ function App() {
       }
     )
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch driver data');
-        }
+        if (!response.ok) throw new Error('Failed to fetch driver data');
         return response.json();
       })
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
       })
-      .catch((error) => {
-        console.error('Error fetching driver data:', error);
-      });
+      .catch((error) => console.error('Error fetching driver data:', error));
   };
 
   const handleArrivedAtCustomer = (payload) => {
@@ -278,7 +242,6 @@ function App() {
     alert('The ride is completed! Thank you for using our service.');
   };
 
-  // Close error popup
   const handleCloseErrorPopup = () => {
     dispatch(deleteOrder());
     setShowErrorPopup(false);
@@ -292,7 +255,6 @@ function App() {
       ) : (
         <div>
           <Navbar />
-          {/* Child routes (including SignUp) are rendered here */}
           <Outlet />
           <Analytics />
           <SpeedInsights />
@@ -309,7 +271,7 @@ function App() {
         </div>
       )}
 
-      {/* Custom Popup to show the "Install" button */}
+      {/* Custom Popup to show the "Install" button (always visible if not installed) */}
       {showInstallPopup && (
         <div
           style={{
@@ -344,7 +306,6 @@ function App() {
             >
               Get a better experience by installing our app.
             </Typography>
-
             <Button
               onClick={handleInstallClick}
               sx={{
@@ -354,9 +315,7 @@ function App() {
                 textTransform: 'none',
                 fontWeight: 'bold',
                 padding: '8px 16px',
-                '&:hover': {
-                  backgroundColor: '#00c059',
-                },
+                '&:hover': { backgroundColor: '#00c059' },
               }}
             >
               Install

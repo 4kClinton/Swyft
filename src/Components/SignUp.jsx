@@ -23,7 +23,6 @@ const SignUp = () => {
     setError(null);
     setSuccess(null);
 
-    // Simple password match check
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       setLoading(false);
@@ -73,10 +72,7 @@ const SignUp = () => {
         sameSite: 'Strict',
       });
 
-      // Dispatch a custom event to tell App.jsx to show the install popup
-      window.dispatchEvent(new Event('show-install-popup'));
-
-      // Optionally navigate to home or dashboard
+      // Navigate to home (the App.jsx logic will then show the install popup if needed)
       navigate('/');
     } catch (err) {
       console.error('An error occurred during sign-up:', err);
@@ -92,7 +88,6 @@ const SignUp = () => {
         <header className="login-header">Create an Account</header>
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
-
         <form onSubmit={signUp}>
           <input
             placeholder="Name or Username"
@@ -132,7 +127,6 @@ const SignUp = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
-
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? (
               <CircularProgress size={34} color="inherit" />
@@ -143,7 +137,7 @@ const SignUp = () => {
         </form>
 
         <Link
-          to={'/'}
+          to="/"
           className="existing-account"
           style={{
             marginTop: '2vh',
