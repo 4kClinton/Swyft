@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Typography, Box, CircularProgress, Button } from '@mui/material';
+import { Typography, Box, CircularProgress } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
 import '../Styles/Login.css';
 import Cookies from 'js-cookie';
@@ -13,49 +13,10 @@ const SignUp = () => {
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
 
-  // Feedback states
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // PWA install states
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstallPopup, setShowInstallPopup] = useState(false);
-
-  // Listen for the beforeinstallprompt event
-  useEffect(() => {
-    const handler = (e) => {
-      // Prevent the mini-infobar or automatic prompt
-      e.preventDefault();
-      // Save the event so we can call it later
-      setDeferredPrompt(e);
-    };
-    window.addEventListener('beforeinstallprompt', handler);
-
-    return () => {
-      window.removeEventListener('beforeinstallprompt', handler);
-    };
-  }, []);
-
-  // Trigger the browser's native install prompt
-  const handleInstallClick = async () => {
-    if (deferredPrompt) {
-      deferredPrompt.prompt();
-      const { outcome } = await deferredPrompt.userChoice;
-      console.log(`User response to the install prompt: ${outcome}`);
-
-      // Clear so it doesn't prompt again automatically
-      setDeferredPrompt(null);
-      // Close your custom popup
-      setShowInstallPopup(false);
-      // Optionally navigate somewhere after the prompt
-      navigate('/');
-    } else {
-      console.log('No deferredPrompt available (iOS or not installable).');
-    }
-  };
-
-  // Sign-up function
   const signUp = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -85,9 +46,7 @@ const SignUp = () => {
         'https://swyft-backend-client-nine.vercel.app/signup',
         {
           method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-          },
+          headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(signupData),
         }
       );
@@ -106,7 +65,7 @@ const SignUp = () => {
         id: userId,
         name,
         phone: phoneNumber,
-        email,
+        email: sanitizedEmail,
       };
       Cookies.set('user', JSON.stringify(userData));
       Cookies.set('authTokencl1', responseData.access_token, {
@@ -114,8 +73,11 @@ const SignUp = () => {
         sameSite: 'Strict',
       });
 
-      // Show your custom popup to trigger the install prompt
-      setShowInstallPopup(true);
+      // Dispatch a custom event to tell App.jsx to show the install popup
+      window.dispatchEvent(new Event('show-install-popup'));
+
+      // Optionally navigate to home or dashboard
+      navigate('/');
     } catch (err) {
       console.error('An error occurred during sign-up:', err);
       setError(err.message || 'An error occurred. Please try again.');
@@ -196,62 +158,6 @@ const SignUp = () => {
           Already have an account? Log in
         </Link>
       </Box>
-
-      {/* Custom Popup to Trigger the Browser's Install Prompt */}
-      {showInstallPopup && (
-        <div
-          style={{
-            position: 'fixed',
-            top: 0,
-            left: 0,
-            width: '100%',
-            height: '100%',
-            backgroundColor: 'rgba(0, 0, 0, 0.5)',
-            backdropFilter: 'blur(5px)',
-            display: 'flex',
-            alignItems: 'center',
-            justifyContent: 'center',
-            zIndex: 2000,
-          }}
-        >
-          <Box
-            sx={{
-              backgroundColor: '#fff',
-              borderRadius: '8px',
-              padding: '32px',
-              textAlign: 'center',
-              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
-            }}
-          >
-            <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
-              Install Swyft
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{ mb: 2, fontFamily: 'Montserrat' }}
-            >
-              Get a better experience by installing our app.
-            </Typography>
-
-            <Button
-              onClick={handleInstallClick}
-              sx={{
-                backgroundColor: '#00d46a',
-                color: '#fff',
-                border: 'none',
-                textTransform: 'none',
-                fontWeight: 'bold',
-                padding: '8px 16px',
-                '&:hover': {
-                  backgroundColor: '#00c059',
-                },
-              }}
-            >
-              Install
-            </Button>
-          </Box>
-        </div>
-      )}
     </div>
   );
 };

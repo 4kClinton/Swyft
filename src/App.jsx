@@ -17,14 +17,73 @@ import {
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
 import Cookies from 'js-cookie';
 
+// MUI components for the custom popup
+import { Box, Typography, Button } from '@mui/material';
+
 function App() {
   const [isLoading, setIsLoading] = useState(true);
-  const [showErrorPopup, setShowErrorPopup] = useState(false); // New state for error popup
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
 
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.user.value);
   const [updateOrders, setUpdateOrders] = useState(false);
   const navigate = useNavigate();
+
+  // ----------------------
+  // PWA install logic
+  // ----------------------
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(false);
+
+  // Listen for the 'beforeinstallprompt' event (fired by supported browsers)
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      // Prevent the mini-infobar or automatic prompt
+      e.preventDefault();
+      // Store the event so we can call it later
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+
+    // Listen for a custom event from SignUp.jsx to show the install popup
+    const handleShowInstallPopup = () => {
+      // Only show the popup if we actually have a valid deferredPrompt
+      if (deferredPrompt) {
+        setShowInstallPopup(true);
+      }
+    };
+    window.addEventListener('show-install-popup', handleShowInstallPopup);
+
+    return () => {
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt
+      );
+      window.removeEventListener('show-install-popup', handleShowInstallPopup);
+    };
+  }, [deferredPrompt]);
+
+  // When user clicks "Install" in our custom popup
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      // Show the native install prompt
+      deferredPrompt.prompt();
+
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('User response to the install prompt:', outcome);
+
+      // Clear so it won't prompt again
+      setDeferredPrompt(null);
+      setShowInstallPopup(false);
+
+      // Optionally navigate
+      navigate('/');
+    }
+  };
+
+  // ----------------------
+  // Orders & Session logic
+  // ----------------------
 
   useEffect(() => {
     // Subscribe to changes in the 'orders' table
@@ -65,7 +124,7 @@ function App() {
         { event: 'DELETE', schema: 'public', table: 'orders' },
         (payload) => {
           if (payload?.old?.id === supabaseOrderId) {
-            // Instead of using toast.error, set the error popup to visible
+            // Show error popup if no driver found
             setShowErrorPopup(true);
           }
         }
@@ -84,6 +143,7 @@ function App() {
     // eslint-disable-next-line
   }, [customer.id, dispatch]);
 
+  // Verify token & load user data
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
@@ -107,6 +167,7 @@ function App() {
     }
   }, [dispatch]);
 
+  // Fetch orders history & driver data
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
@@ -146,7 +207,7 @@ function App() {
             )
               .then((response) => {
                 if (!response.ok) {
-                  throw new Error('Failed to fetch customer data');
+                  throw new Error('Failed to fetch driver data');
                 }
                 return response.json();
               })
@@ -162,6 +223,7 @@ function App() {
     // eslint-disable-next-line
   }, [updateOrders]);
 
+  // Simulate loading screen for 2 seconds
   useEffect(() => {
     const timer = setTimeout(() => {
       setIsLoading(false);
@@ -169,6 +231,7 @@ function App() {
     return () => clearTimeout(timer);
   }, []);
 
+  // Order status handlers
   const handleOrderAccepted = (payload) => {
     const token = Cookies.get('authTokencl1');
     fetch(
@@ -190,7 +253,6 @@ function App() {
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
-        // You could update the UI here or show a different notification
       })
       .catch((error) => {
         console.error('Error fetching driver data:', error);
@@ -198,12 +260,12 @@ function App() {
   };
 
   const handleArrivedAtCustomer = (payload) => {
-    dispatch(saveOrder(payload.new)); // Update Redux state with new order data
+    dispatch(saveOrder(payload.new));
     alert('Your driver has arrived at the customer location!');
   };
 
   const handleOnTheWayToDestination = (payload) => {
-    dispatch(saveOrder(payload.new)); // Update Redux state with new order data
+    dispatch(saveOrder(payload.new));
     alert('Your driver is on the way to the destination!');
   };
 
@@ -212,12 +274,11 @@ function App() {
     dispatch(removeDriver());
     setUpdateOrders((prev) => !prev);
     Cookies.remove('NavigateToDriverDetails');
-    // Navigate to the Rating Page after ride completion
     navigate('/rate-driver');
     alert('The ride is completed! Thank you for using our service.');
   };
 
-  // Handler for closing the error popup
+  // Close error popup
   const handleCloseErrorPopup = () => {
     dispatch(deleteOrder());
     setShowErrorPopup(false);
@@ -231,6 +292,7 @@ function App() {
       ) : (
         <div>
           <Navbar />
+          {/* Child routes (including SignUp) are rendered here */}
           <Outlet />
           <Analytics />
           <SpeedInsights />
@@ -244,6 +306,62 @@ function App() {
             <p>No driver found for your order. Please try again later.</p>
             <button onClick={handleCloseErrorPopup}>Close</button>
           </div>
+        </div>
+      )}
+
+      {/* Custom Popup to show the "Install" button */}
+      {showInstallPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}
+        >
+          <Box
+            sx={{
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+              padding: '32px',
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
+              Install Swyft
+            </Typography>
+            <Typography
+              variant="body2"
+              sx={{ mb: 2, fontFamily: 'Montserrat' }}
+            >
+              Get a better experience by installing our app.
+            </Typography>
+
+            <Button
+              onClick={handleInstallClick}
+              sx={{
+                backgroundColor: '#00d46a',
+                color: '#fff',
+                border: 'none',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                padding: '8px 16px',
+                '&:hover': {
+                  backgroundColor: '#00c059',
+                },
+              }}
+            >
+              Install
+            </Button>
+          </Box>
         </div>
       )}
     </UserProvider>
