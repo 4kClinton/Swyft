@@ -12,43 +12,57 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+
+  // Feedback states
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Install Prompt states
+  // PWA install states
   const [deferredPrompt, setDeferredPrompt] = useState(null);
   const [showInstallPopup, setShowInstallPopup] = useState(false);
 
-  // Capture the beforeinstallprompt event
+  // Listen for the beforeinstallprompt event
   useEffect(() => {
     const handler = (e) => {
+      // Prevent the mini-infobar or automatic prompt
       e.preventDefault();
+      // Save the event so we can call it later
       setDeferredPrompt(e);
     };
     window.addEventListener('beforeinstallprompt', handler);
-    return () => window.removeEventListener('beforeinstallprompt', handler);
+
+    return () => {
+      window.removeEventListener('beforeinstallprompt', handler);
+    };
   }, []);
 
-  // Function to trigger the install prompt
+  // Trigger the browser's native install prompt
   const handleInstallClick = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
       const { outcome } = await deferredPrompt.userChoice;
       console.log(`User response to the install prompt: ${outcome}`);
+
+      // Clear so it doesn't prompt again automatically
       setDeferredPrompt(null);
+      // Close your custom popup
       setShowInstallPopup(false);
-      navigate('/'); // Navigate after handling install
+      // Optionally navigate somewhere after the prompt
+      navigate('/');
+    } else {
+      console.log('No deferredPrompt available (iOS or not installable).');
     }
   };
 
-  // Sign-Up function to register customer data
+  // Sign-up function
   const signUp = async (event) => {
     event.preventDefault();
     setLoading(true);
     setError(null);
     setSuccess(null);
 
+    // Simple password match check
     if (password !== confirmPassword) {
       setError('Passwords do not match.');
       setLoading(false);
@@ -87,7 +101,7 @@ const SignUp = () => {
 
       setSuccess(responseData.message || 'Account created successfully!');
 
-      // Save user data (excluding password) locally
+      // Save user data in cookies
       const userData = {
         id: userId,
         name,
@@ -100,7 +114,7 @@ const SignUp = () => {
         sameSite: 'Strict',
       });
 
-      // Instead of navigating immediately, show the install popup
+      // Show your custom popup to trigger the install prompt
       setShowInstallPopup(true);
     } catch (err) {
       console.error('An error occurred during sign-up:', err);
@@ -116,6 +130,7 @@ const SignUp = () => {
         <header className="login-header">Create an Account</header>
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
+
         <form onSubmit={signUp}>
           <input
             placeholder="Name or Username"
@@ -155,6 +170,7 @@ const SignUp = () => {
             onChange={(e) => setConfirmPassword(e.target.value)}
             required
           />
+
           <button type="submit" className="login-button" disabled={loading}>
             {loading ? (
               <CircularProgress size={34} color="inherit" />
@@ -165,7 +181,7 @@ const SignUp = () => {
         </form>
 
         <Link
-          to={'/login'}
+          to={'/'}
           className="existing-account"
           style={{
             marginTop: '2vh',
@@ -181,7 +197,7 @@ const SignUp = () => {
         </Link>
       </Box>
 
-      {/* Install Popup with Blur Overlay */}
+      {/* Custom Popup to Trigger the Browser's Install Prompt */}
       {showInstallPopup && (
         <div
           style={{
@@ -216,22 +232,22 @@ const SignUp = () => {
             >
               Get a better experience by installing our app.
             </Typography>
+
             <Button
-              variant="contained"
-              color="primary"
               onClick={handleInstallClick}
-              sx={{ mr: 1 }}
-            >
-              Install
-            </Button>
-            <Button
-              variant="outlined"
-              onClick={() => {
-                setShowInstallPopup(false);
-                navigate('/');
+              sx={{
+                backgroundColor: '#00d46a',
+                color: '#fff',
+                border: 'none',
+                textTransform: 'none',
+                fontWeight: 'bold',
+                padding: '8px 16px',
+                '&:hover': {
+                  backgroundColor: '#00c059',
+                },
               }}
             >
-              Close
+              Install
             </Button>
           </Box>
         </div>
