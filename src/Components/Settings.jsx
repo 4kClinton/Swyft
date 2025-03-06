@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import '../Styles/Settings.css'; // Import the custom CSS file for switch styles
 
 function Settings() {
@@ -10,31 +10,17 @@ function Settings() {
   const [paymentMethod, setPaymentMethod] = useState('Visa **** 1234');
   //eslint-disable-next-line
   const [username, setUsername] = useState('JohnDoe');
-  const [isDarkMode, setIsDarkMode] = useState(false); // Dark mode state
 
   const toggleNotifications = () =>
     setIsNotificationsEnabled(!isNotificationsEnabled);
 
   //eslint-disable-next-line
   const handlePrivacyChange = (e) => setPrivacyLevel(e.target.value);
-
   //eslint-disable-next-line
   const handleLanguageChange = (e) => setLanguage(e.target.value);
   const handlePaymentMethodChange = (e) => setPaymentMethod(e.target.value);
-
   //eslint-disable-next-line
   const handleUsernameChange = (e) => setUsername(e.target.value);
-
-  const toggleDarkMode = () => setIsDarkMode(!isDarkMode); // Toggle dark mode
-
-  useEffect(() => {
-    // Apply the appropriate theme when the isDarkMode state changes
-    if (isDarkMode) {
-      document.body.classList.add('dark-mode');
-    } else {
-      document.body.classList.remove('dark-mode');
-    }
-  }, [isDarkMode]);
 
   return (
     <div style={styles.container}>
@@ -71,22 +57,6 @@ function Settings() {
           </select>
         </div>
       </div>
-
-      {/* Dark Mode Switch */}
-      <div style={styles.section}>
-        <h3 style={styles.sectionHeading}>Theme</h3>
-        <div style={styles.settingItem}>
-          <label style={styles.label}>Dark Mode</label>
-          <label className="switch">
-            <input
-              type="checkbox"
-              checked={isDarkMode}
-              onChange={toggleDarkMode}
-            />
-            <span className="slider"></span>
-          </label>
-        </div>
-      </div>
     </div>
   );
 }
@@ -99,14 +69,14 @@ const styles = {
     fontFamily: 'var(--font-family)',
     maxWidth: '600px',
     margin: '0 auto',
-    backgroundColor: 'var(--primary-color)', // Dynamic based on dark/light mode
+    backgroundColor: 'var(--primary-color)',
     borderRadius: '10px',
     boxShadow: '0 4px 8px rgba(0, 0, 0, 0.3)',
-    color: 'var(--text-color)', // Dynamic text color
+    color: 'var(--text-color)',
   },
   heading: {
     fontSize: '1.8em',
-    color: 'var(--highlight-color)', // Accent color for heading
+    color: 'var(--highlight-color)',
     marginBottom: '20px',
     textAlign: 'center',
   },
@@ -117,7 +87,7 @@ const styles = {
   },
   sectionHeading: {
     fontSize: '1.2em',
-    color: 'var(--highlight-color)', // Accent for section headings
+    color: 'var(--highlight-color)',
     marginBottom: '10px',
   },
   settingItem: {
@@ -129,13 +99,13 @@ const styles = {
   },
   label: {
     fontSize: '1em',
-    color: 'var(--text-color)', // Consistent text color
+    color: 'var(--text-color)',
   },
   input: {
     padding: '10px',
     borderRadius: '8px',
     backgroundColor: 'var(--input-background)',
-    color: 'var(--text-color)', // Input text color
+    color: 'var(--text-color)',
     border: '1px solid var(--border-color)',
     width: '60%',
     outline: 'none',
