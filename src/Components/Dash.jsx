@@ -17,7 +17,6 @@ import {
 
 import { GiTowTruck } from 'react-icons/gi';
 import { PiTruck } from 'react-icons/pi';
-import { PiVan } from 'react-icons/pi';
 
 import { useDispatch, useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
@@ -57,13 +56,13 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
   const rates = {
     pickup: 220,
     miniTruck: 270,
-    van: 300,
+    van: 210,
     flatbed: 350,
     'Car Rescue': 400,
     tukTuk: 100,
-    '10 Tonne Lorry': 500,
-    '18 Tonne Lorry': 600,
-    Tipper: 950,
+    Lorry: 500,
+    // '18 Tonne Lorry': 600,
+    // Tipper: 950,
   };
 
   const decayFactor = 0.005;
@@ -326,11 +325,10 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         {/* Mini Cargo */}
         <h2>Mini Cargo</h2>
         {Object.entries(calculatedCosts)
-          .filter(([vehicle]) => ['pickup', 'tukTuk'].includes(vehicle))
+          .filter(([vehicle]) => ['van'].includes(vehicle))
           .map(([vehicle, cost]) => {
             const Icon = {
-              pickup: FaTruckPickup,
-              tukTuk: PiVan,
+              van: FaShuttleVan,
             }[vehicle];
             return (
               <label
@@ -354,11 +352,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         {/* Medium Cargo */}
         <h2>Medium Cargo</h2>
         {Object.entries(calculatedCosts)
-          .filter(([vehicle]) => ['miniTruck', 'van'].includes(vehicle))
+          .filter(([vehicle]) => ['miniTruck', 'pickup'].includes(vehicle))
           .map(([vehicle, cost]) => {
             const Icon = {
               miniTruck: FaTruck,
-              van: FaShuttleVan,
+              pickup: FaTruckPickup,
             }[vehicle];
             return (
               <label
@@ -382,20 +380,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
         {/* Bulk Cargo */}
         <h2>Bulk Cargo</h2>
         {Object.entries(calculatedCosts)
-          .filter(([vehicle]) =>
-            [
-              'Car Rescue',
-              '10 Tonne Lorry',
-              '18 Tonne Lorry',
-              'Tipper',
-            ].includes(vehicle)
-          )
+          .filter(([vehicle]) => ['Car Rescue', 'Lorry'].includes(vehicle))
           .map(([vehicle, cost]) => {
             const Icon = {
               'Car Rescue': GiTowTruck,
-              '10 Tonne Lorry': PiTruck,
-              '18 Tonne Lorry': PiTruck,
-              Tipper: PiTruck,
+              Lorry: PiTruck,
             }[vehicle];
             return (
               <label
@@ -426,7 +415,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             checked={includeLoader}
             onChange={handleLoaderChange}
           />
-          Need a loader for unloading? (Ksh 600 per loader)
+          Need a loader for loading & unloading? (Ksh 600 per loader)
         </label>
         {includeLoader && (
           <input
