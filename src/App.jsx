@@ -19,10 +19,15 @@ import Cookies from 'js-cookie';
 
 // MUI components for the custom popup
 import { Box, Typography, Button } from '@mui/material';
+// Import an icon for the iOS popup
+import AddToHomeScreenIcon from '@mui/icons-material/AddToHomeScreen';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
   const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [deviceType, setDeviceType] = useState(null); // 'iOS', 'Android', or 'Desktop'
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(false);
 
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.user.value);
@@ -30,11 +35,29 @@ function App() {
   const navigate = useNavigate();
 
   // ----------------------
-  // PWA install logic
+  // Combined Device Detection
   // ----------------------
-  const [deferredPrompt, setDeferredPrompt] = useState(null);
-  const [showInstallPopup, setShowInstallPopup] = useState(false);
+  useEffect(() => {
+    function detectDeviceType() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isIOSDevice =
+        /iPad|iPhone|iPod/.test(userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isAndroidDevice = /android/i.test(userAgent);
+      if (isIOSDevice) {
+        return 'iOS';
+      } else if (isAndroidDevice) {
+        return 'Android';
+      } else {
+        return 'Desktop';
+      }
+    }
+    setDeviceType(detectDeviceType());
+  }, []);
 
+  // ----------------------
+  // PWA Install Logic
+  // ----------------------
   // Capture the beforeinstallprompt event
   useEffect(() => {
     const handleBeforeInstallPrompt = (e) => {
@@ -51,19 +74,24 @@ function App() {
     };
   }, []);
 
-  // Always show the install popup if not installed and a valid deferredPrompt exists
+  // Show install popup:
+  // For Android, we need a deferredPrompt.
+  // For iOS, the prompt event is not supported so we show our custom message.
   useEffect(() => {
     const isStandalone = window.matchMedia(
       '(display-mode: standalone)'
     ).matches;
-    if (!isStandalone && deferredPrompt) {
+    if (
+      !isStandalone &&
+      ((deferredPrompt && deviceType === 'Android') || deviceType === 'iOS')
+    ) {
       setShowInstallPopup(true);
     } else {
       setShowInstallPopup(false);
     }
-  }, [deferredPrompt]);
+  }, [deferredPrompt, deviceType]);
 
-  // When the user clicks "Install" in our custom popup
+  // When the user clicks "Install" in our custom popup (Android only)
   const handleInstallClick = async () => {
     if (deferredPrompt) {
       deferredPrompt.prompt();
@@ -76,7 +104,7 @@ function App() {
   };
 
   // ----------------------
-  // Orders & Session logic
+  // Orders & Session Logic
   // ----------------------
   useEffect(() => {
     // Subscribe to changes in the 'orders' table
@@ -271,7 +299,7 @@ function App() {
         </div>
       )}
 
-      {/* Custom Popup to show the "Install" button (always visible if not installed) */}
+      {/* Custom Install Popup */}
       {showInstallPopup && (
         <div
           style={{
@@ -297,29 +325,66 @@ function App() {
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
             }}
           >
-            <Typography variant="h6" sx={{ mb: 2, fontFamily: 'Montserrat' }}>
-              Install Swyft
-            </Typography>
-            <Typography
-              variant="body2"
-              sx={{ mb: 2, fontFamily: 'Montserrat' }}
-            >
-              Get a better experience by installing our app.
-            </Typography>
-            <Button
-              onClick={handleInstallClick}
-              sx={{
-                backgroundColor: '#00d46a',
-                color: '#fff',
-                border: 'none',
-                textTransform: 'none',
-                fontWeight: 'bold',
-                padding: '8px 16px',
-                '&:hover': { backgroundColor: '#00c059' },
-              }}
-            >
-              Install
-            </Button>
+            {deviceType === 'Android' ? (
+              <>
+                <Typography
+                  variant="h6"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  Install Swyft
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  Get a better experience by installing our app.
+                </Typography>
+                <Button
+                  onClick={handleInstallClick}
+                  sx={{
+                    backgroundColor: '#00d46a',
+                    color: '#fff',
+                    border: 'none',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    padding: '8px 16px',
+                    '&:hover': { backgroundColor: '#00c059' },
+                  }}
+                >
+                  Install
+                </Button>
+              </>
+            ) : deviceType === 'iOS' ? (
+              <>
+                <AddToHomeScreenIcon sx={{ fontSize: 40, mb: 2 }} />
+                <Typography
+                  variant="h6"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  Add to Home Screen
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  For the best experience, add this page to your home screen.
+                </Typography>
+                <Button
+                  onClick={() => setShowInstallPopup(false)}
+                  sx={{
+                    backgroundColor: '#00d46a',
+                    color: '#fff',
+                    border: 'none',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    padding: '8px 16px',
+                    '&:hover': { backgroundColor: '#00c059' },
+                  }}
+                >
+                  Dismiss
+                </Button>
+              </>
+            ) : null}
           </Box>
         </div>
       )}
