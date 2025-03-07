@@ -8,7 +8,7 @@ const urlsToCache = [
   "/icons/icon-512x512.png"
 ];
 
-// Install Service Worker
+// Install Service Worker: Cache essential assets.
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -17,7 +17,7 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Activate & Clean Old Caches
+// Activate Service Worker: Clean up old caches.
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,20 +32,27 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch and Cache Strategy with MIME Type Safeguard
+// Fetch: Use network-first strategy for navigation requests.
 self.addEventListener("fetch", (event) => {
-  const acceptHeader = event.request.headers.get("accept") || "";
-  
-  // For HTML navigation requests, use cache first then network fallback.
-  if (acceptHeader.includes("text/html")) {
+  // Check if this is a navigation request.
+  if (event.request.mode === "navigate") {
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
-      })
+      fetch(event.request)
+        .then((response) => {
+          // Update cache with the latest index.html.
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put("/index.html", responseClone);
+          });
+          return response;
+        })
+        .catch(() => {
+          // Fallback to the cached index.html if network fails.
+          return caches.match("/index.html");
+        })
     );
   } else {
-    // For non-HTML requests (like JS modules), perform a network fetch.
-    // Optionally, fallback to cache if the network fails.
+    // For non-navigation requests, use network-first with cache fallback.
     event.respondWith(
       fetch(event.request).catch(() => caches.match(event.request))
     );
