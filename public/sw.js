@@ -1,14 +1,10 @@
 const CACHE_NAME = "pwa-cache-v1";
+// Pre-cache only the essential navigation assets.
 const urlsToCache = [
   "/",
-  "/index.html",
-  "/styles.css",
-  "/app.js",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png"
+  "/index.html"
 ];
 
-// Install Service Worker: Cache essential assets.
 self.addEventListener("install", (event) => {
   event.waitUntil(
     caches.open(CACHE_NAME).then((cache) => {
@@ -17,7 +13,6 @@ self.addEventListener("install", (event) => {
   );
 });
 
-// Activate Service Worker: Clean up old caches.
 self.addEventListener("activate", (event) => {
   event.waitUntil(
     caches.keys().then((cacheNames) => {
@@ -32,23 +27,24 @@ self.addEventListener("activate", (event) => {
   );
 });
 
-// Fetch: Use network-first strategy for navigation requests.
 self.addEventListener("fetch", (event) => {
-  // Check if this is a navigation request.
+  // Use network-first strategy for navigation requests (pages)
   if (event.request.mode === "navigate") {
     event.respondWith(
       fetch(event.request)
         .then((response) => {
-          // Update cache with the latest index.html.
+          // Optionally, update the cache with the fresh page
           const responseClone = response.clone();
           caches.open(CACHE_NAME).then((cache) => {
-            cache.put("/index.html", responseClone);
+            cache.put(event.request, responseClone);
           });
           return response;
         })
         .catch(() => {
-          // Fallback to the cached index.html if network fails.
-          return caches.match("/index.html");
+          // If network fails, fall back to the cached page or index.html
+          return caches.match(event.request).then(cachedResponse => {
+            return cachedResponse || caches.match("/index.html");
+          });
         })
     );
   } else {
