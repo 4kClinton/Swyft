@@ -18,9 +18,10 @@ import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
 import Cookies from 'js-cookie';
 
 // MUI components for the custom popup
-import { Box, Typography, Button } from '@mui/material';
-// Import an icon for the iOS popup
+import { Box, Typography, Button, IconButton } from '@mui/material';
+// Import icons for the iOS popup and for closing the popup
 import AddToHomeScreenIcon from '@mui/icons-material/AddToHomeScreen';
+import CloseIcon from '@mui/icons-material/Close';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
@@ -41,7 +42,7 @@ function App() {
     function detectDeviceType() {
       const userAgent = navigator.userAgent || navigator.vendor || window.opera;
       const isIOSDevice =
-        /iPad|iPhone|iPod/.test(userAgent) ||
+        /iPad|iPhone|iPod|MacIntel/.test(userAgent) ||
         (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
       const isAndroidDevice = /android/i.test(userAgent);
       if (isIOSDevice) {
@@ -74,16 +75,14 @@ function App() {
     };
   }, []);
 
-  // Show install popup:
-  // For Android, we need a deferredPrompt.
-  // For iOS, the prompt event is not supported so we show our custom message.
+  // Show install popup only on mobile devices (iOS or Android)
   useEffect(() => {
     const isStandalone = window.matchMedia(
       '(display-mode: standalone)'
     ).matches;
     if (
       !isStandalone &&
-      ((deferredPrompt && deviceType === 'Android') || deviceType === 'iOS')
+      ((deviceType === 'Android' && deferredPrompt) || deviceType === 'iOS')
     ) {
       setShowInstallPopup(true);
     } else {
@@ -299,7 +298,7 @@ function App() {
         </div>
       )}
 
-      {/* Custom Install Popup */}
+      {/* Custom Install Popup (only shows on mobile devices) */}
       {showInstallPopup && (
         <div
           style={{
@@ -318,6 +317,7 @@ function App() {
         >
           <Box
             sx={{
+              position: 'relative',
               backgroundColor: '#fff',
               borderRadius: '8px',
               padding: '32px',
@@ -325,6 +325,18 @@ function App() {
               boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
             }}
           >
+            {/* Cancel button at the top right corner */}
+            <IconButton
+              onClick={() => setShowInstallPopup(false)}
+              sx={{
+                position: 'absolute',
+                top: '8px',
+                right: '8px',
+                color: '#999',
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
             {deviceType === 'Android' ? (
               <>
                 <Typography
