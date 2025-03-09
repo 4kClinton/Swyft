@@ -103,8 +103,8 @@ export default function OrderConfirmation() {
     van: Van,
     'Car Rescue': CarRescue,
     tukTuk: TukTuk,
-    '10 Tonne Lorry': TenTonne,
-    '18 Tonne Lorry': TenTonne,
+    Lorry: TenTonne,
+    // 'Lorry': TenTonne,
     Tipper: Tipper,
   };
   const vehicleImage = vehicleImages[orderData.vehicle] || Pickup;
