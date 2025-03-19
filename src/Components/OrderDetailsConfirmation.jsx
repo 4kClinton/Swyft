@@ -9,9 +9,13 @@ import TukTuk from '../assets/TukTuk.jpg';
 import Pickup from '../assets/pickup.png';
 import MiniTruck from '../assets/miniTruck.png';
 import TenTonne from '../assets/10T-Lorry.jpg';
+import fiveTonne from '../assets/5tonne.png';
 import Van from '../assets/van.jpg';
 import Tipper from '../assets/Tipper.jpg';
 import CarRescue from '../assets/Towin.jpg';
+import nduthi from '../assets/nduthi.png';
+import moti from '../assets/moti.png';
+import nduthiElectric from '../assets/Electric.png';
 
 // Import the separate FindDriver component
 import FindDriver from './FindDriver';
@@ -103,7 +107,12 @@ export default function OrderConfirmation() {
     van: Van,
     'Car Rescue': CarRescue,
     tukTuk: TukTuk,
+    SwyftBoda: nduthi,
     Lorry: TenTonne,
+    lorry5Tonne: fiveTonne,
+    lorry10Tonne: TenTonne,
+    car: moti,
+    SwyftBodaElectric: nduthiElectric,
     // 'Lorry': TenTonne,
     Tipper: Tipper,
   };
