@@ -18,8 +18,10 @@
   z-index: 1;
 }
 .finder{
-  font-size: large;
-  font-family: "Montserrat";
+  font-size: 40px;
+    color: #3d3d3d;
+    font-family: Montserrat;
+    text-align: center;
 }
 /* Foreground loading content */
 .loading-container {

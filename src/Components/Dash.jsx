@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, useMemo } from 'react';
 import PropTypes from 'prop-types';
 import '../Styles/Dash.css';
 
@@ -7,68 +7,102 @@ import DateTimePopup from './DateTimePopup';
 import LoaderPopup from './LoaderPopup';
 import ErrorPopup from './ErrorPopup';
 import SuccessPopup from './SuccessPopup';
+import SortingTabs from './SortingTabs';
 
 import {
   FaTruckPickup,
   FaTruck,
   FaShuttleVan,
   FaCheckCircle,
+  FaMotorcycle, // For SwyftBoda
+  FaCar, // For car
 } from 'react-icons/fa';
 
 import { GiTowTruck } from 'react-icons/gi';
 import { PiTruck } from 'react-icons/pi';
-import { PiVan } from 'react-icons/pi';
 
 import { useDispatch, useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useNavigationType } from 'react-router-dom';
 import CancelOrderPopup from './CancelOrderPopup';
 import Cookies from 'js-cookie';
-import { saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
+import { deleteOrder, saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
 
-const Dash = ({ distance = 0, userLocation, destination }) => {
-  const [showCancelPopup, setShowCancelPopup] = useState(false);
-  const [isOpen, setIsOpen] = useState(false);
+const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
+  // Listen for navigation type (POP, PUSH, REPLACE)
+  const navigationType = useNavigationType();
   const dispatch = useDispatch();
-
   const navigate = useNavigate();
 
+  // Clear order if user navigates back via browser button
+  useEffect(() => {
+    if (navigationType === 'POP') {
+      dispatch(deleteOrder());
+      localStorage.removeItem('currentOrder');
+    }
+  }, [navigationType, dispatch]);
+
+  // ======= NEW: Tab State & Loading for the tab switch =======
+  const [activeTab, setActiveTab] = useState('Cargo');
+  const [isTabLoading, setIsTabLoading] = useState(false);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
+  // Simulate a short loading period whenever activeTab changes
+  useEffect(() => {
+    setIsTabLoading(true);
+    const timer = setTimeout(() => {
+      setIsTabLoading(false);
+    }, 800); // 0.8s mock loading
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
+  // ======= Local storage states =======
   const [selectedOption, setSelectedOption] = useState('');
-  const [calculatedCosts, setCalculatedCosts] = useState({});
   const [includeLoader, setIncludeLoader] = useState(false);
   const [numLoaders, setNumLoaders] = useState(1);
+
+  // ======= Other component states =======
+  const [calculatedCosts, setCalculatedCosts] = useState({});
   const [showDateTimePopup, setShowDateTimePopup] = useState(false);
   const [showLoaderPopup, setShowLoaderPopup] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
   const [scheduleDateTime, setScheduleDateTime] = useState('');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
   const [showSuccessPopup, setShowSuccessPopup] = useState(false);
-
-  // States for gradual dragging:
   const [startY, setStartY] = useState(null);
   const [offsetY, setOffsetY] = useState(0);
-
-  const order = useSelector((state) => state.currentOrder.value);
-  const Price = selectedOption ? calculatedCosts[selectedOption] : 0;
-  const theUser = useSelector((state) => state.user.value);
   const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
 
   const dashRef = useRef(null);
+  const order = useSelector((state) => state.currentOrder.value);
+  const theUser = useSelector((state) => state.user.value);
+  const Price = selectedOption ? calculatedCosts[selectedOption] : 0;
 
-  const rates = {
-    pickup: 220,
-    miniTruck: 270,
-    van: 300,
-    flatbed: 350,
-    'Car Rescue': 400,
-    tukTuk: 100,
-    '10 Tonne Lorry': 500,
-    '18 Tonne Lorry': 600,
-    Tipper: 950,
-  };
+  // ======= 1. Define your rates for each vehicle type =======
+  const rates = useMemo(
+    () => ({
+      SwyftBoda: 30,
+      SwyftBodaElectric: 20,
+      car: 50,
+      van: 210,
+      miniTruck: 270,
+      pickup: 220,
+      carRescue: 400,
+      lorry5Tonne: 800,
+      lorry10Tonne: 1200,
+    }),
+    []
+  );
 
+  // Distance cost constants
   const decayFactor = 0.005;
   const floorRate = 50;
 
+  // ======= 2. Cost calculation logic =======
   const calculateRate = (baseRate, distance) => {
     if (distance < 2) {
       return baseRate * 3.5;
@@ -83,63 +117,93 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     }
   };
 
-  // Example Usage:
-  console.log(calculateRate(rates.pickup, 1.5)); // 770
-  console.log(calculateRate(rates.pickup, 2.5)); // 660
-  console.log(calculateRate(rates.pickup, 4)); // 550
-  console.log(calculateRate(rates.pickup, 8)); // 264
-  console.log(calculateRate(rates.pickup, 15)); // Uses decay formula
+  useEffect(() => {
+    console.log('Pickup rate for 1.5 km:', calculateRate(rates.pickup, 1.5));
+    console.log('Pickup rate for 2.5 km:', calculateRate(rates.pickup, 2.5));
+    console.log('Pickup rate for 4 km:', calculateRate(rates.pickup, 4));
+    console.log('Pickup rate for 8 km:', calculateRate(rates.pickup, 8));
+    console.log('Pickup rate for 15 km:', calculateRate(rates.pickup, 15));
+  }, [rates]);
 
+  // Recalculate costs whenever dependencies change
   useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
-      (acc, [vehicle, baseRate]) => {
+      (acc, [vehicleKey, baseRate]) => {
         const adjustedRate = calculateRate(baseRate, distance);
         let calculatedCost = adjustedRate * distance;
-
-        if (vehicle === 'flatbed') {
-          calculatedCost = Math.max(calculatedCost, 3500);
+        // For vehicles other than 'car', 'SwyftBoda', and 'SwyftBodaElectric', apply the minimum cost of Ksh 1000.
+        if (!['car', 'SwyftBoda', 'SwyftBodaElectric'].includes(vehicleKey)) {
+          calculatedCost = Math.max(calculatedCost, 1000);
         }
-
-        calculatedCost = Math.max(calculatedCost, 1000);
-
-        acc[vehicle] = Math.round(
+        // Add loader costs if applicable
+        acc[vehicleKey] = Math.round(
           calculatedCost + (includeLoader ? 600 * numLoaders : 0)
         );
-
         return acc;
       },
       {}
     );
-
     setCalculatedCosts(newCalculatedCosts);
-    //eslint-disable-next-line
-  }, [distance, includeLoader, numLoaders, isLoading]);
+  }, [distance, includeLoader, numLoaders, rates]);
+
+  // ======= 3. Load & save user selections to local storage =======
+  useEffect(() => {
+    const storedSelectedOption = localStorage.getItem('selectedOption');
+    if (storedSelectedOption) setSelectedOption(storedSelectedOption);
+
+    const storedIncludeLoader = localStorage.getItem('includeLoader');
+    if (storedIncludeLoader) {
+      setIncludeLoader(JSON.parse(storedIncludeLoader));
+    }
+
+    const storedNumLoaders = localStorage.getItem('numLoaders');
+    if (storedNumLoaders) {
+      setNumLoaders(parseInt(storedNumLoaders, 10));
+    }
+  }, []);
 
   useEffect(() => {
+    localStorage.setItem('selectedOption', selectedOption);
+  }, [selectedOption]);
+
+  useEffect(() => {
+    localStorage.setItem('includeLoader', JSON.stringify(includeLoader));
+  }, [includeLoader]);
+
+  useEffect(() => {
+    localStorage.setItem('numLoaders', numLoaders.toString());
+  }, [numLoaders]);
+
+  // ======= 4. Panel open/close logic =======
+  useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dashRef.current && !dashRef.current.contains(event.target))
+      if (dashRef.current && !dashRef.current.contains(event.target)) {
         setIsOpen(false);
+      }
     };
-    if (isOpen) document.addEventListener('click', handleClickOutside);
-    return () => document.removeEventListener('click', handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, [isOpen]);
 
-  const handleOptionChange = (vehicle) => {
+  const handleOptionChange = (vehicleKey) => {
     if (!isOpen) {
       setIsOpen(true);
     }
-    setSelectedOption(vehicle);
+    setSelectedOption(vehicleKey);
   };
 
   const handleLoaderChange = (e) => setIncludeLoader(e.target.checked);
   const handleNumLoadersChange = (e) => {
-    const value = parseInt(e.target.value);
+    const value = parseInt(e.target.value, 10);
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
 
-  // Touch handlers for gradual dragging
+  // ======= 5. Touch handlers for dragging the panel =======
   const panelHeight = 300;
-
   const handleTouchStart = (e) => {
     setStartY(e.touches[0].clientY);
   };
@@ -156,13 +220,11 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     const closedPosition = panelHeight;
     const baseTranslate = isOpen ? 0 : closedPosition;
     const finalTranslate = baseTranslate + offsetY;
-
     if (finalTranslate < closedPosition / 2) {
       setIsOpen(true);
     } else {
       setIsOpen(false);
     }
-
     setOffsetY(0);
     setStartY(null);
   };
@@ -179,40 +241,44 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     transition: startY !== null ? 'none' : 'transform 0.3s ease-out',
   };
 
-  console.log(calculatedCosts);
-
+  // ======= 6. Confirm order logic =======
   const confirmOrder = async () => {
-    Cookies.remove('driverData');
+    try {
+      Cookies.remove('driverData');
 
-    if (destination.length === 0) {
-      setErrorMessage('Please enter a destination location.');
-      return;
-    }
-    if (!selectedOption) {
-      setErrorMessage('Please select a vehicle.');
-      return;
-    }
-    if (!theUser || !theUser.id || !theUser.name) {
-      setErrorMessage('User details are missing. Please log in again.');
-      return;
-    }
+      if (destination.length === 0) {
+        throw new Error('Please enter a destination location.');
+      }
+      if (!selectedOption) {
+        throw new Error('Please select a vehicle.');
+      }
+      if (!theUser || !theUser.id || !theUser.name) {
+        throw new Error('User details are missing. Please log in again.');
+      }
 
-    const orderData = {
-      id: theUser.id,
-      vehicle: selectedOption,
-      distance: parseFloat(distance).toFixed(3),
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 600 : 0,
-      totalCost: Price,
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
-    dispatch(saveOrder(orderData));
+      const orderData = {
+        id: theUser.id,
+        vehicle: selectedOption,
+        distance: parseFloat(distance).toFixed(3),
+        loaders: includeLoader ? numLoaders : 0,
+        loaderCost: includeLoader ? numLoaders * 600 : 0,
+        totalCost: Price,
+        userLocation,
+        destination,
+        time: new Date().toLocaleString(),
+      };
 
-    navigate('/confirmOrder', { state: { orderData } });
+      // Save order details in Redux and local storage.
+      dispatch(saveOrder(orderData));
+      localStorage.setItem('currentOrder', JSON.stringify(orderData));
+
+      navigate('/confirmOrder', { state: { orderData } });
+    } catch (error) {
+      setErrorMessage(error.message);
+    }
   };
 
+  // ======= 7. If order is accepted, navigate to driver details =======
   useEffect(() => {
     if (order?.status === 'Accepted') {
       const navigated = Cookies.get('NavigateToDriverDetails');
@@ -227,8 +293,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     } else {
       setIsLoading(true);
     }
-    //eslint-disable-next-line
-  }, [order]);
+  }, [order, navigate]);
 
   const goBackToDash = () => {
     setShowSuccessPopup(false);
@@ -249,13 +314,15 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     setShowCancelPopup(false);
   };
 
+  // If user not logged in, redirect
   useEffect(() => {
     if (!theUser?.id) {
       navigate('/');
     }
   }, [theUser, navigate]);
 
-  if (order?.id) {
+  // ======= 8. If there's an existing order, show "Current Order" =======
+  if (order?.id && order?.vehicle_type) {
     return (
       <div
         ref={dashRef}
@@ -305,6 +372,105 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
     );
   }
 
+  // ======= 9. Main Dash UI: show tab-based vehicles =======
+  // Helper: Render vehicles with label, icon, cost
+  const renderVehicleOptions = (vehicles) => {
+    return vehicles.map(({ key, label, Icon }) => {
+      const cost = calculatedCosts[key] || 0;
+      return (
+        <label
+          key={key}
+          className="Option"
+          onClick={() => handleOptionChange(key)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '1rem',
+          }}
+        >
+          <div
+            className={`checkbox ${selectedOption === key ? 'selected' : ''}`}
+            style={{ marginRight: '1rem' }}
+          >
+            <Icon size={24} />
+          </div>
+          {`${label} - Ksh ${distance > 0 ? cost : '0'}`}
+        </label>
+      );
+    });
+  };
+
+  // Vehicles for each sub-category of Cargo
+  const miniCargo = [{ key: 'van', label: 'Van', Icon: FaShuttleVan }];
+
+  const mediumCargo = [
+    { key: 'miniTruck', label: 'MiniTruck', Icon: FaTruck },
+    { key: 'pickup', label: 'Pickup', Icon: FaTruckPickup },
+  ];
+
+  const bulkCargo = [
+    { key: 'carRescue', label: 'Car Rescue', Icon: GiTowTruck },
+
+    { key: 'lorry5Tonne', label: 'Lorry 5 Tonne', Icon: PiTruck },
+    { key: 'lorry10Tonne', label: 'Lorry 10 Tonne', Icon: PiTruck },
+  ];
+
+  // Vehicles for Parcels
+  const parcelVehicles = [
+    { key: 'SwyftBoda', label: 'Swyft Boda', Icon: FaMotorcycle },
+    {
+      key: 'SwyftBodaElectric',
+      label: 'Swyft Boda Electric',
+      Icon: FaMotorcycle,
+    },
+    { key: 'car', label: 'Car', Icon: FaCar },
+  ];
+
+  // Vehicles for Moving
+  const movingVehicles = [
+    { key: 'pickup', label: 'Pickup', Icon: FaTruckPickup },
+    { key: 'miniTruck', label: 'MiniTruck', Icon: FaTruck },
+
+    { key: 'lorry5Tonne', label: 'Lorry 5 Tonne', Icon: PiTruck },
+    { key: 'lorry10Tonne', label: 'Lorry 10 Tonne', Icon: PiTruck },
+  ];
+
+  // Decide what to render based on activeTab
+  let tabContent;
+  if (isTabLoading) {
+    // Show a circular loader if we're "fetching" vehicles
+    tabContent = (
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="order-spinner" />
+      </div>
+    );
+  } else if (activeTab === 'Cargo') {
+    tabContent = (
+      <>
+        <h2>Mini Cargo</h2>
+        {renderVehicleOptions(miniCargo)}
+
+        <h2>Medium Cargo</h2>
+        {renderVehicleOptions(mediumCargo)}
+
+        <h2>Bulk Cargo</h2>
+        {renderVehicleOptions(bulkCargo)}
+      </>
+    );
+  } else if (activeTab === 'Parcels') {
+    tabContent = <>{renderVehicleOptions(parcelVehicles)}</>;
+  } else if (activeTab === 'Moving') {
+    tabContent = <>{renderVehicleOptions(movingVehicles)}</>;
+  }
+
   return (
     <div
       key="dash"
@@ -318,102 +484,12 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
       <div className="notch">
         <div className="notch-indicator"></div>
       </div>
-
       <h2 className="catch">What’s Your Load Today?</h2>
-      <div className="dash-content">
-        {/* Mini Cargo */}
-        <h2>Mini Cargo</h2>
-        {Object.entries(calculatedCosts)
-          .filter(([vehicle]) => ['pickup', 'tukTuk'].includes(vehicle))
-          .map(([vehicle, cost]) => {
-            const Icon = {
-              pickup: FaTruckPickup,
-              tukTuk: PiVan,
-            }[vehicle];
-            return (
-              <label
-                key={vehicle}
-                className="Option"
-                onClick={() => handleOptionChange(vehicle)}
-              >
-                <div
-                  className={`checkbox ${
-                    selectedOption === vehicle ? 'selected' : ''
-                  }`}
-                >
-                  <Icon size={24} />
-                </div>
-                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{' '}
-                {distance > 0 ? cost : '0'}
-              </label>
-            );
-          })}
 
-        {/* Medium Cargo */}
-        <h2>Medium Cargo</h2>
-        {Object.entries(calculatedCosts)
-          .filter(([vehicle]) => ['miniTruck', 'van'].includes(vehicle))
-          .map(([vehicle, cost]) => {
-            const Icon = {
-              miniTruck: FaTruck,
-              van: FaShuttleVan,
-            }[vehicle];
-            return (
-              <label
-                key={vehicle}
-                className="Option"
-                onClick={() => handleOptionChange(vehicle)}
-              >
-                <div
-                  className={`checkbox ${
-                    selectedOption === vehicle ? 'selected' : ''
-                  }`}
-                >
-                  <Icon size={24} />
-                </div>
-                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{' '}
-                {distance > 0 ? cost : '0'}
-              </label>
-            );
-          })}
+      {/* Pass handleTabChange so Dash knows which tab is selected */}
+      <SortingTabs onTabChange={handleTabChange} />
 
-        {/* Bulk Cargo */}
-        <h2>Bulk Cargo</h2>
-        {Object.entries(calculatedCosts)
-          .filter(([vehicle]) =>
-            [
-              'Car Rescue',
-              '10 Tonne Lorry',
-              '18 Tonne Lorry',
-              'Tipper',
-            ].includes(vehicle)
-          )
-          .map(([vehicle, cost]) => {
-            const Icon = {
-              'Car Rescue': GiTowTruck,
-              '10 Tonne Lorry': PiTruck,
-              '18 Tonne Lorry': PiTruck,
-              Tipper: PiTruck,
-            }[vehicle];
-            return (
-              <label
-                key={vehicle}
-                className="Option"
-                onClick={() => handleOptionChange(vehicle)}
-              >
-                <div
-                  className={`checkbox ${
-                    selectedOption === vehicle ? 'selected' : ''
-                  }`}
-                >
-                  <Icon size={24} />
-                </div>
-                {vehicle.charAt(0).toUpperCase() + vehicle.slice(1)} - Ksh{' '}
-                {distance > 0 ? cost : '0'}
-              </label>
-            );
-          })}
-      </div>
+      <div className="dash-content">{tabContent}</div>
 
       {/* Loader Option */}
       <div className="loader-option">
@@ -424,7 +500,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             checked={includeLoader}
             onChange={handleLoaderChange}
           />
-          Need a loader for unloading? (Ksh 600 per loader)
+          Need a loader for loading & unloading? (Ksh 600 per loader)
         </label>
         {includeLoader && (
           <input
@@ -488,14 +564,8 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
 
 Dash.propTypes = {
   distance: PropTypes.number,
-  userLocation: PropTypes.string,
-  destination: PropTypes.string,
-};
-
-Dash.defaultProps = {
-  distance: 0,
-  userLocation: '',
-  destination: '',
+  userLocation: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  destination: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 export default Dash;

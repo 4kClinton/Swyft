@@ -2,7 +2,6 @@ import '../Styles/OrderDetailsConfirmation.css';
 import { useState, useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
-
 import Cookies from 'js-cookie';
 
 // Import vehicle images
@@ -10,14 +9,18 @@ import TukTuk from '../assets/TukTuk.jpg';
 import Pickup from '../assets/pickup.png';
 import MiniTruck from '../assets/miniTruck.png';
 import TenTonne from '../assets/10T-Lorry.jpg';
+import fiveTonne from '../assets/5tonne.png';
 import Van from '../assets/van.jpg';
 import Tipper from '../assets/Tipper.jpg';
 import CarRescue from '../assets/Towin.jpg';
+import nduthi from '../assets/nduthi.png';
+import moti from '../assets/moti.png';
+import nduthiElectric from '../assets/Electric.png';
 
 // Import the separate FindDriver component
 import FindDriver from './FindDriver';
 
-// Import Material UI components for dialogs and icons
+// Material UI components for dialogs and icons
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -37,30 +40,32 @@ export default function OrderConfirmation() {
   const [receiverName, setReceiverName] = useState('');
   const [receiverPhone, setReceiverPhone] = useState('');
 
-  // New state for Package Type and popup
+  // Package Type state and popup
   const [packageType, setPackageType] = useState('');
   const [showPackagePopup, setShowPackagePopup] = useState(false);
 
   const [isLoading, setIsLoading] = useState(false);
   const [errorMessage, setErrorMessage] = useState('');
-  // Use isFindingDriver to render the FindDriver component
   const [isFindingDriver, setIsFindingDriver] = useState(false);
 
-  // Initialize address states to null so we can conditionally render the loader
+  // Address states for user location and destination
   const [destinationAddress, setDestinationAddress] = useState(null);
   const [userLocationAddress, setUserLocationAddress] = useState(null);
 
-  const orderData = useSelector((state) => state.currentOrder.value);
-  // Reset order data when user leaves the page
+  // Get order data from Redux; if missing, try local storage.
+  const orderDataRedux = useSelector((state) => state.currentOrder.value);
+  const storedOrder = localStorage.getItem('currentOrder');
+  const orderData =
+    orderDataRedux || (storedOrder ? JSON.parse(storedOrder) : null);
+
+  // Reset location.state on unmount.
   useEffect(() => {
     return () => {
       location.state = null;
     };
   }, [location]);
 
-  useEffect(() => {}, []);
-
-  // Fetch addresses using coordinates from orderData
+  // Fetch addresses using orderData coordinates.
   useEffect(() => {
     const fetchAddress = async (locationCoord, setAddress) => {
       if (locationCoord && locationCoord.lat && locationCoord.lng) {
@@ -87,32 +92,37 @@ export default function OrderConfirmation() {
     }
   }, [orderData?.userLocation, orderData?.destination]);
 
-  // If orderData is not available, show error message
+  // If no order data is found, render an error message.
   if (!orderData) {
     return <p>Error: No order data found.</p>;
   }
 
-  // Extract sender's name from orderData (ensure parent passes orderData.senderName)
+  // Extract sender's name (defaulting if missing)
   const senderName = orderData.senderName || 'Unknown User';
 
-  // Map vehicle names to images
+  // Map vehicle names to images.
   const vehicleImages = {
     pickup: Pickup,
     miniTruck: MiniTruck,
     van: Van,
     'Car Rescue': CarRescue,
     tukTuk: TukTuk,
-    '10 Tonne Lorry': TenTonne,
-    '18 Tonne Lorry': TenTonne,
+    SwyftBoda: nduthi,
+    Lorry: TenTonne,
+    lorry5Tonne: fiveTonne,
+    lorry10Tonne: TenTonne,
+    car: moti,
+    SwyftBodaElectric: nduthiElectric,
+    // 'Lorry': TenTonne,
     Tipper: Tipper,
   };
   const vehicleImage = vehicleImages[orderData.vehicle] || Pickup;
 
-  // Calculate the distance-only cost by subtracting the loader cost
+  // Calculate distance-only cost.
   const distanceCost = (orderData.totalCost ?? 0) - (orderData.loaderCost ?? 0);
 
   const handleConfirmOrder = async () => {
-    // Validate required fields first
+    // Validate required fields.
     if (!packageType) {
       setErrorMessage('Please select a package type.');
       return;
@@ -121,18 +131,14 @@ export default function OrderConfirmation() {
       setErrorMessage('Please fill in the receiver details.');
       return;
     }
-    // Clear any previous error message
     setErrorMessage('');
-
-    // Immediately transition to the Finding Driver screen
     setIsFindingDriver(true);
     setIsLoading(true);
     const token = Cookies.get('authTokencl1');
 
-    // Build final data to send to the server
     const finalOrderData = {
       ...orderData,
-      packageType, // include package type in order data
+      packageType,
       paymentInfo: {},
     };
 
@@ -172,7 +178,6 @@ export default function OrderConfirmation() {
 
       Cookies.remove('NavigateToDriverDetails');
     } catch (error) {
-      // On error, revert back to the confirmation screen and show error popup.
       setIsFindingDriver(false);
       setErrorMessage(error.message);
     } finally {
@@ -180,7 +185,6 @@ export default function OrderConfirmation() {
     }
   };
 
-  // List of package options
   const packageOptions = [
     'Furniture',
     'Household items',
@@ -294,12 +298,10 @@ export default function OrderConfirmation() {
         {/* Charges Card */}
         <div className="charges-card">
           <h3 className="charges-title">{orderData.vehicle}</h3>
-          {/* Distance Price */}
           <div className="charge-row">
             <span>Fare ({orderData.distance} Kms)</span>
             <span className="Price">KSh {distanceCost}</span>
           </div>
-          {/* Loader Cost (only if available) */}
           {orderData.loaderCost > 0 && (
             <div className="charge-row">
               <span>Loader Cost</span>
@@ -307,7 +309,6 @@ export default function OrderConfirmation() {
             </div>
           )}
           <hr />
-          {/* Subtotal / Total */}
           <div className="charge-row subtotal">
             <span>Subtotal</span>
             <span className="Price">KSh {orderData.totalCost}</span>
@@ -332,7 +333,6 @@ export default function OrderConfirmation() {
             </div>
           </div>
 
-          {/* Receiver Inputs */}
           {selectedPayment === 'receiver' && (
             <div style={{ marginTop: '1rem' }}>
               <label style={{ display: 'block', marginBottom: '0.5rem' }}>

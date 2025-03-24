@@ -200,7 +200,7 @@ const SearchBar = ({ setDestination, setCurrentLocation }) => {
         type="text"
         value={searchInput}
         onChange={handleSearchInputChange}
-        placeholder="Search for a location"
+        placeholder="destination"
       />
 
       {/* Suggestions list for searchInput */}

@@ -19,9 +19,43 @@ body,
   overflow: visible !important;
   z-index: auto !important;
 }
+
 html,
 body {
   overscroll-behavior-y: none;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.popup button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #00d46a;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }
 
 .logo {
@@ -65,29 +99,13 @@ body {
 
 /* App.css */
 
-/* App.css */
-
 /* Light Mode */
 .light-mode {
   background-color: #fff;
-
   /* Light background color */
   color: #000;
-
   /* Dark text color */
 }
-
-/* Dark Mode */
-.dark-mode {
-  background-color: #121212;
-
-  /* Dark background color */
-  color: #fff;
-
-  /* Light text color */
-}
-
-/* Add additional styles for other components here to ensure they adapt to the theme */
 
 /* Base styles for light mode */
 body.light-mode {
@@ -95,50 +113,36 @@ body.light-mode {
   color: #000;
 }
 
-/* Base styles for dark mode */
-body.dark-mode {
-  background-color: #121212;
-  color: #fff;
-}
+/* Removed Dark Mode and its base styles */
 
 /* Style for the theme toggle button */
 .theme-toggle {
   position: absolute;
-
   /* Positioning the button in the top right corner */
   top: 20px;
-
   /* Adjust top position */
   right: 20px;
-
   /* Adjust right position */
   background: transparent;
-
   /* Transparent background */
   border: none;
-
   /* No border */
   cursor: pointer;
-
   /* Change cursor on hover */
   z-index: 100;
-
   /* Ensure it appears above other elements */
 }
 
 /* Optional: add hover effects */
 .theme-toggle:hover {
   transform: scale(1.1);
-
   /* Slightly enlarge on hover */
 }
 
 /* Style the icons for better appearance */
 .theme-toggle .MuiSvgIcon-root {
   font-size: 24px;
-
   /* Adjust icon size */
   color: inherit;
-
   /* Inherit text color */
 }

@@ -1,53 +1,78 @@
 const CACHE_NAME = "pwa-cache-v1";
-const urlsToCache = [
-  "/",
-  "/index.html",
-  "/styles.css",
-  "/app.js",
-  "/icons/icon-192x192.png",
-  "/icons/icon-512x512.png"
-];
+// Pre-cache only the essential navigation assets.
+const urlsToCache = ["/", "/index.html"];
 
-// Install Service Worker
 self.addEventListener("install", (event) => {
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll(urlsToCache);
-    })
+    caches.open(CACHE_NAME).then((cache) => cache.addAll(urlsToCache))
   );
 });
 
-// Activate & Clean Old Caches
 self.addEventListener("activate", (event) => {
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
+    caches.keys().then((cacheNames) =>
+      Promise.all(
         cacheNames.map((cache) => {
           if (cache !== CACHE_NAME) {
             return caches.delete(cache);
           }
         })
-      );
-    })
+      )
+    )
   );
 });
 
-// Fetch and Cache Strategy with MIME Type Safeguard
 self.addEventListener("fetch", (event) => {
-  const acceptHeader = event.request.headers.get("accept") || "";
-  
-  // For HTML navigation requests, use cache first then network fallback.
-  if (acceptHeader.includes("text/html")) {
+  // Bypass handling for development assets (Vite, react-refresh, etc.)
+  const url = new URL(event.request.url);
+  if (
+    url.pathname.startsWith("/@vite/") ||
+    url.pathname.startsWith("/@react-refresh") ||
+    url.pathname.startsWith("/src/")
+  ) {
+    return event.respondWith(fetch(event.request));
+  }
+
+  // For navigation requests (pages)
+  if (event.request.mode === "navigate") {
     event.respondWith(
-      caches.match(event.request).then((response) => {
-        return response || fetch(event.request);
-      })
+      fetch(event.request)
+        .then((response) => {
+          // Update the cache with the fresh page
+          const responseClone = response.clone();
+          caches.open(CACHE_NAME).then((cache) => {
+            cache.put(event.request, responseClone);
+          });
+          return response;
+        })
+        .catch(() =>
+          // If network fails, try cache, then index.html, then fallback response.
+          caches
+            .match(event.request)
+            .then(
+              (cachedResponse) =>
+                cachedResponse || caches.match("/index.html")
+            )
+            .then(
+              (finalResponse) =>
+                finalResponse ||
+                new Response("Offline", {
+                  status: 200,
+                  headers: { "Content-Type": "text/html" },
+                })
+            )
+        )
     );
   } else {
-    // For non-HTML requests (like JS modules), perform a network fetch.
-    // Optionally, fallback to cache if the network fails.
+    // For non-navigation requests
     event.respondWith(
-      fetch(event.request).catch(() => caches.match(event.request))
+      fetch(event.request)
+        .catch(() => caches.match(event.request))
+        .then(
+          (response) =>
+            response ||
+            new Response("Not found", { status: 404, statusText: "Not found" })
+        )
     );
   }
 });

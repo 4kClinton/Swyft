@@ -1,16 +1,11 @@
 import { useState, useEffect } from 'react';
 import { Outlet, useNavigate } from 'react-router-dom';
 import Navbar from './Components/Navbar.jsx';
-
 import LoadingScreen from './Components/LoadingScreen.jsx';
-
 import './App.css';
-
 import { UserProvider } from './contexts/UserContext.jsx';
-
 import { useDispatch, useSelector } from 'react-redux';
 import { addUser } from './Redux/Reducers/UserSlice';
-
 import { Analytics } from '@vercel/analytics/react';
 import { SpeedInsights } from '@vercel/speed-insights/react';
 import { supabase } from './supabase.js';
@@ -20,23 +15,99 @@ import {
   saveDriver,
 } from './Redux/Reducers/DriverDetailsSlice.js';
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
-import { ToastContainer, toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
 import Cookies from 'js-cookie';
+
+// MUI components for the custom popup
+import { Box, Typography, Button, IconButton } from '@mui/material';
+// Import icons for the iOS popup and for closing the popup
+import AddToHomeScreenIcon from '@mui/icons-material/AddToHomeScreen';
+import CloseIcon from '@mui/icons-material/Close';
 
 function App() {
   const [isLoading, setIsLoading] = useState(true);
+  const [showErrorPopup, setShowErrorPopup] = useState(false);
+  const [deviceType, setDeviceType] = useState(null); // 'iOS', 'Android', or 'Desktop'
+  const [deferredPrompt, setDeferredPrompt] = useState(null);
+  const [showInstallPopup, setShowInstallPopup] = useState(false);
 
   const dispatch = useDispatch();
   const customer = useSelector((state) => state.user.value);
   const [updateOrders, setUpdateOrders] = useState(false);
-
   const navigate = useNavigate();
 
+  // ----------------------
+  // Combined Device Detection
+  // ----------------------
+  useEffect(() => {
+    function detectDeviceType() {
+      const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+      const isIOSDevice =
+        /iPad|iPhone|iPod|MacIntel/.test(userAgent) ||
+        (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+      const isAndroidDevice = /android/i.test(userAgent);
+      if (isIOSDevice) {
+        return 'iOS';
+      } else if (isAndroidDevice) {
+        return 'Android';
+      } else {
+        return 'Desktop';
+      }
+    }
+    setDeviceType(detectDeviceType());
+  }, []);
+
+  // ----------------------
+  // PWA Install Logic
+  // ----------------------
+  // Capture the beforeinstallprompt event
+  useEffect(() => {
+    const handleBeforeInstallPrompt = (e) => {
+      console.log('🔥 beforeinstallprompt event fired');
+      e.preventDefault();
+      setDeferredPrompt(e);
+    };
+    window.addEventListener('beforeinstallprompt', handleBeforeInstallPrompt);
+    return () => {
+      window.removeEventListener(
+        'beforeinstallprompt',
+        handleBeforeInstallPrompt
+      );
+    };
+  }, []);
+
+  // Show install popup only on mobile devices (iOS or Android)
+  useEffect(() => {
+    const isStandalone = window.matchMedia(
+      '(display-mode: standalone)'
+    ).matches;
+    if (
+      !isStandalone &&
+      ((deviceType === 'Android' && deferredPrompt) || deviceType === 'iOS')
+    ) {
+      setShowInstallPopup(true);
+    } else {
+      setShowInstallPopup(false);
+    }
+  }, [deferredPrompt, deviceType]);
+
+  // When the user clicks "Install" in our custom popup (Android only)
+  const handleInstallClick = async () => {
+    if (deferredPrompt) {
+      deferredPrompt.prompt();
+      const { outcome } = await deferredPrompt.userChoice;
+      console.log('User response to the install prompt:', outcome);
+      setDeferredPrompt(null);
+      setShowInstallPopup(false);
+      navigate('/');
+    }
+  };
+
+  // ----------------------
+  // Orders & Session Logic
+  // ----------------------
   useEffect(() => {
     // Subscribe to changes in the 'orders' table
     let supabaseOrderId;
-
     const ordersChannel = supabase
       .channel('orders')
       .on(
@@ -57,7 +128,6 @@ function App() {
           }
         }
       )
-      //Save the supabase order id to delete the order if no driver is found
       .on(
         'postgres_changes',
         { event: 'UPDATE', schema: 'public', table: 'orders' },
@@ -72,22 +142,12 @@ function App() {
         { event: 'DELETE', schema: 'public', table: 'orders' },
         (payload) => {
           if (payload?.old?.id === supabaseOrderId) {
-            toast.error(
-              'No driver found for your order. Please try again later.',
-              {
-                position: 'bottom-center',
-                autoClose: 5000,
-                onClose: () => {
-                  dispatch(deleteOrder());
-                },
-              }
-            );
+            setShowErrorPopup(true);
           }
         }
       )
       .subscribe();
 
-    // Cleanup the subscription on component unmount
     return () => {
       if (ordersChannel) {
         supabase
@@ -96,31 +156,20 @@ function App() {
           .catch((error) => console.error('Error removing channel:', error));
       }
     };
-    //eslint-disable-next-line
   }, [customer.id, dispatch]);
 
   useEffect(() => {
     const token = Cookies.get('authTokencl1');
     if (token) {
       fetch('https://swyft-backend-client-nine.vercel.app/check_session', {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       })
         .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to verify token');
-          }
+          if (!response.ok) throw new Error('Failed to verify token');
           return response.json();
         })
-
-        .then((userData) => {
-          dispatch(addUser(userData));
-        })
-
-        .catch((error) => {
-          console.error('Token verification failed:', error);
-        });
+        .then((userData) => dispatch(addUser(userData)))
+        .catch((error) => console.error('Token verification failed:', error));
     }
   }, [dispatch]);
 
@@ -135,9 +184,7 @@ function App() {
         },
       })
         .then((response) => {
-          if (!response.ok) {
-            throw new Error('Failed to fetch rides history');
-          }
+          if (!response.ok) throw new Error('Failed to fetch rides history');
           return response.json();
         })
         .then((data) => {
@@ -146,8 +193,8 @@ function App() {
             (order) =>
               order.status !== 'completed' &&
               order.status !== 'cancelled' &&
-              order.status != 'Pending' &&
-              order.status != 'Declined'
+              order.status !== 'Pending' &&
+              order.status !== 'Declined'
           );
           dispatch(saveOrder(currentOrder[0]));
           if (currentOrder.length > 0) {
@@ -162,32 +209,25 @@ function App() {
               }
             )
               .then((response) => {
-                if (!response.ok) {
-                  throw new Error('Failed to fetch customer data');
-                }
+                if (!response.ok)
+                  throw new Error('Failed to fetch driver data');
                 return response.json();
               })
-              .then((driverData) => {
-                dispatch(saveDriver(driverData));
-              });
+              .then((driverData) => dispatch(saveDriver(driverData)));
           }
         })
-        .catch((error) => {
-          console.error('Error fetching rides history:', error);
-        });
+        .catch((error) =>
+          console.error('Error fetching rides history:', error)
+        );
     }
-    //eslint-disable-next-line
   }, [updateOrders]);
 
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 2000);
-
+    const timer = setTimeout(() => setIsLoading(false), 2000);
     return () => clearTimeout(timer);
   }, []);
 
-  const handleOrderAccepted = async (payload) => {
+  const handleOrderAccepted = (payload) => {
     const token = Cookies.get('authTokencl1');
     fetch(
       `https://swyft-backend-client-nine.vercel.app/driver/${payload.new.driver_id}`,
@@ -200,31 +240,23 @@ function App() {
       }
     )
       .then((response) => {
-        if (!response.ok) {
-          throw new Error('Failed to fetch driver data');
-        }
+        if (!response.ok) throw new Error('Failed to fetch driver data');
         return response.json();
       })
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
-
-        // Show customer an alert or update UI
       })
-      .catch((error) => {
-        console.error('Error fetching driver data:', error);
-      });
+      .catch((error) => console.error('Error fetching driver data:', error));
   };
 
   const handleArrivedAtCustomer = (payload) => {
-    dispatch(saveOrder(payload.new)); // Update Redux state with new order data
-
+    dispatch(saveOrder(payload.new));
     alert('Your driver has arrived at the customer location!');
   };
 
   const handleOnTheWayToDestination = (payload) => {
-    dispatch(saveOrder(payload.new)); // Update Redux state with new order data
-
+    dispatch(saveOrder(payload.new));
     alert('Your driver is on the way to the destination!');
   };
 
@@ -233,11 +265,14 @@ function App() {
     dispatch(removeDriver());
     setUpdateOrders((prev) => !prev);
     Cookies.remove('NavigateToDriverDetails');
-
-    // Navigate to the Rating Page after ride completion
     navigate('/rate-driver');
-
     alert('The ride is completed! Thank you for using our service.');
+  };
+
+  const handleCloseErrorPopup = () => {
+    dispatch(deleteOrder());
+    setShowErrorPopup(false);
+    navigate('/dash');
   };
 
   return (
@@ -252,7 +287,119 @@ function App() {
           <SpeedInsights />
         </div>
       )}
-      <ToastContainer />
+
+      {/* Error Popup Modal */}
+      {showErrorPopup && (
+        <div className="popup-overlay">
+          <div className="popup">
+            <p>No driver found for your order. Please try again later.</p>
+            <button onClick={handleCloseErrorPopup}>Close</button>
+          </div>
+        </div>
+      )}
+
+      {/* Custom Install Popup (only shows on mobile devices) */}
+      {showInstallPopup && (
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100%',
+            height: '100%',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            backdropFilter: 'blur(5px)',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            zIndex: 2000,
+          }}
+        >
+          <Box
+            sx={{
+              position: 'relative',
+              backgroundColor: '#fff',
+              borderRadius: '8px',
+              padding: '32px',
+              textAlign: 'center',
+              boxShadow: '0 2px 8px rgba(0, 0, 0, 0.3)',
+            }}
+          >
+            {/* Cancel button at the top right corner */}
+            <IconButton
+              onClick={() => setShowInstallPopup(false)}
+              sx={{
+                position: 'absolute',
+                top: '8px',
+                right: '8px',
+                color: '#999',
+              }}
+            >
+              <CloseIcon />
+            </IconButton>
+            {deviceType === 'Android' ? (
+              <>
+                <Typography
+                  variant="h6"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  Install Swyft
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  Get a better experience by installing our app.
+                </Typography>
+                <Button
+                  onClick={handleInstallClick}
+                  sx={{
+                    backgroundColor: '#00d46a',
+                    color: '#fff',
+                    border: 'none',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    padding: '8px 16px',
+                    '&:hover': { backgroundColor: '#00c059' },
+                  }}
+                >
+                  Install
+                </Button>
+              </>
+            ) : deviceType === 'iOS' ? (
+              <>
+                <AddToHomeScreenIcon sx={{ fontSize: 40, mb: 2 }} />
+                <Typography
+                  variant="h6"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  Add to Home Screen
+                </Typography>
+                <Typography
+                  variant="body2"
+                  sx={{ mb: 2, fontFamily: 'Montserrat' }}
+                >
+                  For the best experience, add this page to your home screen.
+                </Typography>
+                <Button
+                  onClick={() => setShowInstallPopup(false)}
+                  sx={{
+                    backgroundColor: '#00d46a',
+                    color: '#fff',
+                    border: 'none',
+                    textTransform: 'none',
+                    fontWeight: 'bold',
+                    padding: '8px 16px',
+                    '&:hover': { backgroundColor: '#00c059' },
+                  }}
+                >
+                  Dismiss
+                </Button>
+              </>
+            ) : null}
+          </Box>
+        </div>
+      )}
     </UserProvider>
   );
 }
