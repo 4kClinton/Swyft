@@ -402,18 +402,18 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
   };
 
   // Vehicles for each sub-category of Cargo
-  const miniCargo = [{ key: 'van', label: 'Van', Icon: FaShuttleVan }];
+  const miniCargo = [{ key: 'van', label: 'Swyft Van', Icon: FaShuttleVan }];
 
   const mediumCargo = [
-    { key: 'miniTruck', label: 'MiniTruck', Icon: FaTruck },
-    { key: 'pickup', label: 'Pickup', Icon: FaTruckPickup },
+    { key: 'miniTruck', label: 'Swyft MiniTruck', Icon: FaTruck },
+    { key: 'pickup', label: 'Swyft Pickup', Icon: FaTruckPickup },
   ];
 
   const bulkCargo = [
-    { key: 'carRescue', label: 'Car Rescue', Icon: GiTowTruck },
+    { key: 'carRescue', label: 'Swyft Car Rescue', Icon: GiTowTruck },
 
-    { key: 'lorry5Tonne', label: 'Lorry 5 Tonne', Icon: PiTruck },
-    { key: 'lorry10Tonne', label: 'Lorry 10 Tonne', Icon: PiTruck },
+    { key: 'lorry5Tonne', label: 'Swyft Lorry 5 Tonne', Icon: PiTruck },
+    { key: 'lorry10Tonne', label: 'Swyft Lorry 10 Tonne', Icon: PiTruck },
   ];
 
   // Vehicles for Parcels
@@ -424,16 +424,16 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
       label: 'Swyft Boda Electric',
       Icon: FaMotorcycle,
     },
-    { key: 'car', label: 'Car', Icon: FaCar },
+    { key: 'car', label: 'Swyft Car', Icon: FaCar },
   ];
 
   // Vehicles for Moving
   const movingVehicles = [
-    { key: 'pickup', label: 'Pickup', Icon: FaTruckPickup },
-    { key: 'miniTruck', label: 'MiniTruck', Icon: FaTruck },
+    { key: 'pickup', label: 'Swyft Pickup', Icon: FaTruckPickup },
+    { key: 'miniTruck', label: 'Swyft MiniTruck', Icon: FaTruck },
 
-    { key: 'lorry5Tonne', label: 'Lorry 5 Tonne', Icon: PiTruck },
-    { key: 'lorry10Tonne', label: 'Lorry 10 Tonne', Icon: PiTruck },
+    { key: 'lorry5Tonne', label: 'Swyft Lorry 5 Tonne', Icon: PiTruck },
+    { key: 'lorry10Tonne', label: 'Swyft Lorry 10 Tonne', Icon: PiTruck },
   ];
 
   // Decide what to render based on activeTab
