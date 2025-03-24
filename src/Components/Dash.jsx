@@ -8,6 +8,7 @@ import LoaderPopup from './LoaderPopup';
 import ErrorPopup from './ErrorPopup';
 import SuccessPopup from './SuccessPopup';
 import SortingTabs from './SortingTabs';
+import TripTracker from './TripTracker';
 
 import {
   FaTruckPickup,
@@ -466,7 +467,11 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
       </>
     );
   } else if (activeTab === 'Parcels') {
-    tabContent = <>{renderVehicleOptions(parcelVehicles)}</>;
+    tabContent = (
+      <>
+        <TripTracker />
+      </>
+    )
   } else if (activeTab === 'Moving') {
     tabContent = <>{renderVehicleOptions(movingVehicles)}</>;
   }
