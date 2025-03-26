@@ -158,7 +158,7 @@ export default function OrderConfirmation() {
 
     try {
       const response = await fetch(
-        'https://swyft-backend-client-nine.vercel.app/orders',
+        'http://127.0.0.1:5000/orders',
         {
           method: 'POST',
           headers: {
@@ -176,6 +176,13 @@ export default function OrderConfirmation() {
         );
       }
 
+      const data = await response.json();
+
+      const order_id = data.order.id;
+      console.log("Order ID: " + order_id);
+
+      localStorage.setItem("order_id", order_id);
+
       Cookies.remove('NavigateToDriverDetails');
     } catch (error) {
       setIsFindingDriver(false);
@@ -185,6 +192,11 @@ export default function OrderConfirmation() {
     }
   };
 
+    // console.log(response.order.id);
+    // const order_id = response.order.id;
+    // console.log(order_id);
+    
+  
   const packageOptions = [
     'Furniture',
     'Household items',

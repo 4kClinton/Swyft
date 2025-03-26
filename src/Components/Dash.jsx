@@ -258,7 +258,6 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
       }
 
       const orderData = {
-        id: theUser.id,
         vehicle: selectedOption,
         distance: parseFloat(distance).toFixed(3),
         loaders: includeLoader ? numLoaders : 0,

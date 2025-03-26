@@ -16,6 +16,14 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   const order = useSelector((state) => state.currentOrder.value);
   const dispatch = useDispatch();
 
+  const orderId = localStorage.getItem('order_id');
+  console.log('Retrieved ID '. orderId);
+  
+
+  console.log(order);
+  console.log(driver);
+  
+
   useEffect(() => {
     if (driver?.id) {
       if (noDriverTimerRef.current) clearTimeout(noDriverTimerRef.current);
@@ -40,7 +48,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
     noDriverTimerRef.current = setTimeout(() => {
       const token = Cookies.get('authTokencl1');
 
-      fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
+      fetch(` http://127.0.0.1:5000/orders/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -66,7 +74,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
         .catch((error) => {
           console.error('Error canceling order:', error);
         });
-    }, 1000);
+    }, 3000);
   }, [noDriverFound, onDriverFound, onDriverNotFound]);
 
   useEffect(() => {
