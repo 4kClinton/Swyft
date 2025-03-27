@@ -158,7 +158,7 @@ export default function OrderConfirmation() {
 
     try {
       const response = await fetch(
-        'http://127.0.0.1:5000/orders',
+        'https://swyft-backend-client-nine.vercel.app/orders',
         {
           method: 'POST',
           headers: {
@@ -179,9 +179,28 @@ export default function OrderConfirmation() {
       const data = await response.json();
 
       const order_id = data.order.id;
-      console.log("Order ID: " + order_id);
+      const driver_id = data.order.driver_id;
+      const nearest_driver_car = data.nearest_driver.car_type;
+      const nearest_driver_name = data.nearest_driver.first_name;
+      const nearest_driver_phone = data.nearest_driver.phone;
+      const order_status = data.order.status;
+      const license = data.nearest_driver.license_plate;
+
+      // console.log("Order ID: " + order_id);
+      // console.log("Driver ID: " + driver_id);
+      // console.log("Nearest Driver Car: " + nearest_driver_car);
+      // console.log("Nearest Driver Name: " + nearest_driver_name);
+      // console.log("Nearest Driver Phone: " + nearest_driver_phone);
+      // console.log("Order Status: " + order_status);
+      // console.log("License: " + license);
 
       localStorage.setItem("order_id", order_id);
+      localStorage.setItem("driver_id",driver_id);
+      localStorage.setItem("car",nearest_driver_car);
+      localStorage.setItem("name", nearest_driver_name);
+      localStorage.setItem("phone", nearest_driver_phone);
+      localStorage.setItem("status", order_status);
+      localStorage.setItem("license", license);
 
       Cookies.remove('NavigateToDriverDetails');
     } catch (error) {

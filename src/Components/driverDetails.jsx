@@ -15,15 +15,25 @@ import Box from '@mui/material/Box'; // Import Box for centering
 
 const DriverDetails = () => {
   const navigate = useNavigate(); // Hook to navigate
-  const driver = useSelector((state) => state.driverDetails.value);
-  const order = useSelector((state) => state.currentOrder.value);
+  //const driver = useSelector((state) => state.driverDetails.value);
+  //const order = useSelector((state) => state.currentOrder.value);
   const dispatch = useDispatch();
+  const nearest_driver = localStorage.getItem('driver_id');
+  const orders = localStorage.getItem('order_id');
+  const car = localStorage.getItem('car');
+  const name = localStorage.getItem('name');
+  const phone = localStorage.getItem('phone');
+  const status = localStorage.getItem('status');
+  const license = localStorage.getItem('license');
+
+  console.log(nearest_driver, orders, car, name, phone, status, license); 
+  
 
   useEffect(() => {
-    if (order?.status === 'Accepted' && !driver?.id) {
+    if (status === 'Accepted' && !nearest_driver) {
       const token = Cookies.get('authTokencl1');
       fetch(
-        `https://swyft-backend-client-nine.vercel.app/driver/${order.driver_id}`,
+        `https://swyft-backend-client-nine.vercel.app/driver/${nearest_driver}`,
         {
           method: 'GET',
           headers: {
@@ -46,13 +56,13 @@ const DriverDetails = () => {
           console.error('Error fetching driver data:', error);
         });
     }
-  }, [order, dispatch, driver?.id]);
+  }, [orders, dispatch, nearest_driver]);
 
   const handleGoHome = () => {
     navigate('/dash'); // Navigate to the home page
   };
 
-  if (!driver?.id) {
+  if (!nearest_driver) {
     return (
       <Box
         sx={{
@@ -69,7 +79,7 @@ const DriverDetails = () => {
 
   // Determine the car image based on car type
   const getCarImage = () => {
-    switch (driver.car_type) {
+    switch (car) {
       case 'pickup':
         return pickup;
       case 'miniTruck':
@@ -87,22 +97,22 @@ const DriverDetails = () => {
     <div className="containerDriverDetails">
       <div className="driverInfo">
         <img
-          src={driver.profilePicture || profilePic}
+          src={nearest_driver.profilePicture || profilePic}
           alt="Driver"
           className="driverImage"
         />
         <div className="textContainer">
-          <h2 className="name">Name: {driver.name}</h2>
+          <h2 className="name">Name: {name}</h2>
           <p className="numberPlate">
             {' '}
             License plate:{' '}
             <span style={{ fontWeight: 'bold' }}>
-              {driver.license_plate}{' '}
+              {license}{' '}
             </span>{' '}
           </p>
           <p className="carType">
             Car Type:{' '}
-            <span style={{ fontWeight: 'bold' }}>{driver.car_type}</span>
+            <span style={{ fontWeight: 'bold' }}>{car}</span>
           </p>
         </div>
       </div>
@@ -113,7 +123,7 @@ const DriverDetails = () => {
 
       <div className="phoneContainer">
         <a
-          href={`tel:${driver.phone}`}
+          href={`tel:${phone}`}
           style={{
             display: 'flex',
             alignItems: 'center',

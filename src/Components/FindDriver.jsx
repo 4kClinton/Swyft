@@ -18,6 +18,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
 
   const orderId = localStorage.getItem('order_id');
   console.log('Retrieved ID '. orderId);
+  const driverId = localStorage.getItem('driver_id');
   
 
   console.log(order);
@@ -25,11 +26,17 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   
 
   useEffect(() => {
-    if (driver?.id) {
-      if (noDriverTimerRef.current) clearTimeout(noDriverTimerRef.current);
+    // Check if driverId is not undefined (meaning it exists)
+    if (driverId !== undefined && driverId !== null) {
+      // Clear the timeout if it exists
+      if (noDriverTimerRef.current) {
+        clearTimeout(noDriverTimerRef.current);
+      }
+
+      // Call onDriverFound if the driverId is valid
       onDriverFound();
     }
-  }, [driver]);
+  }, [driverId]); 
 
   // Refs to store timers so they can be cleared if needed.
   const driverTimerRef = useRef(null);
@@ -48,7 +55,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
     noDriverTimerRef.current = setTimeout(() => {
       const token = Cookies.get('authTokencl1');
 
-      fetch(` http://127.0.0.1:5000/orders/${orderId}`, {
+      fetch(`https://swyft-backend-client-nine.vercel.app/orders/${orderId}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
