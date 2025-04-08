@@ -15,8 +15,8 @@ import {
   FaTruck,
   FaShuttleVan,
   FaCheckCircle,
-  FaMotorcycle, // For SwyftBoda
-  FaCar, // For car
+  // FaMotorcycle, // For SwyftBoda
+  // FaCar, // For car
 } from 'react-icons/fa';
 
 import { GiTowTruck } from 'react-icons/gi';
@@ -416,24 +416,24 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
   ];
 
   // Vehicles for Parcels
-  const parcelVehicles = [
-    { key: 'SwyftBoda', label: 'Swyft Boda', Icon: FaMotorcycle },
-    {
-      key: 'SwyftBodaElectric',
-      label: 'Swyft Boda Electric',
-      Icon: FaMotorcycle,
-    },
-    { key: 'car', label: 'Swyft Car', Icon: FaCar },
-  ];
+  // const parcelVehicles = [
+  //   { key: 'SwyftBoda', label: 'Swyft Boda', Icon: FaMotorcycle },
+  //   {
+  //     key: 'SwyftBodaElectric',
+  //     label: 'Swyft Boda Electric',
+  //     Icon: FaMotorcycle,
+  //   },
+  //   { key: 'car', label: 'Swyft Car', Icon: FaCar },
+  // ];
 
   // Vehicles for Moving
-  const movingVehicles = [
-    { key: 'pickup', label: 'Swyft Pickup', Icon: FaTruckPickup },
-    { key: 'miniTruck', label: 'Swyft MiniTruck', Icon: FaTruck },
+  // const movingVehicles = [
+  //   { key: 'pickup', label: 'Swyft Pickup', Icon: FaTruckPickup },
+  //   { key: 'miniTruck', label: 'Swyft MiniTruck', Icon: FaTruck },
 
-    { key: 'lorry5Tonne', label: 'Swyft Lorry 5 Tonne', Icon: PiTruck },
-    { key: 'lorry10Tonne', label: 'Swyft Lorry 10 Tonne', Icon: PiTruck },
-  ];
+  //   { key: 'lorry5Tonne', label: 'Swyft Lorry 5 Tonne', Icon: PiTruck },
+  //   { key: 'lorry10Tonne', label: 'Swyft Lorry 10 Tonne', Icon: PiTruck },
+  // ];
 
   // Decide what to render based on activeTab
   let tabContent;
@@ -465,15 +465,16 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
         {renderVehicleOptions(bulkCargo)}
       </>
     );
-  } else if (activeTab === 'Parcels') {
+  } else if (activeTab === 'Parcels' || activeTab === 'Moving') {
     tabContent = (
       <>
         <TripTracker />
       </>
-    )
-  } else if (activeTab === 'Moving') {
-    tabContent = <>{renderVehicleOptions(movingVehicles)}</>;
+    );
   }
+  //  else if (activeTab === 'Moving') {
+  //     tabContent = <>{renderVehicleOptions(movingVehicles)}</>;
+  //   }
 
   return (
     <div
