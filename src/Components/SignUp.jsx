@@ -12,11 +12,68 @@ const SignUp = () => {
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
   const [confirmPassword, setConfirmPassword] = useState('');
+  const [step, setStep] = useState('email');
+  const [otp, setOtp] = useState('');
 
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  const sendOtp = async () => {
+    if (!email) {
+      setError('Please enter your email');
+      return;
+    }
+  
+    try {
+      setLoading(true);
+      setError(null);
+      const res = await fetch('https://swyft-backend-client-nine.vercel.app/signup-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email }),
+      });
+  
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Failed to send OTP');
+        return;
+      }
+  
+      setSuccess('OTP sent to your email.');
+      setStep('otp');
+    } catch (err) {
+      setError('Network error. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const verifyOtp = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch('https://swyft-backend-client-nine.vercel.app/verify-signup-otp', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, otp: otp }),
+      });
+  
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Invalid OTP');
+        return;
+      }
+  
+      setSuccess('OTP verified!');
+      setStep('form');
+    } catch (err) {
+      setError('Verification failed. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+  
+  
   const signUp = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -89,51 +146,73 @@ const SignUp = () => {
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
         <form onSubmit={signUp}>
-          <input
-            placeholder="Name or Username"
-            className="login-input"
-            value={name}
-            onChange={(e) => setName(e.target.value)}
-            required
-          />
-          <input
-            placeholder="Email"
-            type="email"
-            className="login-input"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-          />
-          <input
-            placeholder="Phone Number"
-            className="login-input"
-            value={phoneNumber}
-            onChange={(e) => setPhoneNumber(e.target.value)}
-            required
-          />
-          <input
-            placeholder="Password"
-            type="password"
-            className="login-input"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-          />
-          <input
-            placeholder="Confirm Password"
-            type="password"
-            className="login-input"
-            value={confirmPassword}
-            onChange={(e) => setConfirmPassword(e.target.value)}
-            required
-          />
-          <button type="submit" className="login-button" disabled={loading}>
-            {loading ? (
-              <CircularProgress size={34} color="inherit" />
-            ) : (
-              'Sign Up'
-            )}
-          </button>
+        {step === 'email' && (
+            <>
+              <input
+                placeholder="Email"
+                type="email"
+                className="login-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button type="button" onClick={sendOtp} className="login-button" disabled={loading}>
+                {loading ? <CircularProgress size={34} color="inherit" /> : 'Send OTP'}
+              </button>
+            </>
+          )}
+
+         {step === 'otp' && (
+            <>
+              <input
+                placeholder="Enter OTP"
+                className="login-input"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+              <button type="button" onClick={verifyOtp} className="login-button" disabled={loading}>
+                {loading ? <CircularProgress size={34} color="inherit" /> : 'Verify OTP'}
+              </button>
+            </>
+          )}
+          {step === 'form' && (
+          <>
+            <input
+              placeholder="Name or Username"
+              className="login-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+            <input
+              placeholder="Phone Number"
+              className="login-input"
+              value={phoneNumber}
+              onChange={(e) => setPhoneNumber(e.target.value)}
+              required
+            />
+            <input
+              placeholder="Password"
+              type="password"
+              className="login-input"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+            />
+            <input
+              placeholder="Confirm Password"
+              type="password"
+              className="login-input"
+              value={confirmPassword}
+              onChange={(e) => setConfirmPassword(e.target.value)}
+              required
+            />
+            <button type="submit" className="login-button" disabled={loading}>
+              {loading ? <CircularProgress size={34} color="inherit" /> : 'Sign Up'}
+            </button>
+          </>
+        )}
         </form>
 
         <Link
