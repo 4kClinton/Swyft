@@ -145,8 +145,22 @@ const SignUp = () => {
         <header className="login-header">Create an Account</header>
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
-        <form onSubmit={signUp}>
-        {step === 'email' && (
+        
+        {step === 'otp' && (
+            <>
+              <input
+                placeholder="Enter OTP"
+                className="login-input"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+              <button type="button" onClick={verifyOtp} className="login-button" disabled={loading}>
+                {loading ? <CircularProgress size={34} color="inherit" /> : 'Verify OTP'}
+              </button>
+            </>
+          )}
+          {step === 'email' && (
             <>
               <input
                 placeholder="Email"
@@ -161,23 +175,9 @@ const SignUp = () => {
               </button>
             </>
           )}
-
-         {step === 'otp' && (
-            <>
-              <input
-                placeholder="Enter OTP"
-                className="login-input"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-              />
-              <button type="button" onClick={verifyOtp} className="login-button" disabled={loading}>
-                {loading ? <CircularProgress size={34} color="inherit" /> : 'Verify OTP'}
-              </button>
-            </>
-          )}
+        
           {step === 'form' && (
-          <>
+          <form onSubmit={signUp}>
             <input
               placeholder="Name or Username"
               className="login-input"
@@ -211,9 +211,10 @@ const SignUp = () => {
             <button type="submit" className="login-button" disabled={loading}>
               {loading ? <CircularProgress size={34} color="inherit" /> : 'Sign Up'}
             </button>
-          </>
+          </form>
+          
         )}
-        </form>
+        
 
         <Link
           to="/"
