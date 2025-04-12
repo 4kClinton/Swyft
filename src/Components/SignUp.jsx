@@ -175,6 +175,7 @@ const SignUp = () => {
         <header className="login-header">Create an Account</header>
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
+
         <form onSubmit={signUp}>
           {step === 'email' && (
             <>
@@ -222,6 +223,7 @@ const SignUp = () => {
                   'Verify OTP'
                 )}
               </button>
+
               {/* Resend OTP Section */}
               <div style={{ marginTop: '1rem', textAlign: 'center' }}>
                 <button
@@ -284,7 +286,6 @@ const SignUp = () => {
             </>
           )}
         </form>
-
         <Link
           to="/"
           className="existing-account"
@@ -293,6 +294,7 @@ const SignUp = () => {
             marginBottom: '2vh',
             color: '#00D46A',
             fontSize: '15px',
+            fontFamily: 'Montserrat',
             display: 'block',
             textAlign: 'center',
             cursor: 'pointer',
