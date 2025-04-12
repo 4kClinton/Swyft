@@ -85,7 +85,7 @@ const SignUp = () => {
         {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, otp }),
+          body: JSON.stringify({ email, otp: otp }),
         }
       );
 
@@ -176,115 +176,116 @@ const SignUp = () => {
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
 
-        {step === 'email' && (
-          <div>
-            <input
-              placeholder="Email"
-              type="email"
-              className="login-input"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              onClick={sendOtp}
-              className="login-button"
-              disabled={loading}
-            >
-              {loading ? (
-                <CircularProgress size={34} color="inherit" />
-              ) : (
-                'Send OTP'
-              )}
-            </button>
-          </div>
-        )}
-
-        {step === 'otp' && (
-          <div>
-            <input
-              placeholder="Enter OTP"
-              className="login-input"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-            />
-            <button
-              type="button"
-              onClick={verifyOtp}
-              className="login-button"
-              disabled={loading}
-            >
-              {loading ? (
-                <CircularProgress size={34} color="inherit" />
-              ) : (
-                'Verify OTP'
-              )}
-            </button>
-            {/* Resend OTP Section */}
-            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+        <form onSubmit={signUp}>
+          {step === 'email' && (
+            <>
+              <input
+                placeholder="Email"
+                type="email"
+                className="login-input"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+              />
               <button
                 type="button"
                 onClick={sendOtp}
-                className="resend-button"
-                disabled={loading || !canResend}
-                style={{ padding: '0.5rem 1rem' }}
+                className="login-button"
+                disabled={loading}
               >
                 {loading ? (
                   <CircularProgress size={34} color="inherit" />
-                ) : canResend ? (
-                  'Resend OTP'
                 ) : (
-                  `Resend OTP in ${timer}s`
+                  'Send OTP'
                 )}
               </button>
-            </div>
-          </div>
-        )}
+            </>
+          )}
 
-        {step === 'form' && (
-          <form onSubmit={signUp}>
-            <input
-              placeholder="Name or Username"
-              className="login-input"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              required
-            />
-            <input
-              placeholder="Phone Number"
-              className="login-input"
-              value={phoneNumber}
-              onChange={(e) => setPhoneNumber(e.target.value)}
-              required
-            />
-            <input
-              placeholder="Password"
-              type="password"
-              className="login-input"
-              value={password}
-              onChange={(e) => setPassword(e.target.value)}
-              required
-            />
-            <input
-              placeholder="Confirm Password"
-              type="password"
-              className="login-input"
-              value={confirmPassword}
-              onChange={(e) => setConfirmPassword(e.target.value)}
-              required
-            />
-            <button type="submit" className="login-button" disabled={loading}>
-              {loading ? (
-                <CircularProgress size={34} color="inherit" />
-              ) : (
-                'Sign Up'
-              )}
-            </button>
-          </form>
-        )}
+          {step === 'otp' && (
+            <>
+              <input
+                placeholder="Enter OTP"
+                className="login-input"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={verifyOtp}
+                className="login-button"
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={34} color="inherit" />
+                ) : (
+                  'Verify OTP'
+                )}
+              </button>
 
+              {/* Resend OTP Section */}
+              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                <button
+                  type="button"
+                  onClick={sendOtp}
+                  className="resend-button"
+                  disabled={loading || !canResend}
+                  style={{ padding: '0.5rem 1rem' }}
+                >
+                  {loading ? (
+                    <CircularProgress size={34} color="inherit" />
+                  ) : canResend ? (
+                    'Resend OTP'
+                  ) : (
+                    `Resend OTP in ${timer}s`
+                  )}
+                </button>
+              </div>
+            </>
+          )}
+          {step === 'form' && (
+            <>
+              <input
+                placeholder="Name or Username"
+                className="login-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
+                required
+              />
+              <input
+                placeholder="Phone Number"
+                className="login-input"
+                value={phoneNumber}
+                onChange={(e) => setPhoneNumber(e.target.value)}
+                required
+              />
+              <input
+                placeholder="Password"
+                type="password"
+                className="login-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
+              <input
+                placeholder="Confirm Password"
+                type="password"
+                className="login-input"
+                value={confirmPassword}
+                onChange={(e) => setConfirmPassword(e.target.value)}
+                required
+              />
+              <button type="submit" className="login-button" disabled={loading}>
+                {loading ? (
+                  <CircularProgress size={34} color="inherit" />
+                ) : (
+                  'Sign Up'
+                )}
+              </button>
+            </>
+          )}
+        </form>
         <Link
           to="/"
           className="existing-account"
@@ -293,6 +294,7 @@ const SignUp = () => {
             marginBottom: '2vh',
             color: '#00D46A',
             fontSize: '15px',
+            fontFamily: 'Montserrat',
             display: 'block',
             textAlign: 'center',
             cursor: 'pointer',
