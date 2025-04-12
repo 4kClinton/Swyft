@@ -37,27 +37,28 @@ const Login = () => {
     setSuccess(null);
 
     try {
-      // Login endpoint now returns the access token and user details directly.
       const response = await axios.post(
         'https://swyft-backend-client-nine.vercel.app/login',
         { email: email.trim().toLowerCase(), password },
         { headers: { 'Content-Type': 'application/json' } }
       );
 
-      const { access_token, user: loggedUser, message } = response.data;
+      const { access_token, user, message } = response.data;
 
-      // Save authentication data in cookies and dispatch the user to Redux.
       Cookies.set('authTokencl1', access_token, {
         secure: true,
         sameSite: 'Strict',
       });
-      Cookies.set('user', JSON.stringify(loggedUser));
-      dispatch(addUser(loggedUser));
+      dispatch(addUser(user));
+      Cookies.set('message', message);
+      Cookies.set('user', JSON.stringify(user));
+      Cookies.set('status', 'user logged in!');
+
       setSuccess(message || 'Login successful!');
 
       setTimeout(() => {
         navigate('/dash');
-      }, 3000);
+      }, 1500);
     } catch (err) {
       console.error(err.response);
       setError(
@@ -87,6 +88,7 @@ const Login = () => {
             </Typography>
           </div>
         )}
+
         <form onSubmit={logIn}>
           <input
             placeholder="Email"
@@ -113,7 +115,12 @@ const Login = () => {
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
           </Box>
-          <button type="submit" className="login-button" disabled={loading}>
+          <button
+            type="submit"
+            className="login-button"
+            color="success"
+            disabled={loading}
+          >
             {loading ? (
               <CircularProgress
                 className="login-loader"
@@ -125,6 +132,7 @@ const Login = () => {
             )}
           </button>
         </form>
+
         <Button
           onClick={() => navigate('/signup')}
           variant="text"

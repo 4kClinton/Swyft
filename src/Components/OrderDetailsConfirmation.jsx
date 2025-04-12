@@ -105,7 +105,7 @@ export default function OrderConfirmation() {
     pickup: Pickup,
     miniTruck: MiniTruck,
     van: Van,
-    'Car Rescue': CarRescue,
+    carRescue: CarRescue,
     tukTuk: TukTuk,
     SwyftBoda: nduthi,
     Lorry: TenTonne,

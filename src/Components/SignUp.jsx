@@ -1,43 +1,109 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Typography, Box, CircularProgress, IconButton } from '@mui/material';
-import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { Typography, Box, CircularProgress } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
-import { useDispatch } from 'react-redux';
-import { addUser } from '../Redux/Reducers/UserSlice';
-import axios from 'axios';
-import Cookies from 'js-cookie';
 import '../Styles/Login.css';
+import Cookies from 'js-cookie';
 
 const SignUp = () => {
   const navigate = useNavigate();
-  const dispatch = useDispatch();
-
-  // Step 1: sign-up form; Step 2: OTP verification
-  const [step, setStep] = useState(1);
-
-  // Common states
+  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
+  const [phoneNumber, setPhoneNumber] = useState('');
+  const [password, setPassword] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
+  const [step, setStep] = useState('email');
+  const [otp, setOtp] = useState('');
+
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
-  // Sign-up specific states
-  const [name, setName] = useState('');
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [password, setPassword] = useState('');
-  const [confirmPassword, setConfirmPassword] = useState('');
+  // For OTP resend functionality
+  const [canResend, setCanResend] = useState(true);
+  const [timer, setTimer] = useState(30);
 
-  // OTP specific state
-  const [otp, setOtp] = useState('');
+  // Effect to handle countdown timer when OTP is sent.
+  useEffect(() => {
+    let interval;
+    if (!canResend && step === 'otp') {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            setCanResend(true);
+            return 30; // reset timer for next time
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [canResend, step]);
 
-  // For toggling password visibility
-  const [showPassword, setShowPassword] = useState(false);
-  const togglePasswordVisibility = () => {
-    setShowPassword((prev) => !prev);
+  const sendOtp = async () => {
+    if (!email) {
+      setError('Please enter your email');
+      return;
+    }
+
+    setLoading(true);
+    const sanitizedEmail = email.trim().toLowerCase();
+
+    try {
+      setError(null);
+      const res = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/signup-otp',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: sanitizedEmail }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Failed to send OTP');
+        return;
+      }
+
+      setSuccess('OTP sent to your email.');
+      setStep('otp');
+      setCanResend(false); // disable resend until timer finishes
+    } catch {
+      setError('Network error. Try again.');
+    } finally {
+      setLoading(false);
+    }
   };
 
-  // Sign-up submission that sends the OTP email
+  const verifyOtp = async () => {
+    try {
+      setLoading(true);
+      const res = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/verify-signup-otp',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp: otp }),
+        }
+      );
+
+      const data = await res.json();
+      if (!res.ok) {
+        setError(data.error || 'Invalid OTP');
+        return;
+      }
+
+      setSuccess('OTP verified!');
+      setStep('form');
+    } catch {
+      setError('Verification failed. Try again.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const signUp = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -50,11 +116,11 @@ const SignUp = () => {
       return;
     }
 
-    const newUserId = uuidv4();
+    const userId = uuidv4();
     const sanitizedEmail = email.trim().toLowerCase();
 
     const signupData = {
-      id: newUserId,
+      id: userId,
       name,
       phone: phoneNumber,
       email: sanitizedEmail,
@@ -70,19 +136,31 @@ const SignUp = () => {
           body: JSON.stringify(signupData),
         }
       );
-      const responseData = await response.json();
 
-      // Debug: log the signup response from the server
-      console.log('Signup Response:', responseData);
+      const responseData = await response.json();
 
       if (!response.ok) {
         setError(responseData.message || 'Sign-up failed. Please try again.');
-        setLoading(false);
         return;
       }
 
-      setSuccess(responseData.message || 'OTP sent to your email');
-      setStep(2);
+      setSuccess(responseData.message || 'Account created successfully!');
+
+      // Save user data in cookies
+      const userData = {
+        id: userId,
+        name,
+        phone: phoneNumber,
+        email: sanitizedEmail,
+      };
+      Cookies.set('user', JSON.stringify(userData));
+      Cookies.set('authTokencl1', responseData.access_token, {
+        secure: true,
+        sameSite: 'Strict',
+      });
+
+      // Navigate to home (the App.jsx logic will then show the install popup if needed)
+      navigate('/');
     } catch (err) {
       console.error('An error occurred during sign-up:', err);
       setError(err.message || 'An error occurred. Please try again.');
@@ -91,93 +169,86 @@ const SignUp = () => {
     }
   };
 
-  // OTP verification function
-  const verifyOtp = async (event) => {
-    event.preventDefault();
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-
-    try {
-      const response = await axios.post(
-        'https://swyft-backend-client-nine.vercel.app/verify-otp',
-        { email: email.trim().toLowerCase(), otp },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      // Debug: log the OTP verification response from the server
-      console.log('OTP Verification Response:', response.data);
-
-      const { access_token, user, message } = response.data;
-
-      Cookies.set('authTokencl1', access_token, {
-        secure: true,
-        sameSite: 'Strict',
-      });
-      dispatch(addUser(user));
-      Cookies.set('user', JSON.stringify(user));
-
-      setSuccess(message || 'Sign-up successful!');
-
-      setTimeout(() => {
-        navigate('/dash');
-      }, 3000);
-    } catch (err) {
-      console.error('OTP Verification Error:', err.response);
-      setError(err.response?.data?.error || 'Invalid OTP. Please try again.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  // Resend OTP function
-  const resendOtp = async () => {
-    setLoading(true);
-    setError(null);
-    setSuccess(null);
-    try {
-      const response = await axios.post(
-        'https://swyft-backend-client-nine.vercel.app/resend-otp',
-        { email: email.trim().toLowerCase() },
-        { headers: { 'Content-Type': 'application/json' } }
-      );
-
-      // Debug: log the resend OTP response from the server
-      console.log('Resend OTP Response:', response.data);
-
-      setSuccess(response.data.message || 'OTP resent successfully!');
-    } catch (err) {
-      console.error('Resend OTP Error:', err.response);
-      setError(
-        err.response?.data?.error || 'Failed to resend OTP. Please try again.'
-      );
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="login-component">
       <Box className="login-container">
-        {step === 1 ? (
-          <>
-            <header className="login-header">Create an Account</header>
-            {error && <Typography color="error">{error}</Typography>}
-            {success && <Typography color="primary">{success}</Typography>}
-            <form onSubmit={signUp}>
-              <input
-                placeholder="Name or Username"
-                className="login-input"
-                value={name}
-                onChange={(e) => setName(e.target.value)}
-                required
-              />
+        <header className="login-header">Create an Account</header>
+        {error && <Typography color="error">{error}</Typography>}
+        {success && <Typography color="primary">{success}</Typography>}
+        <form onSubmit={signUp}>
+          {step === 'email' && (
+            <>
               <input
                 placeholder="Email"
                 type="email"
                 className="login-input"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={sendOtp}
+                className="login-button"
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={34} color="inherit" />
+                ) : (
+                  'Send OTP'
+                )}
+              </button>
+            </>
+          )}
+
+          {step === 'otp' && (
+            <>
+              <input
+                placeholder="Enter OTP"
+                className="login-input"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+              />
+              <button
+                type="button"
+                onClick={verifyOtp}
+                className="login-button"
+                disabled={loading}
+              >
+                {loading ? (
+                  <CircularProgress size={34} color="inherit" />
+                ) : (
+                  'Verify OTP'
+                )}
+              </button>
+              {/* Resend OTP Section */}
+              <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+                <button
+                  type="button"
+                  onClick={sendOtp}
+                  className="resend-button"
+                  disabled={loading || !canResend}
+                  style={{ padding: '0.5rem 1rem' }}
+                >
+                  {loading ? (
+                    <CircularProgress size={34} color="inherit" />
+                  ) : canResend ? (
+                    'Resend OTP'
+                  ) : (
+                    `Resend OTP in ${timer}s`
+                  )}
+                </button>
+              </div>
+            </>
+          )}
+          {step === 'form' && (
+            <>
+              <input
+                placeholder="Name or Username"
+                className="login-input"
+                value={name}
+                onChange={(e) => setName(e.target.value)}
                 required
               />
               <input
@@ -187,23 +258,14 @@ const SignUp = () => {
                 onChange={(e) => setPhoneNumber(e.target.value)}
                 required
               />
-              <Box className="input-container">
-                <input
-                  placeholder="Password"
-                  type={showPassword ? 'text' : 'password'}
-                  className="login-input"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                />
-                <IconButton
-                  aria-label="toggle password visibility"
-                  onClick={togglePasswordVisibility}
-                  className="password-toggle"
-                >
-                  {showPassword ? <VisibilityOff /> : <Visibility />}
-                </IconButton>
-              </Box>
+              <input
+                placeholder="Password"
+                type="password"
+                className="login-input"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+              />
               <input
                 placeholder="Confirm Password"
                 type="password"
@@ -219,64 +281,25 @@ const SignUp = () => {
                   'Sign Up'
                 )}
               </button>
-            </form>
-            <Link
-              to="/"
-              className="existing-account"
-              style={{
-                marginTop: '2vh',
-                marginBottom: '2vh',
-                color: '#00D46A',
-                fontSize: '15px',
-                display: 'block',
-                textAlign: 'center',
-                cursor: 'pointer',
-              }}
-            >
-              Already have an account? Log in
-            </Link>
-          </>
-        ) : (
-          <>
-            <header className="login-header">Verify OTP</header>
-            {error && <Typography color="error">{error}</Typography>}
-            {success && (
-              <div className="success-popup">
-                <Typography color="success" align="center">
-                  {success}
-                </Typography>
-              </div>
-            )}
-            <form onSubmit={verifyOtp}>
-              <input
-                placeholder="Enter OTP"
-                type="text"
-                className="login-input"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-              />
-              <button type="submit" className="login-button" disabled={loading}>
-                {loading ? (
-                  <CircularProgress size={34} color="inherit" />
-                ) : (
-                  'Verify OTP'
-                )}
-              </button>
-            </form>
-            <Typography
-              align="center"
-              style={{
-                marginTop: '10px',
-                color: '#00D46A',
-                cursor: 'pointer',
-              }}
-              onClick={resendOtp}
-            >
-              Resend OTP
-            </Typography>
-          </>
-        )}
+            </>
+          )}
+        </form>
+
+        <Link
+          to="/"
+          className="existing-account"
+          style={{
+            marginTop: '2vh',
+            marginBottom: '2vh',
+            color: '#00D46A',
+            fontSize: '15px',
+            display: 'block',
+            textAlign: 'center',
+            cursor: 'pointer',
+          }}
+        >
+          Already have an account? Log in
+        </Link>
       </Box>
     </div>
   );

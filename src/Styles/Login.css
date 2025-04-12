@@ -120,6 +120,22 @@
   transition: background-color 0.3s;
 }
 
+.resend-button{
+    background-color: #fff;
+      color: var(--secondary-color);
+      padding: 10px 20px;
+      border: none;
+      border-radius: 50px;
+      margin-top: 2vh;
+      cursor: pointer;
+      font-family: var(--font-family);
+      font-weight: bold;
+      font-size: 21px;
+      width: 90%;
+      height: 7vh;
+      transition: background-color 0.3s;
+}
+
 .GoogleLoginContainer{
   display: flex;
   align-items: center;
