@@ -61,7 +61,9 @@ const Login = () => {
       }, 1500);
     } catch (err) {
       console.error(err.response);
-      setError(err.response?.data?.error || 'An error occurred. Please try again.');
+      setError(
+        err.response?.data?.error || 'An error occurred. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
@@ -120,7 +122,11 @@ const Login = () => {
             disabled={loading}
           >
             {loading ? (
-              <CircularProgress className="login-loader" size={34} color="#fff" />
+              <CircularProgress
+                className="login-loader"
+                size={34}
+                color="#fff"
+              />
             ) : (
               'Log In'
             )}

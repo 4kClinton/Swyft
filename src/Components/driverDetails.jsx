@@ -6,7 +6,7 @@ import flatbed from '../assets/flatbed.png';
 import Van from '../assets/van.jpg';
 import { FaPhoneAlt } from 'react-icons/fa'; // Importing the phone icon
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { saveDriver } from '../Redux/Reducers/DriverDetailsSlice';
 import { useEffect } from 'react';
 import Cookies from 'js-cookie';
@@ -26,8 +26,7 @@ const DriverDetails = () => {
   const status = localStorage.getItem('status');
   const license = localStorage.getItem('license');
 
-  console.log(nearest_driver, orders, car, name, phone, status, license); 
-  
+  console.log(nearest_driver, orders, car, name, phone, status, license);
 
   useEffect(() => {
     if (status === 'Accepted' && !nearest_driver) {
@@ -56,7 +55,7 @@ const DriverDetails = () => {
           console.error('Error fetching driver data:', error);
         });
     }
-  }, [orders, dispatch, nearest_driver]);
+  }, [orders, dispatch, nearest_driver, status]);
 
   const handleGoHome = () => {
     navigate('/dash'); // Navigate to the home page
@@ -106,13 +105,10 @@ const DriverDetails = () => {
           <p className="numberPlate">
             {' '}
             License plate:{' '}
-            <span style={{ fontWeight: 'bold' }}>
-              {license}{' '}
-            </span>{' '}
+            <span style={{ fontWeight: 'bold' }}>{license} </span>{' '}
           </p>
           <p className="carType">
-            Car Type:{' '}
-            <span style={{ fontWeight: 'bold' }}>{car}</span>
+            Car Type: <span style={{ fontWeight: 'bold' }}>{car}</span>
           </p>
         </div>
       </div>
@@ -142,7 +138,7 @@ const DriverDetails = () => {
 
       {/* Go back home button */}
       <button className="goHomeButton" onClick={handleGoHome}>
-        Go Back Home
+        Check Details
       </button>
     </div>
   );

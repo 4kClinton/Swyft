@@ -28,7 +28,7 @@ import DialogActions from '@mui/material/DialogActions';
 import Button from '@mui/material/Button';
 import ErrorIcon from '@mui/icons-material/ErrorOutline';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteOrder } from '../Redux/Reducers/CurrentOrderSlice';
+import { deleteOrder, saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
 
 export default function OrderConfirmation() {
   const dispatch = useDispatch();
@@ -105,7 +105,7 @@ export default function OrderConfirmation() {
     pickup: Pickup,
     miniTruck: MiniTruck,
     van: Van,
-    'Car Rescue': CarRescue,
+    carRescue: CarRescue,
     tukTuk: TukTuk,
     SwyftBoda: nduthi,
     Lorry: TenTonne,
@@ -194,13 +194,16 @@ export default function OrderConfirmation() {
       // console.log("Order Status: " + order_status);
       // console.log("License: " + license);
 
-      localStorage.setItem("order_id", order_id);
-      localStorage.setItem("driver_id",driver_id);
-      localStorage.setItem("car",nearest_driver_car);
-      localStorage.setItem("name", nearest_driver_name);
-      localStorage.setItem("phone", nearest_driver_phone);
-      localStorage.setItem("status", order_status);
-      localStorage.setItem("license", license);
+      localStorage.setItem('order_id', order_id);
+      localStorage.setItem('driver_id', driver_id);
+      localStorage.setItem('car', nearest_driver_car);
+      localStorage.setItem('name', nearest_driver_name);
+      localStorage.setItem('phone', nearest_driver_phone);
+      localStorage.setItem('status', order_status);
+      localStorage.setItem('license', license);
+
+      dispatch(saveOrder(finalOrderData));
+      localStorage.setItem('currentOrder', JSON.stringify(finalOrderData));
 
       Cookies.remove('NavigateToDriverDetails');
     } catch (error) {
@@ -211,11 +214,10 @@ export default function OrderConfirmation() {
     }
   };
 
-    // console.log(response.order.id);
-    // const order_id = response.order.id;
-    // console.log(order_id);
-    
-  
+  // console.log(response.order.id);
+  // const order_id = response.order.id;
+  // console.log(order_id);
+
   const packageOptions = [
     'Furniture',
     'Household items',

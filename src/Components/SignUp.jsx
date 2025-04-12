@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
 import { Typography, Box, CircularProgress } from '@mui/material';
 import { v4 as uuidv4 } from 'uuid';
@@ -19,30 +19,58 @@ const SignUp = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
 
+  // For OTP resend functionality
+  const [canResend, setCanResend] = useState(true);
+  const [timer, setTimer] = useState(30);
+
+  // Effect to handle countdown timer when OTP is sent.
+  useEffect(() => {
+    let interval;
+    if (!canResend && step === 'otp') {
+      interval = setInterval(() => {
+        setTimer((prevTimer) => {
+          if (prevTimer <= 1) {
+            clearInterval(interval);
+            setCanResend(true);
+            return 30; // reset timer for next time
+          }
+          return prevTimer - 1;
+        });
+      }, 1000);
+    }
+    return () => clearInterval(interval);
+  }, [canResend, step]);
+
   const sendOtp = async () => {
     if (!email) {
       setError('Please enter your email');
       return;
     }
-  
+
+    setLoading(true);
+    const sanitizedEmail = email.trim().toLowerCase();
+
     try {
-      setLoading(true);
       setError(null);
-      const res = await fetch('https://swyft-backend-client-nine.vercel.app/signup-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email }),
-      });
-  
+      const res = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/signup-otp',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: sanitizedEmail }),
+        }
+      );
+
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Failed to send OTP');
         return;
       }
-  
+
       setSuccess('OTP sent to your email.');
       setStep('otp');
-    } catch (err) {
+      setCanResend(false); // disable resend until timer finishes
+    } catch {
       setError('Network error. Try again.');
     } finally {
       setLoading(false);
@@ -52,28 +80,30 @@ const SignUp = () => {
   const verifyOtp = async () => {
     try {
       setLoading(true);
-      const res = await fetch('https://swyft-backend-client-nine.vercel.app/verify-signup-otp', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ email, otp: otp }),
-      });
-  
+      const res = await fetch(
+        'https://swyft-backend-client-nine.vercel.app/verify-signup-otp',
+        {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, otp }),
+        }
+      );
+
       const data = await res.json();
       if (!res.ok) {
         setError(data.error || 'Invalid OTP');
         return;
       }
-  
+
       setSuccess('OTP verified!');
       setStep('form');
-    } catch (err) {
+    } catch {
       setError('Verification failed. Try again.');
     } finally {
       setLoading(false);
     }
   };
-  
-  
+
   const signUp = async (event) => {
     event.preventDefault();
     setLoading(true);
@@ -145,38 +175,75 @@ const SignUp = () => {
         <header className="login-header">Create an Account</header>
         {error && <Typography color="error">{error}</Typography>}
         {success && <Typography color="primary">{success}</Typography>}
-        
+
+        {step === 'email' && (
+          <div>
+            <input
+              placeholder="Email"
+              type="email"
+              className="login-input"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={sendOtp}
+              className="login-button"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={34} color="inherit" />
+              ) : (
+                'Send OTP'
+              )}
+            </button>
+          </div>
+        )}
+
         {step === 'otp' && (
-            <>
-              <input
-                placeholder="Enter OTP"
-                className="login-input"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-              />
-              <button type="button" onClick={verifyOtp} className="login-button" disabled={loading}>
-                {loading ? <CircularProgress size={34} color="inherit" /> : 'Verify OTP'}
+          <div>
+            <input
+              placeholder="Enter OTP"
+              className="login-input"
+              value={otp}
+              onChange={(e) => setOtp(e.target.value)}
+              required
+            />
+            <button
+              type="button"
+              onClick={verifyOtp}
+              className="login-button"
+              disabled={loading}
+            >
+              {loading ? (
+                <CircularProgress size={34} color="inherit" />
+              ) : (
+                'Verify OTP'
+              )}
+            </button>
+            {/* Resend OTP Section */}
+            <div style={{ marginTop: '1rem', textAlign: 'center' }}>
+              <button
+                type="button"
+                onClick={sendOtp}
+                className="resend-button"
+                disabled={loading || !canResend}
+                style={{ padding: '0.5rem 1rem' }}
+              >
+                {loading ? (
+                  <CircularProgress size={34} color="inherit" />
+                ) : canResend ? (
+                  'Resend OTP'
+                ) : (
+                  `Resend OTP in ${timer}s`
+                )}
               </button>
-            </>
-          )}
-          {step === 'email' && (
-            <>
-              <input
-                placeholder="Email"
-                type="email"
-                className="login-input"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
-                required
-              />
-              <button type="button" onClick={sendOtp} className="login-button" disabled={loading}>
-                {loading ? <CircularProgress size={34} color="inherit" /> : 'Send OTP'}
-              </button>
-            </>
-          )}
-        
-          {step === 'form' && (
+            </div>
+          </div>
+        )}
+
+        {step === 'form' && (
           <form onSubmit={signUp}>
             <input
               placeholder="Name or Username"
@@ -209,12 +276,14 @@ const SignUp = () => {
               required
             />
             <button type="submit" className="login-button" disabled={loading}>
-              {loading ? <CircularProgress size={34} color="inherit" /> : 'Sign Up'}
+              {loading ? (
+                <CircularProgress size={34} color="inherit" />
+              ) : (
+                'Sign Up'
+              )}
             </button>
           </form>
-          
         )}
-        
 
         <Link
           to="/"
