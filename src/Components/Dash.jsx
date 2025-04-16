@@ -1,354 +1,509 @@
-import React, { useState, useEffect, useRef } from "react";
-import "../Styles/Dash.css";
-import { useNavigate } from "react-router-dom";
-import ConfirmationPopup from "./ConfirmationPopup";
-import DateTimePopup from "./DateTimePopup";
-import LoaderPopup from "./LoaderPopup";
-import ErrorPopup from "./ErrorPopup"; // New ErrorPopup
-import SuccessPopup from "./SuccessPopup"; // New SuccessPopup
-import CircularProgress from "@mui/material/CircularProgress";
-import FindDriverComponent from "./FindDriverComponent";
-import PopupTutorial from "../Components/PopupTutorial.jsx";
+import { useState, useEffect, useRef, useMemo } from 'react';
+import PropTypes from 'prop-types';
+import '../Styles/Dash.css';
+
+import ConfirmationPopup from './ConfirmationPopup';
+import DateTimePopup from './DateTimePopup';
+import LoaderPopup from './LoaderPopup';
+import ErrorPopup from './ErrorPopup';
+import SuccessPopup from './SuccessPopup';
+import SortingTabs from './SortingTabs';
+import TripTracker from './TripTracker';
+
 import {
   FaTruckPickup,
   FaTruck,
-  FaTruckMoving,
-  FaCarCrash,
+  FaShuttleVan,
   FaCheckCircle,
-  FaRegClock,
-} from "react-icons/fa";
-import { useSelector } from "react-redux";
-import { useDispatch } from "react-redux";
-import { useSocket } from "../hooks/useSocket.js";
+  // FaMotorcycle, // For SwyftBoda
+  // FaCar, // For car
+} from 'react-icons/fa';
 
-const Dash = ({ distance = 0, userLocation, destination }) => {
+import { GiTowTruck } from 'react-icons/gi';
+import { PiTruck } from 'react-icons/pi';
+
+import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate, useNavigationType } from 'react-router-dom';
+import CancelOrderPopup from './CancelOrderPopup';
+import Cookies from 'js-cookie';
+import { deleteOrder, saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
+
+const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
+  // Listen for navigation type (POP, PUSH, REPLACE)
+  const navigationType = useNavigationType();
+  const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [isOpen, setIsOpen] = useState(false);
-  const [selectedOption, setSelectedOption] = useState("");
-  const [calculatedCosts, setCalculatedCosts] = useState({});
+
+  // Clear order if user navigates back via browser button
+  useEffect(() => {
+    if (navigationType === 'POP') {
+      dispatch(deleteOrder());
+      localStorage.removeItem('currentOrder');
+    }
+  }, [navigationType, dispatch]);
+
+  // ======= NEW: Tab State & Loading for the tab switch =======
+  const [activeTab, setActiveTab] = useState('Cargo');
+  const [isTabLoading, setIsTabLoading] = useState(false);
+
+  const handleTabChange = (tab) => {
+    setActiveTab(tab);
+  };
+
+  // Simulate a short loading period whenever activeTab changes
+  useEffect(() => {
+    setIsTabLoading(true);
+    const timer = setTimeout(() => {
+      setIsTabLoading(false);
+    }, 800); // 0.8s mock loading
+    return () => clearTimeout(timer);
+  }, [activeTab]);
+
+  // ======= Local storage states =======
+  const [selectedOption, setSelectedOption] = useState('');
   const [includeLoader, setIncludeLoader] = useState(false);
   const [numLoaders, setNumLoaders] = useState(1);
+
+  // ======= Other component states =======
+  const [calculatedCosts, setCalculatedCosts] = useState({});
   const [showDateTimePopup, setShowDateTimePopup] = useState(false);
   const [showLoaderPopup, setShowLoaderPopup] = useState(false);
-  const [errorMessage, setErrorMessage] = useState("");
-  const [scheduleDateTime, setScheduleDateTime] = useState("");
+  const [errorMessage, setErrorMessage] = useState('');
+  const [scheduleDateTime, setScheduleDateTime] = useState('');
   const [showConfirmationPopup, setShowConfirmationPopup] = useState(false);
-  const [showSuccessPopup, setShowSuccessPopup] = useState(false); // New state for success popup
-  const [showFindDriverComponent, setFindDriverComponent] = useState(false);
-  const [showPopup, setShowPopup] = useState(true);
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const theUser = useSelector((state) => state.user.value);
-  const socket = useSocket()
-
-
-  useEffect(() => {
-    socket.on('order_update', (data) => {
-      const { status, driver } = data;
-      alert(`Order has been ${status?"Accepted":"Declined"}`);
-      
-  
-     
-  
-    // Cleanup the listener when the component is unmounted
-    return () => {
-      socket.off('order_update'); // Clean up the event listener when the component unmounts
-    }
-  })}, [socket, theUser])
-
-  useEffect(() => {
-    const loginStatus = theUser.name;
-    console.log("Login status on mount:", loginStatus); // Debugging line
-    if (loginStatus) {
-      setIsLoggedIn(true); // User is logged in
-    }
-  }, [theUser]);
+  const [showSuccessPopup, setShowSuccessPopup] = useState(false);
+  const [startY, setStartY] = useState(null);
+  const [offsetY, setOffsetY] = useState(0);
+  const [isLoading, setIsLoading] = useState(false);
+  const [isOpen, setIsOpen] = useState(false);
+  const [showCancelPopup, setShowCancelPopup] = useState(false);
 
   const dashRef = useRef(null);
+  const order = useSelector((state) => state.currentOrder.value);
+  const theUser = useSelector((state) => state.user.value);
+  const Price = selectedOption ? calculatedCosts[selectedOption] : 0;
 
-  // Rate and distance calculations
-  const rates = {
-    pickup: 160,
-    miniTruck: 230,
-    lorry: 310,
-    flatbed: 350,
+  // ======= 1. Define your rates for each vehicle type =======
+  const rates = useMemo(
+    () => ({
+      SwyftBoda: 30,
+      SwyftBodaElectric: 20,
+      car: 50,
+      van: 210,
+      miniTruck: 270,
+      pickup: 220,
+      carRescue: 400,
+      lorry5Tonne: 800,
+      lorry10Tonne: 1200,
+    }),
+    []
+  );
+
+  // Distance cost constants
+  const decayFactor = 0.005;
+  const floorRate = 50;
+
+  // ======= 2. Cost calculation logic =======
+  const calculateRate = (baseRate, distance) => {
+    if (distance < 2) {
+      return baseRate * 3.5;
+    } else if (distance < 3) {
+      return baseRate * 3;
+    } else if (distance < 5) {
+      return baseRate * 2.5;
+    } else if (distance < 10) {
+      return baseRate * 1.2;
+    } else {
+      return Math.max(baseRate * Math.exp(-decayFactor * distance), floorRate);
+    }
   };
 
   useEffect(() => {
+    console.log('Pickup rate for 1.5 km:', calculateRate(rates.pickup, 1.5));
+    console.log('Pickup rate for 2.5 km:', calculateRate(rates.pickup, 2.5));
+    console.log('Pickup rate for 4 km:', calculateRate(rates.pickup, 4));
+    console.log('Pickup rate for 8 km:', calculateRate(rates.pickup, 8));
+    console.log('Pickup rate for 15 km:', calculateRate(rates.pickup, 15));
+  }, [rates]);
+
+  // Recalculate costs whenever dependencies change
+  useEffect(() => {
     const newCalculatedCosts = Object.entries(rates).reduce(
-      (acc, [vehicle, rate]) => {
-        // Calculate base cost
-        let calculatedCost = rate * distance;
-
-        // Apply specific minimum logic for flatbed
-        if (vehicle === "flatbed") {
-          calculatedCost = Math.max(calculatedCost, 3500);
+      (acc, [vehicleKey, baseRate]) => {
+        const adjustedRate = calculateRate(baseRate, distance);
+        let calculatedCost = adjustedRate * distance;
+        // For vehicles other than 'car', 'SwyftBoda', and 'SwyftBodaElectric', apply the minimum cost of Ksh 1000.
+        if (!['car', 'SwyftBoda', 'SwyftBodaElectric'].includes(vehicleKey)) {
+          calculatedCost = Math.max(calculatedCost, 1000);
         }
-
-        // Enforce minimum cost of 1000 for all vehicles
-        calculatedCost = Math.max(calculatedCost, 1000);
-
         // Add loader costs if applicable
-        acc[vehicle] = Math.round(
-          calculatedCost + (includeLoader ? 300 * numLoaders : 0)
+        acc[vehicleKey] = Math.round(
+          calculatedCost + (includeLoader ? 600 * numLoaders : 0)
         );
-
         return acc;
       },
       {}
     );
-
     setCalculatedCosts(newCalculatedCosts);
-  }, [distance, includeLoader, numLoaders]);
+  }, [distance, includeLoader, numLoaders, rates]);
+
+  // ======= 3. Load & save user selections to local storage =======
+  useEffect(() => {
+    const storedSelectedOption = localStorage.getItem('selectedOption');
+    if (storedSelectedOption) setSelectedOption(storedSelectedOption);
+
+    const storedIncludeLoader = localStorage.getItem('includeLoader');
+    if (storedIncludeLoader) {
+      setIncludeLoader(JSON.parse(storedIncludeLoader));
+    }
+
+    const storedNumLoaders = localStorage.getItem('numLoaders');
+    if (storedNumLoaders) {
+      setNumLoaders(parseInt(storedNumLoaders, 10));
+    }
+  }, []);
 
   useEffect(() => {
+    localStorage.setItem('selectedOption', selectedOption);
+  }, [selectedOption]);
+
+  useEffect(() => {
+    localStorage.setItem('includeLoader', JSON.stringify(includeLoader));
+  }, [includeLoader]);
+
+  useEffect(() => {
+    localStorage.setItem('numLoaders', numLoaders.toString());
+  }, [numLoaders]);
+
+  // ======= 4. Panel open/close logic =======
+  useEffect(() => {
     const handleClickOutside = (event) => {
-      if (dashRef.current && !dashRef.current.contains(event.target))
+      if (dashRef.current && !dashRef.current.contains(event.target)) {
         setIsOpen(false);
+      }
     };
-    if (isOpen) document.addEventListener("click", handleClickOutside);
-    return () => document.removeEventListener("click", handleClickOutside);
+    if (isOpen) {
+      document.addEventListener('click', handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener('click', handleClickOutside);
+    };
   }, [isOpen]);
 
-  const toggleDash = () => setIsOpen(!isOpen);
-  const handleOptionChange = (vehicle) => setSelectedOption(vehicle);
+  const handleOptionChange = (vehicleKey) => {
+    if (!isOpen) {
+      setIsOpen(true);
+    }
+    setSelectedOption(vehicleKey);
+  };
+
   const handleLoaderChange = (e) => setIncludeLoader(e.target.checked);
   const handleNumLoadersChange = (e) => {
-    const value = parseInt(e.target.value);
+    const value = parseInt(e.target.value, 10);
     setNumLoaders(isNaN(value) ? 0 : Math.max(0, value));
   };
 
-  const handleSelectDateTime = () => {
-    if (!selectedOption) {
-      setErrorMessage("Please select a vehicle first.");
-      return;
-    }
-
-    // Construct the order data
-    const orderData = {
-      id: theUser.id, // User ID
-      vehicle: selectedOption,
-      distance,
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
-      totalCost: calculatedCosts[selectedOption],
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
-
-    // Save order data to localStorage
-    localStorage.setItem("orderDetails", JSON.stringify(orderData));
-
-    // Log the stored order details for debugging
-    console.log("Order details stored locally:", orderData);
-
-    setShowDateTimePopup(true); // Show Date/Time Popup after selecting vehicle
+  // ======= 5. Touch handlers for dragging the panel =======
+  const panelHeight = 300;
+  const handleTouchStart = (e) => {
+    setStartY(e.touches[0].clientY);
   };
 
-
-
-  const handleScheduleOrder = () => {
-    if (!scheduleDateTime) {
-      setErrorMessage("Please select a date and time for scheduling.");
-      return;
+  const handleTouchMove = (e) => {
+    if (startY !== null) {
+      const currentY = e.touches[0].clientY;
+      const deltaY = currentY - startY;
+      setOffsetY(deltaY);
     }
+  };
 
-    const alertTime = new Date(scheduleDateTime).getTime();
-    const currentTime = Date.now();
-    const delay = alertTime - currentTime;
-
-    if (delay > 0) {
-      setTimeout(() => setShowSuccessPopup(true), delay); // Show success popup
-      setShowSuccessPopup(true);
+  const handleTouchEnd = () => {
+    const closedPosition = panelHeight;
+    const baseTranslate = isOpen ? 0 : closedPosition;
+    const finalTranslate = baseTranslate + offsetY;
+    if (finalTranslate < closedPosition / 2) {
+      setIsOpen(true);
     } else {
-      setErrorMessage("Please select a future date and time.");
+      setIsOpen(false);
     }
-    setShowDateTimePopup(false); // Close the DateTimePopup after scheduling
+    setOffsetY(0);
+    setStartY(null);
   };
 
+  const closedPosition = panelHeight;
+  const baseTranslate = isOpen ? 0 : closedPosition;
+  const translateY =
+    startY !== null
+      ? Math.min(Math.max(baseTranslate + offsetY, 0), closedPosition)
+      : baseTranslate;
+
+  const dashStyle = {
+    transform: `translateY(${translateY}px)`,
+    transition: startY !== null ? 'none' : 'transform 0.3s ease-out',
+  };
+
+  // ======= 6. Confirm order logic =======
   const confirmOrder = async () => {
-    if (!destination) {
-      setErrorMessage("Please enter a destination location.");
-      return;
-    }
-    if (!selectedOption) {
-      setErrorMessage("Please select a vehicle.");
-      return;
-    }
-
-    // Check if the user is logged in
-    function LoggedIn() {
-      return isLoggedIn;
-    }
-
-    // Usage
-    // if (!LoggedIn()) {
-    //   navigate("/login");
-    //   setErrorMessage("You must be logged in to place an order.");
-    //   return;
-    // }
-
-    // Assuming `user` is retrieved from sessionStorage or state
-    const user = JSON.parse(sessionStorage.getItem("theUser")); // Adjust according to how you store user data
-    if (!theUser || !theUser.id || !theUser.name) {
-      setErrorMessage("User details are missing. Please log in again.");
-      navigate("/login");
-      return;
-    }
-
-    // Construct the order data including user details
-    const orderData = {
-      id: theUser.id, // User ID
-      vehicle: selectedOption,
-      distance,
-      loaders: includeLoader ? numLoaders : 0,
-      loaderCost: includeLoader ? numLoaders * 300 : 0,
-      totalCost: calculatedCosts[selectedOption],
-      userLocation,
-      destination,
-      time: new Date().toLocaleString(),
-    };
-
-    setFindDriverComponent(true); // Show loader popup while processing
-
-    const token = sessionStorage.getItem("authToken");
-
     try {
-      const response = await fetch(
-        "https://swyft-backend-client-ac1s.onrender.com/orders",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json", Authorization: `Bearer ${token}`, },
-          body: JSON.stringify(orderData),
-        }
-      );
+      Cookies.remove('driverData');
+      localStorage.removeItem('order_id');
+      localStorage.removeItem('driver_id');
+      localStorage.removeItem('car');
+      localStorage.removeItem('name');
+      localStorage.removeItem('phone');
+      localStorage.removeItem('status');
+      localStorage.removeItem('license');
+      localStorage.removeItem('currentOrder');
+      dispatch(deleteOrder());
 
-      if (!response.ok) {
-        throw new Error("Failed to place order, server error");
+      if (destination.length === 0) {
+        throw new Error('Please enter a destination location.');
+      }
+      if (!selectedOption) {
+        throw new Error('Please select a vehicle.');
+      }
+      if (!theUser || !theUser.id || !theUser.name) {
+        throw new Error('User details are missing. Please log in again.');
       }
 
-      const result = await response.json();
-      
-      console.log("Order placed successfully:", result);
+      const orderData = {
+        vehicle: selectedOption,
+        distance: parseFloat(distance).toFixed(3),
+        loaders: includeLoader ? numLoaders : 0,
+        loaderCost: includeLoader ? numLoaders * 600 : 0,
+        totalCost: Price,
+        userLocation,
+        destination,
+        time: new Date().toLocaleString(),
+      };
 
-      setShowLoaderPopup(false); // Close loader popup
-      setShowSuccessPopup(true); // Show success popup
-      resetDash(); // Reset the dashboard after a successful order
+      // Save order details in Redux and local storage.
+      dispatch(saveOrder(orderData));
+      localStorage.setItem('currentOrder', JSON.stringify(orderData));
+
+      navigate('/confirmOrder', { state: { orderData } });
     } catch (error) {
-      console.error("Error while placing order:", error);
-      setShowLoaderPopup(false); // Close loader popup
-      setErrorMessage("Failed to place order. Please try again."); // Show error popup
+      setErrorMessage(error.message);
     }
   };
 
-  const calculateDistance = (userLocation, driverLocation) => {
-    const toRadians = (degrees) => (degrees * Math.PI) / 180;
-
-    const R = 6371; // Radius of the Earth in km
-    const lat1 = toRadians(userLocation.latitude);
-    const lon1 = toRadians(userLocation.longitude);
-    const lat2 = toRadians(driverLocation.latitude);
-    const lon2 = toRadians(driverLocation.longitude);
-
-    const dLat = lat2 - lat1;
-    const dLon = lon2 - lon1;
-
-    const a =
-      Math.sin(dLat / 2) ** 2 +
-      Math.cos(lat1) * Math.cos(lat2) * Math.sin(dLon / 2) ** 2;
-    const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-
-    return R * c; // Distance in km
-  };
-
-  const sendOrderToDriver = async (driverId, orderData) => {
-    try {
-      const response = await fetch(`http://localhost:3000/vehicles`, {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(orderData),
-      });
-
-      if (!response.ok) {
-        throw new Error("Failed to place order, server error");
+  // ======= 7. If order is accepted, navigate to driver details =======
+  useEffect(() => {
+    if (order?.status === 'Accepted') {
+      const navigated = Cookies.get('NavigateToDriverDetails');
+      if (!navigated) {
+        navigate('/driverDetails');
+        Cookies.set('NavigateToDriverDetails', 'true');
       }
-
-      const result = await response.json();
-      console.log("Order sent successfully:", result);
-    } catch (error) {
-      console.error("Error while sending order:", error);
-      setErrorMessage("Failed to place order. Please try again.");
     }
-  };
-
-  const resetDash = () => {
-    setSelectedOption("");
-    setIncludeLoader(false);
-    setNumLoaders(1);
-    setCalculatedCosts(0);
-    setErrorMessage("");
-    setScheduleDateTime("");
-  };
+    if (!order?.id) {
+      setShowSuccessPopup(false);
+      setIsLoading(false);
+    } else {
+      setIsLoading(true);
+    }
+  }, [order, navigate]);
 
   const goBackToDash = () => {
-    resetDash();
+    setShowSuccessPopup(false);
     setShowDateTimePopup(false);
     setShowConfirmationPopup(false);
   };
 
   const handlePopupClose = () => {
-    resetDash();
     setShowLoaderPopup(false);
-    setErrorMessage("");
+    setErrorMessage('');
   };
+
+  const handleCancelOrder = () => {
+    setShowCancelPopup(true);
+  };
+
+  const closeCancelPopup = () => {
+    setShowCancelPopup(false);
+  };
+
+  // If user not logged in, redirect
+  useEffect(() => {
+    if (!theUser?.id) {
+      navigate('/');
+    }
+  }, [theUser, navigate]);
+
+  // ======= 8. If there's an existing order, show "Current Order" =======
+  if (order?.id && order?.vehicle_type) {
+    return (
+      <div
+        ref={dashRef}
+        className={`OrderDash ${isOpen ? 'open' : ''}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={dashStyle}
+      >
+        <div className="notch">
+          <div className="notch-indicator"></div>
+        </div>
+        <h2 className="catch">Current Order Details</h2>
+        <div className="order-details">
+          <p className="order-detail-item">
+            <strong>Vehicle:</strong>{' '}
+            {order.vehicle_type.charAt(0).toUpperCase() +
+              order.vehicle_type.slice(1)}
+          </p>
+          <p className="order-detail-item">
+            <strong>Loaders:</strong> {order.loaders}
+          </p>
+          <p className="order-detail-item">
+            <strong>Distance:</strong> {order.distance} km
+          </p>
+          <p className="order-detail-item">
+            <strong>Total Cost:</strong> Ksh {order.total_cost}
+          </p>
+        </div>
+        <button
+          className="cancel-button"
+          style={{ backgroundColor: '#00c763' }}
+          onClick={() => navigate('/driverDetails')}
+        >
+          View driver details
+        </button>
+        <br /> <br />
+        <button
+          className="cancel-button"
+          style={{ backgroundColor: 'red' }}
+          onClick={handleCancelOrder}
+        >
+          Cancel Order
+        </button>
+        {showCancelPopup && <CancelOrderPopup onClose={closeCancelPopup} />}
+      </div>
+    );
+  }
+
+  // ======= 9. Main Dash UI: show tab-based vehicles =======
+  // Helper: Render vehicles with label, icon, cost
+  const renderVehicleOptions = (vehicles) => {
+    return vehicles.map(({ key, label, Icon }) => {
+      const cost = calculatedCosts[key] || 0;
+      return (
+        <label
+          key={key}
+          className="Option"
+          onClick={() => handleOptionChange(key)}
+          style={{
+            display: 'flex',
+            alignItems: 'center',
+            marginBottom: '1rem',
+          }}
+        >
+          <div
+            className={`checkbox ${selectedOption === key ? 'selected' : ''}`}
+            style={{ marginRight: '1rem' }}
+          >
+            <Icon size={24} />
+          </div>
+          {`${label} - Ksh ${distance > 0 ? cost : '0'}`}
+        </label>
+      );
+    });
+  };
+
+  // Vehicles for each sub-category of Cargo
+  const miniCargo = [{ key: 'van', label: 'Swyft Van', Icon: FaShuttleVan }];
+
+  const mediumCargo = [
+    { key: 'miniTruck', label: 'Swyft MiniTruck', Icon: FaTruck },
+    { key: 'pickup', label: 'Swyft Pickup', Icon: FaTruckPickup },
+  ];
+
+  const bulkCargo = [
+    { key: 'carRescue', label: 'Swyft Car Rescue', Icon: GiTowTruck },
+
+    { key: 'lorry5Tonne', label: 'Swyft Lorry 5 Tonne', Icon: PiTruck },
+    { key: 'lorry10Tonne', label: 'Swyft Lorry 10 Tonne', Icon: PiTruck },
+  ];
+
+  // Vehicles for Parcels
+  // const parcelVehicles = [
+  //   { key: 'SwyftBoda', label: 'Swyft Boda', Icon: FaMotorcycle },
+  //   {
+  //     key: 'SwyftBodaElectric',
+  //     label: 'Swyft Boda Electric',
+  //     Icon: FaMotorcycle,
+  //   },
+  //   { key: 'car', label: 'Swyft Car', Icon: FaCar },
+  // ];
+
+  // Vehicles for Moving
+  // const movingVehicles = [
+  //   { key: 'pickup', label: 'Swyft Pickup', Icon: FaTruckPickup },
+  //   { key: 'miniTruck', label: 'Swyft MiniTruck', Icon: FaTruck },
+
+  //   { key: 'lorry5Tonne', label: 'Swyft Lorry 5 Tonne', Icon: PiTruck },
+  //   { key: 'lorry10Tonne', label: 'Swyft Lorry 10 Tonne', Icon: PiTruck },
+  // ];
+
+  // Decide what to render based on activeTab
+  let tabContent;
+  if (isTabLoading) {
+    // Show a circular loader if we're "fetching" vehicles
+    tabContent = (
+      <div
+        style={{
+          textAlign: 'center',
+          marginTop: '1rem',
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <div className="order-spinner" />
+      </div>
+    );
+  } else if (activeTab === 'Cargo') {
+    tabContent = (
+      <>
+        <h2>Mini Cargo</h2>
+        {renderVehicleOptions(miniCargo)}
+
+        <h2>Medium Cargo</h2>
+        {renderVehicleOptions(mediumCargo)}
+
+        <h2>Bulk Cargo</h2>
+        {renderVehicleOptions(bulkCargo)}
+      </>
+    );
+  } else if (activeTab === 'Parcels' || activeTab === 'Moving') {
+    tabContent = (
+      <>
+        <TripTracker />
+      </>
+    );
+  }
+  //  else if (activeTab === 'Moving') {
+  //     tabContent = <>{renderVehicleOptions(movingVehicles)}</>;
+  //   }
 
   return (
     <div
-      key={distance}
+      key="dash"
       ref={dashRef}
-      className={`Dash ${isOpen ? "open" : ""}`}
+      className={`Dash ${isOpen ? 'open' : ''}`}
+      onTouchStart={handleTouchStart}
+      onTouchMove={handleTouchMove}
+      onTouchEnd={handleTouchEnd}
+      style={dashStyle}
     >
-      <div className="notch" onClick={toggleDash}>
+      <div className="notch">
         <div className="notch-indicator"></div>
       </div>
+      <h2 className="catch">What’s Your Load Today?</h2>
 
-      {/* Vehicle Selection */}
-      {/* <PopupTutorial
-        message="Click to Open"
-        onDismiss={() => setShowPopup(true)}
-      /> */}
-      <h2 className="catch" onClick={toggleDash}>
-        Which means do you prefer?
-      </h2>
-      <div className="dash-content">
-        {Object.entries(calculatedCosts).map(([vehicle, cost]) => {
-          const Icon = {
-            pickup: FaTruckPickup,
-            miniTruck: FaTruck,
-            lorry: FaTruckMoving,
-            flatbed: FaCarCrash,
-          }[vehicle];
-          return (
-            <label
-              key={vehicle}
-              className="Option"
-              onClick={() => handleOptionChange(vehicle)}
-            >
-              <div
-                className={`checkbox ${
-                  selectedOption === vehicle ? "selected" : ""
-                }`}
-              >
-                <Icon size={24} />
-              </div>
-              {vehicle === "flatbed"
-                ? "Car Rescue (Flatbed)"
-                : vehicle.charAt(0).toUpperCase() + vehicle.slice(1)}{" "}
-              - Ksh {distance > 0 ? cost : "0"}
-            </label>
-          );
-        })}
-      </div>
+      {/* Pass handleTabChange so Dash knows which tab is selected */}
+      <SortingTabs onTabChange={handleTabChange} />
+
+      <div className="dash-content">{tabContent}</div>
 
       {/* Loader Option */}
       <div className="loader-option">
@@ -359,7 +514,7 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             checked={includeLoader}
             onChange={handleLoaderChange}
           />
-          Need a loader for unloading? (Ksh 300 per loader)
+          Need a loader for loading & unloading? (Ksh 600 per loader)
         </label>
         {includeLoader && (
           <input
@@ -367,54 +522,64 @@ const Dash = ({ distance = 0, userLocation, destination }) => {
             type="number"
             value={numLoaders}
             onChange={handleNumLoadersChange}
-            style={{ marginLeft: "10px", width: "50px" }}
+            style={{ marginLeft: '10px', width: '50px' }}
           />
         )}
       </div>
 
       <div className="total-cost">
-        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || "0"}</h3>
+        <h3>Total Cost: Ksh {calculatedCosts[selectedOption] || '0'}</h3>
       </div>
 
       <div className="order-group">
-        {/* Confirm and Schedule */}
-        <button className="order-button" onClick={confirmOrder}>
-          Confirm Order
-          <FaCheckCircle
-            size={14}
-            className="check-icon"
-            style={{ marginLeft: "5px" }}
-          />
+        <button
+          className="order-button"
+          onClick={confirmOrder}
+          disabled={isLoading}
+          style={{
+            opacity: isLoading ? 0.7 : 1,
+            width: '40vh',
+            backgroundColor: '#00c763',
+          }}
+        >
+          {isLoading ? (
+            <>
+              Finding Driver...
+              <span className="order-spinner" />
+            </>
+          ) : (
+            <>
+              Confirm Order
+              <FaCheckCircle
+                size={14}
+                className="check-icon"
+                style={{ marginLeft: '5px', width: '2vh' }}
+              />
+            </>
+          )}
         </button>
-
-        {/* Schedule Button with FaRegClock */}
-        <button className="order-button" onClick={handleSelectDateTime}>
-          Schedule Move
-          <FaRegClock
-            size={14}
-            className="check-icon"
-            style={{ marginLeft: "5px" }}
+        {errorMessage && (
+          <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
+        )}
+        {showConfirmationPopup && <ConfirmationPopup onClose={goBackToDash} />}
+        {showSuccessPopup && <SuccessPopup onClose={goBackToDash} />}
+        {showDateTimePopup && (
+          <DateTimePopup
+            scheduleDateTime={scheduleDateTime}
+            setScheduleDateTime={setScheduleDateTime}
+            onClose={() => setShowDateTimePopup(false)}
           />
-        </button>
+        )}
+        {showLoaderPopup && <LoaderPopup />}
       </div>
-
-      {/* Popups */}
-
-      {errorMessage && (
-        <ErrorPopup message={errorMessage} onClose={handlePopupClose} />
-      )}
-      {showConfirmationPopup && <ConfirmationPopup onClose={goBackToDash} />}
-      {showSuccessPopup && <SuccessPopup onClose={goBackToDash} />}
-      {showDateTimePopup && (
-        <DateTimePopup
-          scheduleDateTime={scheduleDateTime}
-          setScheduleDateTime={setScheduleDateTime}
-          onClose={() => setShowDateTimePopup(false)}
-        />
-      )}
-      {showLoaderPopup && <LoaderPopup />}
     </div>
   );
+};
+
+Dash.propTypes = {
+  distance: PropTypes.number,
+  userLocation: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
+  destination: PropTypes.oneOfType([PropTypes.string, PropTypes.object]),
 };
 
 export default Dash;

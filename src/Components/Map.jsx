@@ -1,23 +1,27 @@
-import React, { useState, useEffect } from "react";
+import { useState, useEffect } from 'react';
 import {
   GoogleMap,
   useLoadScript,
   DirectionsRenderer,
-} from "@react-google-maps/api";
-import CircularProgress from "@mui/material/CircularProgress"; // For loader
-import "../Styles/Map.css";
-import SearchBar from "./SearchBar";
-import Dash from "./Dash"; // Import the Dash component
+} from '@react-google-maps/api';
+import CircularProgress from '@mui/material/CircularProgress'; // For loader
+import '../Styles/Map.css';
+import SearchBar from './SearchBar';
+import Dash from './Dash'; // Import the Dash component
+import { useSelector } from 'react-redux';
 
 const Map = () => {
   const { isLoaded } = useLoadScript({
     googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Load API key from .env
-    libraries: ["places"],
+    libraries: ['places'],
   });
 
   const [directionsResponse, setDirectionsResponse] = useState(null);
   const [distance, setDistance] = useState(0); // Initial state for distance
-  const [duration, setDuration] = useState("");
+  const order = useSelector((state) => state.currentOrder.value); // Fetch ongoing order from Redux
+
+  //eslint-disable-next-line
+  const [duration, setDuration] = useState('');
   const [destination, setDestination] = useState(null);
   const [currentLocation, setCurrentLocation] = useState(null);
 
@@ -29,17 +33,24 @@ const Map = () => {
           lng: position.coords.longitude,
         };
         setCurrentLocation(userLocation);
-        setDestination(userLocation); // Optional: set as initial destination
       });
     } else {
-      alert("Geolocation is not supported by this browser.");
+      alert('Geolocation is not supported by this browser.');
     }
-  }, []);
+    if (order && order.dest_lat && order.dest_lng) {
+      setDestination({
+        lat: order.dest_lat,
+        lng: order.dest_lng,
+      });
+    }
+  }, [order]);
 
   useEffect(() => {
     if (isLoaded && currentLocation && destination) {
       calculateRoute();
     }
+
+    //eslint-disable-next-line
   }, [isLoaded, currentLocation, destination]);
 
   const calculateRoute = async () => {
@@ -67,18 +78,16 @@ const Map = () => {
 
       const distanceElement = distanceMatrixResult.rows[0].elements[0];
 
-      if (distanceElement && distanceElement.status === "OK") {
-        const calculatedDistance = distanceElement.distance.value / 1000; // Convert to kilometers
-        setDistance(calculatedDistance); // Set the distance
-        console.log("Updated Distance State:", calculatedDistance);
+      if (distanceElement && distanceElement.status === 'OK') {
+        const calculatedDistance = distanceElement.distance.value / 1000; // Convert to km
+        setDistance(parseFloat(calculatedDistance.toFixed(3))); // Set distance with 3 decimal places
 
-        console.log("Calculated Distance:", calculatedDistance); // Log the distance
         setDuration(distanceElement.duration.text);
       } else {
-        console.error("Distance calculation failed:", distanceElement);
+        console.error('Distance calculation failed:', distanceElement);
       }
     } catch (error) {
-      console.error("Error fetching directions or distance matrix:", error);
+      console.error('Error fetching directions or distance matrix:', error);
     }
   };
 
@@ -90,8 +99,13 @@ const Map = () => {
     );
 
   return (
-    <div className="map-container">
-      <SearchBar setDestination={setDestination} />
+    <div className={`map-container ${order?.id ? 'order-active' : ''}`}>
+      {!order?.id && (
+        <SearchBar
+          setDestination={setDestination}
+          setCurrentLocation={setCurrentLocation}
+        />
+      )}
 
       <GoogleMap
         mapContainerClassName="google-map"
@@ -106,7 +120,7 @@ const Map = () => {
       </GoogleMap>
 
       {/* Display distance */}
-      <div className="distance-info">{distance.toFixed(2)} km</div>
+      {/* <div className="distance-info">{distance.toFixed(2)} km</div> */}
 
       {/* Pass distance, userLocation, and destination as props to the Dash component */}
       <Dash

@@ -1,12 +1,29 @@
-import { StrictMode } from 'react'
-import { Provider } from 'react-redux'
-import {store} from './Redux/Store'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
+import { Provider } from 'react-redux';
+import ReactDOM from 'react-dom/client';
+import { store } from './Redux/Store';
 
-createRoot(document.getElementById("root")).render(
+import './index.css';
+import { createBrowserRouter, RouterProvider } from 'react-router-dom';
+import { routes } from './routes';
+
+const router = createBrowserRouter(routes);
+const root = ReactDOM.createRoot(document.getElementById('root'));
+
+root.render(
   <Provider store={store}>
-    <App />
+    <RouterProvider router={router} />
   </Provider>
 );
+
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker
+      .register('/sw.js')
+      .then((registration) => {
+        console.log('Service Worker registered:', registration);
+      })
+      .catch((error) => {
+        console.log('Service Worker registration failed:', error);
+      });
+  });
+}

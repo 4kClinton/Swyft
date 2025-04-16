@@ -1,13 +1,14 @@
 :root {
   --primary-color: #121212;
-  --secondary-color: #00D46A;
-  --text-color: #E0E0E0;
-  --input-background: #1E1E1E;
+  --secondary-color: #00c763;
+  --text-color: #e0e0e0;
+  --input-background: #1e1e1e;
   --card-background: #252525;
-  --highlight-color: #FFD54F;
-  --border-color: #333333;
+  --highlight-color: #ffd54f;
+  --border-color: #333;
   --border-radius: 5vh;
-  font-family: 'Montserrat', sans-serif;
+
+  font-family: Montserrat, sans-serif;
 }
 
 .success-popup {
@@ -15,11 +16,11 @@
   top: 20%;
   left: 50%;
   transform: translate(-50%, -50%);
-  background-color: #ffffff;
+  background-color: #fff;
   color: white;
   padding: 10px 20px;
   border-radius: 8px;
-  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 4px 6px rgb(0 0 0 / 10%);
   z-index: 1000;
   animation: fadeInOut 3s ease-in-out;
 }
@@ -51,21 +52,25 @@
   align-items: center;
   background-color: var(--primary-color);
   border-radius: 16px;
+  font-family: "Montserrat";
   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
   width: 90%;
   max-width: 400px;
+
   /* padding: 20px; */
-      
 }
-#login-section{
+
+#login-section {
   position: absolute;
-        top: 30vh;
+  top: 30vh;
 }
-.introPic{
+
+.introPic {
   width: 60%;
-    position: absolute;
-    top: 13vh;
+  position: absolute;
+  top: 13vh;
 }
+
 .login-header {
   font-family: var(--font-family);
   font-size: 25px;
@@ -84,18 +89,21 @@
   font-family: var(--font-family);
   color: var(--text-color);
 }
-.existing-account{
-      text-align: center;
-        margin-top: 18px;
-        position: relative;
-        bottom: -3vh;
-        font-style: normal;
-        font-family: var(--font-family);
-        color: var(--text-color);
+
+.existing-account {
+  text-align: center;
+  margin-top: 18px;
+  position: relative;
+  bottom: -3vh;
+  font-style: normal;
+  font-family: var(--font-family);
+  color: var(--text-color);
 }
-.login-loader svg{
-  color:#fff
+
+.login-loader svg {
+  color: #fff;
 }
+
 .login-button {
   background-color: var(--secondary-color);
   color: #ffff;
@@ -107,9 +115,32 @@
   font-family: var(--font-family);
   font-weight: bold;
   font-size: 21px;
-    width: 90%;
-    height: 7vh;
+  width: 90%;
+  height: 7vh;
   transition: background-color 0.3s;
+}
+
+.resend-button {
+  background-color: #fff;
+  color: var(--secondary-color);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  margin-top: 2vh;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-weight: bold;
+  font-size: 21px;
+  width: 90%;
+  height: 7vh;
+  transition: background-color 0.3s;
+}
+
+.GoogleLoginContainer {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
 }
 
 .login-button:hover {
@@ -117,18 +148,23 @@
 }
 
 .login-input {
+  font-family: "Montserrat";
   padding: 10px;
-    margin: 10px 0;
-    width: 90%;
-    height: 4vh;
-    margin-bottom: 3vh;
-    background-color: var(--input-background);
-    color: var(--text-color);
-    border: none;
-    border-bottom: 1px solid var(--border-color);
-    font-weight: bold;
-    font-size: large;
-    border-radius: 4px;
+  margin: 10px 0;
+  width: 90%;
+  height: 4vh;
+  margin-bottom: 3vh;
+  background-color: var(--input-background);
+  color: var(--text-color);
+  border: none;
+  border-bottom: 1px solid var(--border-color);
+  font-weight: bold;
+  font-size: large;
+  border-radius: 4px;
+}
+
+.login-input :hover {
+  border: none !important;
 }
 
 .login-input::placeholder {
@@ -143,7 +179,8 @@
   color: #888;
   border: none;
 }
-.css-aixiz9-MuiButtonBase-root-MuiIconButton-root{
+
+.css-aixiz9-MuiButtonBase-root-MuiIconButton-root {
   margin-top: 2vh;
 }
 
@@ -162,6 +199,16 @@
   display: flex;
   justify-content: space-between;
   margin-bottom: 20px;
+}
+
+.signup-component {
+  display: flex;
+  position: relative;
+  top: -12vh;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  background-color: var(--primary-color);
 }
 
 .login-component {

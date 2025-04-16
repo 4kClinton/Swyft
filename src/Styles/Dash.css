@@ -1,243 +1,345 @@
 /* General Styles */
 :root {
-    --primary-color: #121212;
-    /* Darker background color for main sections */
-    --secondary-color: #00D46A;
-    /* Softer green accent for dark mode */
-    --text-color: #E0E0E0;
-    /* Light gray text for readability */
-    --input-background: #1E1E1E;
-    /* Dark gray background for input fields */
-    --card-background: #252525;
-    /* Medium-dark gray for cards/containers */
-    --highlight-color: #FFD54F;
-    /* Warm yellow for highlights or alerts */
-    --border-color: #333333;
-    /* Subtle border color for dividing elements */
-    --border-radius: 5vh;
-    /* Same border radius for rounded effect */
-    font-family: 'Montserrat', sans-serif;
+  --primary-color: #121212;
+
+  /* Darker background color for main sections */
+  --secondary-color: #00c763;
+
+  /* Softer green accent for dark mode */
+  --text-color: #e0e0e0;
+
+  /* Light gray text for readability */
+  --input-background: #1e1e1e;
+
+  /* Dark gray background for input fields */
+  --card-background: #252525;
+
+  /* Medium-dark gray for cards/containers */
+  --highlight-color: #ff9500;
+
+  /* Warm yellow for highlights or alerts */
+  --border-color: #333;
+
+  /* Subtle border color for dividing elements */
+  --border-radius: 5vh;
+
+  /* Same border radius for rounded effect */
+  font-family: Montserrat, sans-serif;
 }
-.order-group{
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-   
+
+.order-group {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 /* Dashboard Container */
 .Dash {
-    font-family: 'Montserrat', sans-serif;
-    font-weight:500;
+    font-family: Montserrat, sans-serif;
+    font-weight: 500;
     font-size: small;
     position: fixed;
-    /* Fixed position for the dash */
     bottom: 0;
-    /* Align to the bottom */
     left: 0;
     width: 100%;
-    max-height: 570px;
-    /* Set a max height */
+    max-height: 510px;
     background-color: var(--dash-background);
     /* border-radius: 5vh; */
-    border-top-left-radius: var(--border-radius);
-    border-top-right-radius: var(--border-radius);
-    transition: transform 0.3s ease;
-    /* Smooth transition for open/close */
+    border-top-left-radius: 25px;
+    border-top-right-radius: 25px;
+    transition: transform 0.3sease;
     transform: translateY(50%);
-    /* Hide by default */
     z-index: 1000;
-    overflow-y: auto;
-    /* Enable vertical scrolling */
+   
     padding-bottom: 20px;
-    /* Optional: Add some padding at the bottom */
-    box-shadow: 0px 1px 20px 1px var(--dash-shadow);
+    box-shadow: 0 1px 20px 1px var(--dash-shadow);
+
 }
+
 .confirm-dash {
-    max-height: 400px;
-    font-family: 'Montserrat', sans-serif;
-    /* Use 'Montserrat' instead of 'mons' */
-    /* min-height: 350px; */
+  max-height: 400px;
+  font-family: Montserrat, sans-serif;
+
+  /* Use 'Montserrat' instead of 'mons' */
+
+  /* min-height: 350px; */
 }
-.confirm-button{
-        background-color: #fba421;
-        margin-right: 10px;
+
+.confirm-button {
+  background-color: #fba421;
+  margin-right: 10px;
 }
+
 .Dash.open {
-    transform: translateY(0);
-    /* Show when open */
+      max-height: 750px;
+    overflow-y: auto;
+  transform: translateY(0);
+
+  /* Show when open */
+}
+
+.OrderDash{
+    font-family: Montserrat, sans-serif;
+      font-weight: 500;
+      font-size: small;
+      position: fixed;
+      bottom: 0;
+      left: 0;
+      width: 100%;
+      max-height: 700px;
+            height: 400px;
+      background-color: var(--dash-background);
+      /* border-radius: 5vh; */
+      border-top-left-radius: 25px;
+      border-top-right-radius: 25px;
+      transition: transform 0.3sease;
+      transform: translateY(50%);
+      z-index: 1000;
+    
+      padding-bottom: 20px;
+      box-shadow: 0 1px 20px 1px var(--dash-shadow);
+}
+
+.OrderDash.open {
+  max-height: 750px;
+  overflow-y: auto;
+  transform: translateY(0);
+
+  /* Show when open */
 }
 
 /* Notch */
 .notch {
-    width: 70px;
-    height: 5px;
-    background-color: var(--secondary-color);
-    border-radius: var(--border-radius);
-    position: absolute;
-    top: 10px;
-    /* Positioning the notch */
-    left: 50%;
-    transform: translateX(-50%);
-    cursor: pointer;
+  width: 70px;
+  height: 5px;
+  background-color: var(--secondary-color);
+  border-radius: var(--border-radius);
+  position: absolute;
+  top: 10px;
+
+  /* Positioning the notch */
+  left: 50%;
+  transform: translateX(-50%);
+  cursor: pointer;
 }
 
 /* Title */
 .catch {
-    color: var(--text-color);
-    text-align: center;
-    margin: 20px 0;
-    font-size: large;
+  color: var(--text-color);
+  text-align: center;
+  margin: 20px 0;
+  margin-top: 23px;
+  font-size: large;
 }
 
 /* Dash Content */
 .dash-content {
-    display: flex;
-    flex-direction: column;
-    /* Stack options vertically */
-    padding: 0 20px;
+  display: flex;
+  flex-direction: column;
+
+  /* Stack options vertically */
+  padding: 0 20px;
 }
 
 /* Options */
 .Option {
-    font-weight: bold;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;
-    /* Align items to start */
-    background: var(--input-background);
-    padding: 15px;
-    border-radius: var(--border-radius);
-    margin: 10px 0;
-    cursor: pointer;
-    transition: background 0.3s;
+  font-weight: bold;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+
+  /* Align items to start */
+  background: var(--input-background);
+  padding: 15px;
+  border-radius: var(--border-radius);
+  margin: 10px 0;
+  cursor: pointer;
+  transition: background 0.3s;
 }
 
 .Option:hover {
-    background: rgba(0, 0, 0, 0.1);
-    /* Change background on hover */
+  background: rgb(0 0 0 / 10%);
+
+  /* Change background on hover */
 }
 
 .checkbox {
-    width: 30px;
-    height: 30px;
-    border-radius: var(--border-radius);
-    border: 2px solid var(--secondary-color);
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin-right: 15px;
-    /* Spacing for icon */
+  width: 30px;
+  height: 30px;
+  border-radius: var(--border-radius);
+  border: 2px solid var(--secondary-color);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 15px;
+
+  /* Spacing for icon */
 }
 
 .checkbox.selected {
-    background: var(--secondary-color);
+  background: var(--secondary-color);
+}
+
+.order-spinner {
+  border: 4px solid var(--primary-color);
+  border-top: 4px solid var(--text-color);
+  border-radius: 50%;
+  width: 35px;
+  height: 35px;
+  animation: spin 0.5s linear infinite;
+  margin-bottom: 10px;
 }
 
 /* Order Button */
 .order-button {
-    background-color: var(--secondary-color);
-    width: 40%;
-    color: #FFFFFF;
-    padding: 10px 20px;
-    border: none;
-    border-radius: var(--border-radius);
-    font-size: 1em;
-    cursor: pointer;
-    transition: background 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    margin: 20px auto;
-    /* Center the button */
+  background-color: var(--secondary-color);
+  width: 40%;
+  color: #fff;
+  padding: 10px 20px;
+  border: none;
+  border-radius: var(--border-radius);
+  font-size: 1.5em;
+  cursor: pointer;
+  transition: background 0.3s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 20px auto;
+
+  /* Center the button */
 }
 
 .order-button:hover {
-    background-color: #18b700;
-    /* Slightly darker on hover */
+  background-color: #18b700;
+
+  /* Slightly darker on hover */
+}
+
+.order-button svg {
+  margin: initial;
+  padding-left: 1vh;
 }
 
 .check-icon {
-    color: #FFFFFF;
-    /* Check icon color */
+  color: #fff;
+
+  /* Check icon color */
 }
 
-
 .distance-input {
-    margin: 16px 0;
-    /* Space around input */
+  margin: 16px 0;
+
+  /* Space around input */
 }
 
 .distance-input label {
-    margin-right: 8px;
-    /* Space between label and input */
+  margin-right: 8px;
+
+  /* Space between label and input */
 }
 
-
-.round-checkbox{
-    border-radius:"50%"
-    width "20px";
+.round-checkbox {
+  border-radius: '50%' width '20px';
 }
 
 /* ConfirmationPopup.css */
 
 .confirmation-popup {
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    background-color: white;
-    border: 2px solid #2191fb;
-    border-radius: 10px;
-    padding: 20px;
-    text-align: center;
-    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
-    z-index: 1000;
-    animation: fadeIn 0.5s ease;
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-color: white;
+  border: 2px solid #2191fb;
+  border-radius: 10px;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgb(0 0 0 / 10%);
+  z-index: 1000;
+  animation: fadeIn 0.5s ease;
 }
 
 .check-icon {
-    color: #2191fb;
-    margin-bottom: 10px;
+  color: #2191fb;
+  margin-bottom: 10px;
 }
 
 button {
-    background-color: #2191fb;
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    border-radius: 5px;
-    cursor: pointer;
+  background-color: #2191fb;
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 5px;
+  cursor: pointer;
 }
 
 @keyframes fadeIn {
-    from {
-        opacity: 0;
-    }
+  from {
+    opacity: 0;
+  }
 
-    to {
-        opacity: 1;
-    }
+  to {
+    opacity: 1;
+  }
 }
 
 .loader-popup {
-    position: fixed;
-    top: 0;
-    left: 0;
-    right: 0;
-    bottom: 0;
-    background: rgba(0, 0, 0, 0.8);
-    color: white;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 2rem;
-    z-index: 1000;
-    /* Ensure it appears above other content */
+  position: fixed;
+  inset: 0;
+  background: rgb(0 0 0 / 80%);
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 2rem;
+  z-index: 1000;
+
+  /* Ensure it appears above other content */
 }
 
-.loader-input{
-     margin-top: 5px;
-    border-radius: 15px;
-    text-align: center;
+.loader-input {
+  margin-top: 5px;
+  border-radius: 15px;
+  text-align: center;
+}
+
+.classicOptions {
+    margin-top: 2vh;
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    padding: 15px;
+}
+
+.movepicDiv {
+  flex: 1;
+  max-width: 140px; /* Adjust size */
+  background-color: white;
+  border-radius: 12px;
+  box-shadow: 0px 3px 5px rgba(0, 0, 0, 0.1);
+  text-align: center;
+  padding: 12px;
+  transition: transform 0.2s ease-in-out;
+}
+
+.movepicDiv:hover {
+  transform: translateY(-3px);
+}
+
+.movePic {
+  width: 60px; /* Adjust size of icons */
+  height: auto;
+  margin-bottom: 5px;
+}
+
+.productTitle {
+  font-size: 14px;
+  font-weight: bold;
+  color: black;
+  margin-bottom: 3px;
+}
+
+.movepicDiv span {
+  font-size: 12px;
+  color: #757575;
 }

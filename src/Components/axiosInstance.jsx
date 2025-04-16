@@ -1,16 +1,17 @@
-import axios from "axios";
+import axios from 'axios';
+import Cookies from 'js-cookie';
 
 const axiosInstance = axios.create({
-  baseURL: "https://swyft-backend-client-ac1s.onrender.com/", // Backend URL
+  baseURL: 'https://swyft-backend-client-nine.vercel.app/', // Backend URL
   withCredentials: true, // Important for sending cookies
 });
 
 // Interceptor to add Access Token
 axiosInstance.interceptors.request.use(
   async (config) => {
-    const accessToken = localStorage.getItem("accessToken");
+    const accessToken = Cookies.get('accessToken');
     if (accessToken) {
-      config.headers["Authorization"] = `Bearer ${accessToken}`;
+      config.headers['Authorization'] = `Bearer ${accessToken}`;
     }
     return config;
   },
@@ -26,18 +27,20 @@ axiosInstance.interceptors.response.use(
       originalRequest._retry = true;
       try {
         const { data } = await axios.post(
-          "https://swyft-backend-client-ac1s.onrender.com/",
+          'https://swyft-backend-client-nine.vercel.app/',
           {},
           { withCredentials: true }
         );
-        localStorage.setItem("accessToken", data.accessToken); // Update Access Token
-        axiosInstance.defaults.headers[
-          "Authorization"
-        ] = `Bearer ${data.accessToken}`;
-        originalRequest.headers["Authorization"] = `Bearer ${data.accessToken}`;
+        Cookies.set('authTokencl1', data.access_token, {
+          secure: true,
+          sameSite: 'Strict',
+        }); // Update Access Token
+        axiosInstance.defaults.headers['Authorization'] =
+          `Bearer ${data.accessToken}`;
+        originalRequest.headers['Authorization'] = `Bearer ${data.accessToken}`;
         return axiosInstance(originalRequest);
       } catch (refreshError) {
-        console.error("Refresh Token failed", refreshError);
+        console.error('Refresh Token failed', refreshError);
         return Promise.reject(refreshError);
       }
     }

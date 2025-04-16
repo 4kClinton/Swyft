@@ -1,12 +1,13 @@
-@import '@fortawesome/fontawesome-free/css/all.min.css';
+@import url('@fortawesome/fontawesome-free/css/all.min.css');
+
 #root {
   max-width: 1280px;
   margin: 0 auto;
-  padding: 2rem;
+  /* padding: 2rem; */
   text-align: center;
-  font-family: 'Montserrat', sans-serif;
-
+  font-family: Montserrat, sans-serif;
 }
+
 /* .blurred {
   filter: blur(5px);
   z-index: 1000;
@@ -18,15 +19,56 @@ body,
   overflow: visible !important;
   z-index: auto !important;
 }
+
+html,
+body {
+  overscroll-behavior-y: none;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+
+.popup {
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+}
+
+.popup button {
+  margin-top: 10px;
+  padding: 8px 16px;
+  background: #00c763;
+  color: white;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
 .logo {
   height: 6em;
   padding: 1.5em;
   will-change: filter;
   transition: filter 300ms;
 }
+
 .logo:hover {
   filter: drop-shadow(0 0 2em #646cffaa);
 }
+
 .logo.react:hover {
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
@@ -35,6 +77,7 @@ body,
   from {
     transform: rotate(0deg);
   }
+
   to {
     transform: rotate(360deg);
   }
@@ -55,36 +98,22 @@ body,
 }
 
 /* App.css */
-/* App.css */
 
 /* Light Mode */
 .light-mode {
-  background-color: #ffffff;
+  background-color: #fff;
   /* Light background color */
-  color: #000000;
+  color: #000;
   /* Dark text color */
 }
 
-/* Dark Mode */
-.dark-mode {
-  background-color: #121212;
-  /* Dark background color */
-  color: #ffffff;
-  /* Light text color */
-}
-
-/* Add additional styles for other components here to ensure they adapt to the theme */
 /* Base styles for light mode */
 body.light-mode {
-  background-color: #ffffff;
-  color: #000000;
+  background-color: #fff;
+  color: #000;
 }
 
-/* Base styles for dark mode */
-body.dark-mode {
-  background-color: #121212;
-  color: #ffffff;
-}
+/* Removed Dark Mode and its base styles */
 
 /* Style for the theme toggle button */
 .theme-toggle {

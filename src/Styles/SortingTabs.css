@@ -1,0 +1,53 @@
+/* Container around the tabs */
+.sorting-tabs-container {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+/* The row of tabs itself */
+.sorting-tabs {
+    display: flex;
+    background-color: #f1f1f1;
+    border-radius: 28px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+    width: 90%;
+    align-items: center;
+}
+
+/* Individual tab button */
+.sorting-tab {
+    flex: 1;
+    padding: 0.75rem;
+    cursor: pointer;
+    border: none;
+    background-color: transparent;
+    font-weight: 600;
+    text-align: center;
+    transition: background-color 0.2s ease;
+}
+
+/* Remove focus outline if needed */
+.sorting-tab:focus {
+    outline: none;
+}
+
+/* Hover effect for each tab */
+.sorting-tab:hover {
+    background-color: #e2e2e2;
+}
+
+/* Active (selected) tab styling */
+.sorting-tab.active {
+    background-color: #fff;
+    color: #00c763;
+    padding: 10px;
+    margin: 10px;
+    border-radius: 30px;
+    border: none;
+    outline: none;
+    /* border-bottom: 2px solid #00c763; */
+    box-shadow: -1px 2px 120px 1px;
+}

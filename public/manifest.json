@@ -1,0 +1,104 @@
+{
+  "name": "Swyft",
+  "short_name": "Swyft",
+  "description": "Logistics & moving services",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#00c763",
+  "theme_color": "#00c763",
+  "icons": [
+   
+    {
+      "src": "/android/android-launchericon-48-48.png",
+      "sizes": "48x48",
+      "type": "image/png"
+    },
+    {
+      "src": "/android/android-launchericon-72-72.png",
+      "sizes": "72x72",
+      "type": "image/png"
+    },
+    {
+      "src": "/android/android-launchericon-96-96.png",
+      "sizes": "96x96",
+      "type": "image/png"
+    },
+    {
+      "src": "/android/android-launchericon-144-144.png",
+      "sizes": "144x144",
+      "type": "image/png"
+    },
+    {
+      "src": "/android/android-launchericon-192-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "/android/android-launchericon-512-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+
+   
+    {
+      "src": "/ios/16.png",
+      "sizes": "16x16",
+      "type": "image/png"
+    },
+    {
+      "src": "/ios/20.png",
+      "sizes": "20x20",
+      "type": "image/png"
+    },
+    {
+      "src": "/ios/40.png",
+      "sizes": "40x40",
+      "type": "image/png"
+    },
+    {
+      "src": "/ios/76.png",
+      "sizes": "76x76",
+      "type": "image/png"
+    },
+    {
+      "src": "/ios/180.png",
+      "sizes": "180x180",
+      "type": "image/png"
+    },
+    {
+      "src": "/ios/512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+
+    
+    {
+      "src": "/windows11/SmallTile.scale-100.png",
+      "sizes": "71x71",
+      "type": "image/png"
+    },
+    {
+      "src": "/windows11/Square150x150Logo.scale-100.png",
+      "sizes": "150x150",
+      "type": "image/png"
+    }
+   
+  ],
+
+  "screenshots": [
+    {
+      "src": "/icons/Untitled.png",
+      "sizes": "1280x720",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Swyft App Home"
+    },
+    {
+      "src": "/icons/phone-screenshot.png",
+      "sizes": "397x866",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Swyft Mobile App"
+    }
+  ]
+}

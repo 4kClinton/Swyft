@@ -1,61 +1,123 @@
-/* LoadingComponent.css */
+.find-driver-container {
+  position: relative;
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+}
+
+/* Map background for aesthetic purposes */
+.map-background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: url('../assets/Map.jpg') no-repeat center center;
+  background-size: cover;
+  filter: blur(8px);
+  z-index: 1;
+}
+
+.finder {
+  font-size: 40px;
+  color: #3d3d3d;
+  font-family: Montserrat;
+  text-align: center;
+}
+
+/* Foreground loading content */
 .loading-container {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    height: 100vh;
-    background: #f4f4f4;
-    /* Change to your brand's primary background color */
-    color: #2191fb;
-    /* Swyft signature color */
-    font-family: 'Arial', sans-serif;
+  position: relative;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  text-align: center;
+  color: #00c763;
+  font-family: Arial, sans-serif;
 }
 
-.spinner {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 60px;
-    height: 20px;
-    margin-bottom: 20px;
+/* Pulse container and animation */
+.pulse-container {
+  position: relative;
+  width: 300px;
+  height: 300px;
+  margin-bottom: 20px;
 }
 
-.dot {
-    width: 15px;
-    height: 15px;
-    background-color: #2191fb;
-    border-radius: 50%;
-    animation: bounce 1.5s infinite;
+.pulse {
+  position: absolute;
+  width: 300px;
+  height: 300px;
+  border: 5px solid #00c763;
+  border-radius: 50%;
+  opacity: 0;
+  animation: pulse 2s infinite;
 }
 
-.dot1 {
-    animation-delay: 0s;
+.pulse:nth-child(2) {
+  animation-delay: 0.5s;
 }
 
-.dot2 {
-    animation-delay: 0.3s;
+.pulse:nth-child(3) {
+  animation-delay: 1s;
 }
 
-.dot3 {
-    animation-delay: 0.6s;
+@keyframes pulse {
+  0% {
+    transform: scale(0.8);
+    opacity: 0.8;
+    filter: blur(0px);
+  }
+
+  70% {
+    transform: scale(1.5);
+    opacity: 0;
+    filter: blur(8px);
+  }
+
+  100% {
+    transform: scale(1.5);
+    opacity: 0;
+    filter: blur(8px);
+  }
 }
 
-@keyframes bounce {
-
-    0%,
-    80%,
-    100% {
-        transform: scale(0);
-    }
-
-    40% {
-        transform: scale(1);
-    }
+/* Popup styling */
+.popup {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  z-index: 3;
+  background: #fff;
+  padding: 20px;
+  border-radius: 8px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+  text-align: center;
 }
 
-.loading-text {
-    font-size: 1.5rem;
-    font-weight: 500;
-    text-align: center;
+.popup h3 {
+  margin: 0 0 10px;
+}
+
+.popup p {
+  margin-bottom: 1rem;
+}
+
+.popup-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 1rem;
+}
+
+.popup-buttons button {
+  padding: 8px 16px;
+  background: #00c763;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
 }

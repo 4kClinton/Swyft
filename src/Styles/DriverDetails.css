@@ -1,108 +1,122 @@
 /* Container styling for the driver details */
-.container {
-    padding: 20px;
-    max-width: 400px;
-    /* Adjusted width for a more compact design */
-    margin: 20px auto;
-    border-radius: 16px;
-    /* Rounded corners for a softer, more modern look */
-    background-color: #fff;
-    /* White background for a clean look */
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-    /* Slightly larger shadow for depth */
+.containerDriverDetails {
+  padding: 20px;
+  max-width: 400px;
+
+  /* Adjusted width for a more compact design */
+  margin: 20px auto;
+  border-radius: 16px;
+
+  /* Rounded corners for a softer, more modern look */
+  background-color: #fff;
+
+  /* White background for a clean look */
+  box-shadow: 0 4px 12px rgb(0 0 0 / 10%);
+
+  /* Slightly larger shadow for depth */
 }
 
 /* Styling for the driver info section */
 .driverInfo {
-    display: flex;
-    align-items: center;
-    padding-bottom: 16px;
-    border-bottom: 1px solid #f0f0f0;
-    /* Light border between sections */
-    margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  padding-bottom: 16px;
+  border-bottom: 1px solid #f0f0f0;
+
+  /* Light border between sections */
+  margin-bottom: 16px;
 }
 
 /* Driver image style */
 .driverImage {
-    width: 60px;
-    height: 60px;
-    border-radius: 50%;
-    object-fit: cover;
-    margin-right: 16px;
-    /* Increased margin for more space between image and text */
+  width: 60px;
+  height: 60px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-right: 16px;
+
+  /* Increased margin for more space between image and text */
 }
 
 /* Text container for the driver info */
 .textContainer {
-    flex: 1;
-    margin-left: 12px;
+  flex: 1;
+  margin-left: 12px;
 }
 
 /* Driver name style */
 .name {
-    font-size: 16px;
-    font-weight: bold;
-    margin: 0;
-    color: #333;
-    /* Darker color for better readability */
+  font-size: 16px;
+  font-weight: bold;
+  margin: 0;
+  color: #333;
+
+  /* Darker color for better readability */
 }
 
 /* Number plate style */
 .numberPlate {
-    font-size: 12px;
-    color: #777;
-    /* Lighter color for less emphasis */
-    margin-top: 4px;
+  font-size: 12px;
+  color: #777;
+
+  /* Lighter color for less emphasis */
+  margin-top: 4px;
 }
 
 /* Car type style */
 .carType {
-    font-size: 12px;
-    color: #777;
-    /* Same color as number plate */
-    margin-top: 4px;
+  font-size: 12px;
+  color: #777;
+
+  /* Same color as number plate */
+  margin-top: 4px;
 }
 
 /* Car image container style */
 .carImageContainer {
-    margin-top: 20px;
-    text-align: center;
+  margin-top: 20px;
+  text-align: center;
 }
 
 /* Car image style */
 .carImage {
-    width: 100%;
-    height: 200px;
-    /* Set height to make car images consistent */
-    object-fit: cover;
-    border-radius: 12px;
-    /* Rounded corners for car image */
+  width: 100%;
+  height: 200px;
+
+  /* Set height to make car images consistent */
+  object-fit: cover;
+  border-radius: 12px;
+
+  /* Rounded corners for car image */
 }
 
-.phoneContainer{
-    background-color: #00D46A;
-    border-radius: 50px;
-    color: #fff;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.phoneContainer {
+  background-color: #00c763;
+  border-radius: 50px;
+  color: #fff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
+
 /* Add styles for the Go Home button */
 .goHomeButton {
-    background-color: #00D46A;
-    /* Blue color for the button */
-    color: white;
-    border: none;
-    padding: 10px 20px;
-    font-size: 16px;
-    font-weight: bold;
-    border-radius: 5px;
-    cursor: pointer;
-    margin-top: 20px;
-    transition: background-color 0.3s ease;
+  background-color: #00c763;
+
+  /* Blue color for the button */
+  color: white;
+  border: none;
+  padding: 10px 20px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  cursor: pointer;
+  margin-top: 20px;
+  transition: background-color 0.3s ease;
 }
 
 .goHomeButton:hover {
-    background-color: #1a7fd7;
-    /* Darker blue when hovered */
+  background-color: #1a7fd7;
+
+  /* Darker blue when hovered */
 }

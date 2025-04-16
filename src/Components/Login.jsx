@@ -1,31 +1,31 @@
-import React, { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Button,
   Typography,
   Box,
   CircularProgress,
   IconButton,
-} from "@mui/material";
-import { Visibility, VisibilityOff } from "@mui/icons-material";
-import { useDispatch } from "react-redux";
-import { addUser } from "../Redux/Reducers/UserSlice";
-import axios from "axios";
-import GoogleLogin from "./GoogleLogin"; // Make sure this import is correct
-import "../Styles/Login.css";
-import introPic from "../assets/loaders-swyft.png"
+} from '@mui/material';
+import { Visibility, VisibilityOff } from '@mui/icons-material';
+import { useDispatch, useSelector } from 'react-redux';
+import { addUser } from '../Redux/Reducers/UserSlice';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import '../Styles/Login.css';
+import introPic from '../assets/loaders-swyft.png';
 
 const Login = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [email, setEmail] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
+  const user = useSelector((state) => state.user.value);
 
-  // Toggle password visibility
   const togglePasswordVisibility = () => {
     setShowPassword((prev) => !prev);
   };
@@ -38,31 +38,42 @@ const Login = () => {
 
     try {
       const response = await axios.post(
-        "https://swyft-backend-client-ac1s.onrender.com/login",
-        { email, password },
-        { headers: { "Content-Type": "application/json" } }
+        'https://swyft-backend-client-nine.vercel.app/login',
+        { email: email.trim().toLowerCase(), password },
+        { headers: { 'Content-Type': 'application/json' } }
       );
 
       const { access_token, user, message } = response.data;
 
-      sessionStorage.setItem("authToken", access_token);
+      Cookies.set('authTokencl1', access_token, {
+        secure: true,
+        sameSite: 'Strict',
+      });
       dispatch(addUser(user));
-      sessionStorage.setItem("message", message || "Login successful!");
-      localStorage.setItem("user", JSON.stringify(user));
-      localStorage.setItem("status", "user logged in!");
+      Cookies.set('message', message);
+      Cookies.set('user', JSON.stringify(user));
+      Cookies.set('status', 'user logged in!');
 
-      setSuccess(message || "Login successful!");
+      setSuccess(message || 'Login successful!');
+
       setTimeout(() => {
-        navigate("/");
-      }, 3000);
+        navigate('/dash');
+      }, 1500);
     } catch (err) {
-      const errorMessage =
-        err.response?.data?.message || "An error occurred. Please try again.";
-      setError(errorMessage);
+      console.error(err.response);
+      setError(
+        err.response?.data?.error || 'An error occurred. Please try again.'
+      );
     } finally {
       setLoading(false);
     }
   };
+
+  useEffect(() => {
+    if (user?.id) {
+      navigate('/dash');
+    }
+  }, [user, navigate]);
 
   return (
     <div className="login-component">
@@ -77,9 +88,11 @@ const Login = () => {
             </Typography>
           </div>
         )}
+
         <form onSubmit={logIn}>
           <input
-            placeholder="Email or Username"
+            placeholder="Email"
+            type="email"
             className="login-input"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
@@ -88,7 +101,7 @@ const Login = () => {
           <Box className="input-container">
             <input
               placeholder="Password"
-              type={showPassword ? "text" : "password"}
+              type={showPassword ? 'text' : 'password'}
               className="login-input"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
@@ -102,13 +115,10 @@ const Login = () => {
               {showPassword ? <VisibilityOff /> : <Visibility />}
             </IconButton>
           </Box>
-
           <button
-            variant="contained"
-            color="success"
             type="submit"
             className="login-button"
-            sx={{ mt: 2, backgroundColor: "#18b700", fontWeight: "bold" }}
+            color="success"
             disabled={loading}
           >
             {loading ? (
@@ -118,28 +128,19 @@ const Login = () => {
                 color="#fff"
               />
             ) : (
-              "Log In"
+              'Log In'
             )}
           </button>
         </form>
 
-        {/* Pass the necessary props to GoogleLogin  */}
-        {/* <GoogleLogin
-          setLoading={setLoading}
-          setError={setError}
-          dispatch={dispatch}
-          addUser={addUser}
-          navigate={navigate}
-        /> */}
-
         <Button
-          onClick={() => navigate("/signup")}
+          onClick={() => navigate('/signup')}
           variant="text"
           sx={{
             mt: 2,
-            color: "#18b700",
-            fontWeight: "bold",
-            fontFamily: "Montserrat",
+            color: '#18b700',
+            fontWeight: 'bold',
+            fontFamily: 'Montserrat',
           }}
         >
           Create account
