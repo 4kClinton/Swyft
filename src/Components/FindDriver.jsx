@@ -16,14 +16,12 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   const order = useSelector((state) => state.currentOrder.value);
   const dispatch = useDispatch();
 
-  const orderId = localStorage.getItem('order_id');
-  console.log('Retrieved ID '. orderId);
+  // const orderId = localStorage.getItem('order_id');
+  console.log('Retrieved ID '.orderId);
   const driverId = localStorage.getItem('driver_id');
-  
 
   console.log(order);
   console.log(driver);
-  
 
   useEffect(() => {
     // Check if driverId is not undefined (meaning it exists)
@@ -36,12 +34,12 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
       // Call onDriverFound if the driverId is valid
       onDriverFound();
     }
-  }, [driverId]); 
+  }, [driverId]);
 
   // Refs to store timers so they can be cleared if needed.
   const driverTimerRef = useRef(null);
   const noDriverTimerRef = useRef(null);
-
+  const nearest_driver = localStorage.getItem('driver_id');
   const startSearch = useCallback(() => {
     // Clear any existing timers.
     if (driverTimerRef.current) clearTimeout(driverTimerRef.current);
@@ -55,7 +53,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
     noDriverTimerRef.current = setTimeout(() => {
       const token = Cookies.get('authTokencl1');
 
-      fetch(`https://swyft-backend-client-nine.vercel.app/orders/${orderId}`, {
+      fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
@@ -87,10 +85,12 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   useEffect(() => {
     startSearch();
     return () => {
-      if (driverTimerRef.current) clearTimeout(driverTimerRef.current);
-      if (noDriverTimerRef.current) clearTimeout(noDriverTimerRef.current);
+      if (driverTimerRef.current || nearest_driver)
+        clearTimeout(driverTimerRef.current);
+      if (noDriverTimerRef.current || nearest_driver)
+        clearTimeout(noDriverTimerRef.current);
     };
-  }, [startSearch]);
+  }, [startSearch, nearest_driver]);
 
   const handleGoHome = () => {
     navigate('/dash');

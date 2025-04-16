@@ -292,7 +292,7 @@ const SignUp = () => {
           style={{
             marginTop: '2vh',
             marginBottom: '2vh',
-            color: '#00D46A',
+            color: '#00c763',
             fontSize: '15px',
             fontFamily: 'Montserrat',
             display: 'block',

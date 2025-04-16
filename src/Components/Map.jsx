@@ -120,7 +120,7 @@ const Map = () => {
       </GoogleMap>
 
       {/* Display distance */}
-      <div className="distance-info">{distance.toFixed(2)} km</div>
+      {/* <div className="distance-info">{distance.toFixed(2)} km</div> */}
 
       {/* Pass distance, userLocation, and destination as props to the Dash component */}
       <Dash

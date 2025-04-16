@@ -1,7 +1,7 @@
 /* Root Variables */
 :root {
   --primary-color: #121212;
-  --secondary-color: #00d46a;
+  --secondary-color: #00c763;
   --text-color: #e0e0e0;
   --input-background: #1e1e1e;
   --card-background: #252525;
@@ -24,10 +24,12 @@ body {
   align-items: center;
   min-height: 100vh;
 }
-.UserDetails{
+
+.UserDetails {
   display: contents;
-  
+
 }
+
 .account-container {
   display: contents;
   min-height: 100vh;
@@ -35,8 +37,8 @@ body {
 
 /* User Card */
 .user-card {
-      position: relative;
-    top: -6vh;
+  position: relative;
+  top: -6vh;
   margin-left: 4px;
   background: var(--card-background);
   color: var(--text-color);
@@ -80,11 +82,11 @@ body {
 
 /* Username */
 .username {
-      margin-top: 0;
-    font-size: 28px;
-    margin-bottom: 16px;
-    color: var(--secondary-color);
-    font-family: Montserrat;
+  margin-top: 0;
+  font-size: 28px;
+  margin-bottom: 16px;
+  color: var(--secondary-color);
+  font-family: Montserrat;
 }
 
 .username-input {
@@ -138,16 +140,16 @@ body {
 
 /* Buttons */
 .save-button {
-      margin-top: 16px;
-    width: 70%;
-    padding: 12px;
-    font-size: 16px;
-    font-family: Montserrat, sans-serif;
-    background-color: #252525;
-    color: #00d46a;
-    border: none !important;
-    cursor: pointer;
-    
+  margin-top: 16px;
+  width: 70%;
+  padding: 12px;
+  font-size: 16px;
+  font-family: Montserrat, sans-serif;
+  background-color: #252525;
+  color: #00c763;
+  border: none !important;
+  cursor: pointer;
+
 }
 
 .editProfile {
@@ -164,17 +166,17 @@ body {
 }
 
 .logoutButton {
-     background-color: red;
-    color: #fff;
-    width: 40%;
-    padding: 12px;
-    position: relative;
-    top: -5vh;
-    margin-top: 4vh;
-    font-size: larger;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
+  background-color: red;
+  color: #fff;
+  width: 40%;
+  padding: 12px;
+  position: relative;
+  top: -5vh;
+  margin-top: 4vh;
+  font-size: larger;
+  border: none;
+  cursor: pointer;
+  border-radius: 5px;
 }
 
 /* Loading Spinner */

@@ -178,13 +178,13 @@ export default function OrderConfirmation() {
 
       const data = await response.json();
 
-      const order_id = data.order.id;
-      const driver_id = data.order.driver_id;
-      const nearest_driver_car = data.nearest_driver.car_type;
-      const nearest_driver_name = data.nearest_driver.first_name;
-      const nearest_driver_phone = data.nearest_driver.phone;
-      const order_status = data.order.status;
-      const license = data.nearest_driver.license_plate;
+      // const order_id = data.order.id;
+      // const driver_id = data.order.driver_id;
+      // const nearest_driver_car = data.nearest_driver.car_type;
+      // const nearest_driver_name = data.nearest_driver.first_name;
+      // const nearest_driver_phone = data.nearest_driver.phone;
+      // const order_status = data.order.status;
+      // const license = data.nearest_driver.license_plate;
 
       // console.log("Order ID: " + order_id);
       // console.log("Driver ID: " + driver_id);
@@ -194,15 +194,15 @@ export default function OrderConfirmation() {
       // console.log("Order Status: " + order_status);
       // console.log("License: " + license);
 
-      localStorage.setItem('order_id', order_id);
-      localStorage.setItem('driver_id', driver_id);
-      localStorage.setItem('car', nearest_driver_car);
-      localStorage.setItem('name', nearest_driver_name);
-      localStorage.setItem('phone', nearest_driver_phone);
-      localStorage.setItem('status', order_status);
-      localStorage.setItem('license', license);
+      // localStorage.setItem('order_id', order_id);
+      // localStorage.setItem('driver_id', driver_id);
+      // localStorage.setItem('car', nearest_driver_car);
+      // localStorage.setItem('name', nearest_driver_name);
+      // localStorage.setItem('phone', nearest_driver_phone);
+      // localStorage.setItem('status', order_status);
+      // localStorage.setItem('license', license);
 
-      dispatch(saveOrder(finalOrderData));
+      dispatch(saveOrder(data.order));
       localStorage.setItem('currentOrder', JSON.stringify(finalOrderData));
 
       Cookies.remove('NavigateToDriverDetails');
@@ -271,7 +271,7 @@ export default function OrderConfirmation() {
                   style={{
                     width: '12px',
                     height: '12px',
-                    backgroundColor: '#00d46a',
+                    backgroundColor: '#00c763',
                     borderRadius: '50%',
                     display: 'inline-block',
                   }}

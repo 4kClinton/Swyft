@@ -7,14 +7,13 @@ import { useSelector } from 'react-redux';
 
 const OrderCompletion = () => {
   const [rating, setRating] = useState(0);
-
   const [comment, setComment] = useState('');
-  const [latestOrder, setLatestOrder] = useState({});
+  const [latestOrder, setLatestOrder] = useState(null); // initialize as null
   const navigate = useNavigate();
   const orders = useSelector((state) => state.ordersHistory.value);
 
   useEffect(() => {
-    if (!orders[0]) {
+    if (!orders || orders.length === 0) {
       navigate('/dash');
     } else {
       const sortedOrders = [...orders].sort(
@@ -22,7 +21,7 @@ const OrderCompletion = () => {
       );
       setLatestOrder(sortedOrders[0]);
     }
-  }, [orders]);
+  }, [orders, navigate]);
 
   const handleRatingChange = (newRating) => {
     setRating(newRating);
@@ -38,11 +37,19 @@ const OrderCompletion = () => {
       return;
     }
 
+    // Retrieve driver ID from local storage
+    const storedDriverId = localStorage.getItem('driver_id');
+    console.log('Driver ID from local storage:', storedDriverId);
+    if (!storedDriverId || storedDriverId === 'null') {
+      alert('Unable to submit rating because driver details are missing.');
+      return;
+    }
+
     const token = Cookies.get('authTokencl1');
 
     try {
       const response = await fetch(
-        `https://swyft-backend-client-nine.vercel.app/rating/driver/${latestOrder.driver_id}`,
+        `https://swyft-backend-client-nine.vercel.app/rating/driver/${storedDriverId}`,
         {
           method: 'POST',
           headers: {
@@ -50,7 +57,8 @@ const OrderCompletion = () => {
             Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({
-            rating: rating,
+            rating,
+            comment, // optionally include comment if needed on the backend
           }),
         }
       );
@@ -62,6 +70,7 @@ const OrderCompletion = () => {
       navigate('/');
     } catch (error) {
       console.error('Error submitting rating:', error);
+      alert('An error occurred while submitting your rating.');
     }
   };
 
@@ -78,7 +87,6 @@ const OrderCompletion = () => {
         <p>
           <strong>Vehicle: </strong> {latestOrder.vehicle_type}
         </p>
-
         <p>
           <strong>Distance: </strong> {latestOrder.distance} km
         </p>

@@ -4,7 +4,8 @@
   padding-bottom: 80px;
   font-family: "Montserrat";
   max-width: 100%;
-  overflow-x: hidden; /* Prevent horizontal scrolling */
+  overflow-x: hidden;
+  /* Prevent horizontal scrolling */
 }
 
 
@@ -15,7 +16,7 @@ header {
 }
 
 h1 {
-   /* text-align: start; */
+  /* text-align: start; */
   font-size: 32px;
   font-weight: bold;
   margin: 0;
@@ -30,7 +31,7 @@ h1 {
 }
 
 .tabs {
-   text-align: start;
+  text-align: start;
   display: flex;
   gap: 32px;
   margin-bottom: 32px;
@@ -63,7 +64,7 @@ h1 {
 
 .month-section {
   margin-bottom: 32px;
-   text-align: start;
+  text-align: start;
 }
 
 h2 {
@@ -73,7 +74,7 @@ h2 {
 }
 
 .ride-entry {
-   text-align: start;
+  text-align: start;
   display: flex;
   align-items: center;
   padding: 16px;
@@ -88,7 +89,7 @@ h2 {
 
 .ride-details {
   flex: 1;
-   text-align: start;
+  text-align: start;
   min-width: 0;
 }
 
@@ -103,8 +104,8 @@ h2 {
   margin-bottom: 4px;
   white-space: nowrap;
   overflow: hidden;
-  color: #00d46a;
-   text-align: start;
+  color: #00c763;
+  text-align: start;
   text-overflow: ellipsis;
 }
 
@@ -176,12 +177,13 @@ h2 {
   animation: slideIn 0.3s ease-out;
   display: flex;
   flex-direction: column;
-  align-items: center;  /* This centers the button */
+  align-items: center;
+  /* This centers the button */
 }
 
 .modalTitle {
   font-size: 24px;
-   text-align: start;
+  text-align: start;
   font-weight: bold;
   margin-bottom: 20px;
   color: #333;
@@ -207,8 +209,10 @@ h2 {
   cursor: pointer;
   font-size: 16px;
   transition: background-color 0.3s ease;
-  width: 100%;  /* Make the button take full width of the container */
-  max-width: 200px; /* Limit button width */
+  width: 100%;
+  /* Make the button take full width of the container */
+  max-width: 200px;
+  /* Limit button width */
 }
 
 .closeButton:hover {
@@ -219,6 +223,7 @@ h2 {
   0% {
     opacity: 0;
   }
+
   100% {
     opacity: 1;
   }
@@ -228,6 +233,7 @@ h2 {
   0% {
     transform: translateY(-50px);
   }
+
   100% {
     transform: translateY(0);
   }

@@ -1,9 +1,19 @@
 import '../Styles/DriverDetails.css'; // Import the CSS file
-import profilePic from '../assets/profilePic.jpeg';
-import pickup from '../assets/pickup.png';
-import miniTruck from '../assets/miniTruck.png';
-import flatbed from '../assets/flatbed.png';
+
+// Import vehicle images
+import TukTuk from '../assets/TukTuk.jpg';
+import Pickup from '../assets/pickup.png';
+import MiniTruck from '../assets/miniTruck.png';
+import TenTonne from '../assets/10T-Lorry.jpg';
+import fiveTonne from '../assets/5tonne.png';
 import Van from '../assets/van.jpg';
+import Tipper from '../assets/Tipper.jpg';
+import CarRescue from '../assets/Towin.jpg';
+import nduthi from '../assets/nduthi.png';
+import moti from '../assets/moti.png';
+import nduthiElectric from '../assets/Electric.png';
+import profilePic from '../assets/profilePic.jpeg'; // Importing a default profile picture
+
 import { FaPhoneAlt } from 'react-icons/fa'; // Importing the phone icon
 import { useNavigate } from 'react-router-dom'; // Importing useNavigate for navigation
 import { useDispatch } from 'react-redux';
@@ -19,6 +29,7 @@ const DriverDetails = () => {
   //const order = useSelector((state) => state.currentOrder.value);
   const dispatch = useDispatch();
   const nearest_driver = localStorage.getItem('driver_id');
+
   const orders = localStorage.getItem('order_id');
   const car = localStorage.getItem('car');
   const name = localStorage.getItem('name');
@@ -55,7 +66,7 @@ const DriverDetails = () => {
           console.error('Error fetching driver data:', error);
         });
     }
-  }, [orders, dispatch, nearest_driver, status]);
+  }, [orders, nearest_driver, status]);
 
   const handleGoHome = () => {
     navigate('/dash'); // Navigate to the home page
@@ -80,13 +91,30 @@ const DriverDetails = () => {
   const getCarImage = () => {
     switch (car) {
       case 'pickup':
-        return pickup;
+        return Pickup;
       case 'miniTruck':
-        return miniTruck;
-      case 'flatbed':
-        return flatbed;
+        return MiniTruck;
+
+      case 'lorry5Tonne':
+        return fiveTonne;
+      case 'lorry10Tonne':
+        return TenTonne;
       case 'van':
         return Van;
+      case 'tukTuk':
+        return TukTuk;
+
+      case 'tipper':
+        return Tipper;
+      case 'carRescue':
+        return CarRescue;
+      case 'SwyftBoda':
+        return nduthi;
+      case 'car':
+        return moti;
+      case 'SwyftBodaElectric':
+        return nduthiElectric;
+
       default:
         return null; // Or return a default image
     }

@@ -91,7 +91,7 @@
 }
 
 .phoneContainer {
-  background-color: #00d46a;
+  background-color: #00c763;
   border-radius: 50px;
   color: #fff;
   display: flex;
@@ -101,7 +101,7 @@
 
 /* Add styles for the Go Home button */
 .goHomeButton {
-  background-color: #00d46a;
+  background-color: #00c763;
 
   /* Blue color for the button */
   color: white;
