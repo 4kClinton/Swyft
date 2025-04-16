@@ -23,7 +23,7 @@
 .UserInput,
 .SearchInput {
   height: 80%;
-  border: 3px solid #00d46a;
+  border: 3px solid #00c763;
   outline: none;
   background-color: var(--input-background);
   color: var(--text-color);

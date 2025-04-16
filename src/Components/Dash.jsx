@@ -246,6 +246,15 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
   const confirmOrder = async () => {
     try {
       Cookies.remove('driverData');
+      localStorage.removeItem('order_id');
+      localStorage.removeItem('driver_id');
+      localStorage.removeItem('car');
+      localStorage.removeItem('name');
+      localStorage.removeItem('phone');
+      localStorage.removeItem('status');
+      localStorage.removeItem('license');
+      localStorage.removeItem('currentOrder');
+      dispatch(deleteOrder());
 
       if (destination.length === 0) {
         throw new Error('Please enter a destination location.');
@@ -354,7 +363,7 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
         </div>
         <button
           className="cancel-button"
-          style={{ backgroundColor: '#00d46a' }}
+          style={{ backgroundColor: '#00c763' }}
           onClick={() => navigate('/driverDetails')}
         >
           View driver details
@@ -530,7 +539,7 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
           style={{
             opacity: isLoading ? 0.7 : 1,
             width: '40vh',
-            backgroundColor: '#00D46A',
+            backgroundColor: '#00c763',
           }}
         >
           {isLoading ? (

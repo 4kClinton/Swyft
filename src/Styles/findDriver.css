@@ -17,12 +17,14 @@
   filter: blur(8px);
   z-index: 1;
 }
-.finder{
+
+.finder {
   font-size: 40px;
-    color: #3d3d3d;
-    font-family: Montserrat;
-    text-align: center;
+  color: #3d3d3d;
+  font-family: Montserrat;
+  text-align: center;
 }
+
 /* Foreground loading content */
 .loading-container {
   position: relative;
@@ -33,7 +35,7 @@
   justify-content: center;
   height: 100vh;
   text-align: center;
-  color: #00d46a;
+  color: #00c763;
   font-family: Arial, sans-serif;
 }
 
@@ -49,7 +51,7 @@
   position: absolute;
   width: 300px;
   height: 300px;
-  border: 5px solid #00d46a;
+  border: 5px solid #00c763;
   border-radius: 50%;
   opacity: 0;
   animation: pulse 2s infinite;
@@ -69,11 +71,13 @@
     opacity: 0.8;
     filter: blur(0px);
   }
+
   70% {
     transform: scale(1.5);
     opacity: 0;
     filter: blur(8px);
   }
+
   100% {
     transform: scale(1.5);
     opacity: 0;
@@ -91,7 +95,7 @@
   background: #fff;
   padding: 20px;
   border-radius: 8px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.3);
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
   text-align: center;
 }
 
@@ -111,7 +115,7 @@
 
 .popup-buttons button {
   padding: 8px 16px;
-  background: #00d46a;
+  background: #00c763;
   color: #fff;
   border: none;
   border-radius: 4px;

@@ -193,7 +193,7 @@ const styles = {
     marginTop: '10px',
     fontSize: '1em',
     color: '#fff',
-    backgroundColor: '#00D46A', // Green for close
+    backgroundColor: '#00c763', // Green for close
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',

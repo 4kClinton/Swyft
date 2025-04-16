@@ -149,7 +149,7 @@ const styles = {
     marginTop: '15px',
     fontSize: '1em',
     color: '#fff',
-    backgroundColor: '#00D46A',
+    backgroundColor: '#00c763',
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',

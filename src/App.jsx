@@ -246,6 +246,13 @@ function App() {
       .then((driverData) => {
         dispatch(saveDriver(driverData));
         dispatch(saveOrder(payload.new));
+        localStorage.setItem('order_id', payload.new.id);
+        localStorage.setItem('driver_id', driverData.id);
+        localStorage.setItem('car', driverData.car_type);
+        localStorage.setItem('name', driverData.first_name);
+        localStorage.setItem('phone', driverData.phone);
+        localStorage.setItem('status', payload.new.status);
+        localStorage.setItem('license', driverData.license_plate);
       })
       .catch((error) => console.error('Error fetching driver data:', error));
   };

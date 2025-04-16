@@ -1,6 +1,6 @@
 :root {
   --primary-color: #121212;
-  --secondary-color: #00d46a;
+  --secondary-color: #00c763;
   --text-color: #e0e0e0;
   --input-background: #1e1e1e;
   --card-background: #252525;
@@ -52,7 +52,7 @@
   align-items: center;
   background-color: var(--primary-color);
   border-radius: 16px;
- font-family: "Montserrat";
+  font-family: "Montserrat";
   /* box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); */
   width: 90%;
   max-width: 400px;
@@ -120,28 +120,29 @@
   transition: background-color 0.3s;
 }
 
-.resend-button{
-    background-color: #fff;
-      color: var(--secondary-color);
-      padding: 10px 20px;
-      border: none;
-      border-radius: 50px;
-      margin-top: 2vh;
-      cursor: pointer;
-      font-family: var(--font-family);
-      font-weight: bold;
-      font-size: 21px;
-      width: 90%;
-      height: 7vh;
-      transition: background-color 0.3s;
+.resend-button {
+  background-color: #fff;
+  color: var(--secondary-color);
+  padding: 10px 20px;
+  border: none;
+  border-radius: 50px;
+  margin-top: 2vh;
+  cursor: pointer;
+  font-family: var(--font-family);
+  font-weight: bold;
+  font-size: 21px;
+  width: 90%;
+  height: 7vh;
+  transition: background-color 0.3s;
 }
 
-.GoogleLoginContainer{
+.GoogleLoginContainer {
   display: flex;
   align-items: center;
   justify-content: center;
 
 }
+
 .login-button:hover {
   background-color: #00b44b;
 }
@@ -161,9 +162,11 @@
   font-size: large;
   border-radius: 4px;
 }
-.login-input :hover{
- border: none !important;
+
+.login-input :hover {
+  border: none !important;
 }
+
 .login-input::placeholder {
   color: var(--border-color);
 }
@@ -198,15 +201,16 @@
   margin-bottom: 20px;
 }
 
-.signup-component{
+.signup-component {
   display: flex;
   position: relative;
-    top: -12vh;
+  top: -12vh;
   align-items: center;
   justify-content: center;
   height: 100vh;
   background-color: var(--primary-color);
 }
+
 .login-component {
   display: flex;
   align-items: center;

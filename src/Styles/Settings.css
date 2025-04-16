@@ -37,19 +37,19 @@
   transition: 0.4s;
 }
 
-input:checked + .slider::before {
+input:checked+.slider::before {
   background-color: var(--primary);
 }
 
-input:checked + .slider {
+input:checked+.slider {
   background-color: var(--secondary-container);
 }
 
-input:focus + .slider {
+input:focus+.slider {
   box-shadow: 0 0 1px var(--secondary-container);
 }
 
-input:checked + .slider::before {
+input:checked+.slider::before {
   transform: translateX(1.9em);
 }
 
@@ -69,11 +69,11 @@ body.dark-mode .switch .slider {
   background-color: #141414;
 }
 
-body.dark-mode .switch input:checked + .slider {
+body.dark-mode .switch input:checked+.slider {
   background-color: #84da89;
 }
 
-body.dark-mode .switch input:checked + .slider::before {
+body.dark-mode .switch input:checked+.slider::before {
   background-color: #000;
 }
 
@@ -81,7 +81,7 @@ body.dark-mode .switch input:checked + .slider::before {
 :root {
   --primary-color: #fff;
   --text-color: #333;
-  --highlight-color: #00d46a;
+  --highlight-color: #00c763;
   --border-color: #ccc;
   --input-background: #f5f5f5;
   --dash-background: #ffff;
@@ -97,7 +97,7 @@ body {
 body.dark-mode {
   --primary-color: #121212;
   --text-color: #f5f5f5;
-  --highlight-color: #00d46a;
+  --highlight-color: #00c763;
 
   /* Accent color in dark mode */
   --border-color: #444;

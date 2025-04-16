@@ -2,23 +2,24 @@ import { Bus } from 'lucide-react';
 import styles from '../Styles/Rides.module.css';
 import { useEffect, useState } from 'react';
 import { useLoadScript } from '@react-google-maps/api';
-import { CircularProgress } from '@mui/material';
 import RideDetailsModal from './RideDetailsModal';
 import { useSelector } from 'react-redux';
+
 export default function RidesHistory() {
   const [loading, setLoading] = useState(true);
-
   const [rides, setRides] = useState([]);
-  const [addressesLoaded, setAddressesLoaded] = useState(false);
   const [selectedRide, setSelectedRide] = useState(null);
+
+  // Redux state with your ride/orders data
   const ordersHistory = useSelector((state) => state.ordersHistory.value);
 
+  // Load the Google Maps script (Geocoder is inside 'places' library)
   const { isLoaded } = useLoadScript({
-    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // Load API key from .env
+    googleMapsApiKey: import.meta.env.VITE_GOOGLE_MAPS_API_KEY, // from .env
     libraries: ['places'],
   });
 
-  // Group rides by month
+  // Helper to group rides by month
   const groupedRides = rides.reduce((acc, ride) => {
     const date = new Date(ride.created_at);
     const month = `${date.getFullYear()}-${String(date.getMonth() + 1).padStart(2, '0')}`;
@@ -29,17 +30,19 @@ export default function RidesHistory() {
     return acc;
   }, {});
 
+  // Fetch addresses (with caching) once ordersHistory is available
   useEffect(() => {
-    if (ordersHistory.length > 0) {
-      const fetchAddresses = async () => {
+    if (ordersHistory.length > 0 && isLoaded) {
+      (async () => {
         const geocoder = new window.google.maps.Geocoder();
+
         const ridesWithAddresses = await Promise.all(
           ordersHistory.map(async (ride) => {
             const userLatLng = { lat: ride.user_lat, lng: ride.user_lng };
             const destLatLng = { lat: ride.dest_lat, lng: ride.dest_lng };
 
-            const userAddress = await geocodeLatLng(geocoder, userLatLng);
-            const destAddress = await geocodeLatLng(geocoder, destLatLng);
+            const userAddress = await getCachedOrGeocode(geocoder, userLatLng);
+            const destAddress = await getCachedOrGeocode(geocoder, destLatLng);
 
             return {
               ...ride,
@@ -48,28 +51,45 @@ export default function RidesHistory() {
             };
           })
         );
-        // Sort rides by created_at in descending order (latest first)
+
+        // Sort by created_at descending
         ridesWithAddresses.sort(
           (a, b) => new Date(b.created_at) - new Date(a.created_at)
         );
+
         setRides(ridesWithAddresses);
-        setAddressesLoaded(true);
         setLoading(false);
-      };
-
-      if (isLoaded) {
-        fetchAddresses();
-      } else {
-        // Sort ordersHistory directly if addresses are not loaded
-        const sortedRides = [...ordersHistory].sort(
-          (a, b) => new Date(b.created_at) - new Date(a.created_at)
-        );
-        setRides(sortedRides);
-        setLoading(false);
-      }
+      })();
+    } else if (ordersHistory.length === 0) {
+      // If there’s literally no orders, we can stop loading immediately
+      setRides([]);
+      setLoading(false);
     }
-  }, [isLoaded, ordersHistory]);
+  }, [ordersHistory, isLoaded]);
 
+  /**
+   * Attempts to retrieve a cached address from localStorage;
+   * if it doesn't exist, calls geocodeLatLng, then caches it.
+   */
+  const getCachedOrGeocode = async (geocoder, latlng) => {
+    const cacheKey = `${latlng.lat},${latlng.lng}`;
+    const cachedAddress = localStorage.getItem(cacheKey);
+    if (cachedAddress) {
+      return cachedAddress;
+    }
+    try {
+      const address = await geocodeLatLng(geocoder, latlng);
+      localStorage.setItem(cacheKey, address);
+      return address;
+    } catch (error) {
+      console.error(error);
+      return 'Address not found';
+    }
+  };
+
+  /**
+   * Wraps the Geocoder call in a Promise-based function
+   */
   const geocodeLatLng = (geocoder, latlng) => {
     return new Promise((resolve, reject) => {
       geocoder.geocode({ location: latlng }, (results, status) => {
@@ -82,6 +102,7 @@ export default function RidesHistory() {
     });
   };
 
+  // Helper to format the month-year heading
   const formatMonth = (month) => {
     const [year, monthIndex] = month.split('-');
     return new Intl.DateTimeFormat('en-US', {
@@ -90,18 +111,82 @@ export default function RidesHistory() {
     }).format(new Date(year, monthIndex - 1));
   };
 
-  if ((loading || !addressesLoaded) && rides.length !== 0)
+  // 1) Show loader if data is still fetching or script not yet loaded
+  if (loading || !isLoaded) {
     return (
-      <div style={{ display: 'flex', alignItems: 'center' }}>
-        <CircularProgress className="login-loader" size={34} color="#0000" />
-        <span>Loading rides history...</span>
+      <div
+        style={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'center',
+          minHeight: '200px',
+          width: '100%',
+        }}
+      >
+        {/* Inline the CSS for the loading dots */}
+        <style>{`
+          .dots-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            width: 100%;
+          }
+          .dot {
+            height: 20px;
+            width: 20px;
+            margin-right: 10px;
+            border-radius: 10px;
+            background-color: #00c763;
+            animation: pulse 1.5s infinite ease-in-out;
+          }
+          .dot:last-child {
+            margin-right: 0;
+          }
+          .dot:nth-child(1) {
+            animation-delay: -0.3s;
+          }
+          .dot:nth-child(2) {
+            animation-delay: -0.1s;
+          }
+          .dot:nth-child(3) {
+            animation-delay: 0.1s;
+          }
+          @keyframes pulse {
+            0% {
+              transform: scale(0.8);
+              background-color: #00c763;
+              box-shadow: 0 0 0 0 rgba(0, 212, 106, 0.7);
+            }
+            50% {
+              transform: scale(1.2);
+              background-color: #00c763;
+              box-shadow: 0 0 0 10px rgba(0, 212, 106, 0);
+            }
+            100% {
+              transform: scale(0.8);
+              background-color: #00c763;
+              box-shadow: 0 0 0 0 rgba(0, 212, 106, 0.7);
+            }
+          }
+        `}</style>
+        <section className="dots-container">
+          <div className="dot"></div>
+          <div className="dot"></div>
+          <div className="dot"></div>
+          <div className="dot"></div>
+          <div className="dot"></div>
+        </section>
       </div>
     );
+  }
 
-  if (rides.length === 0) {
+  // 2) If we’re done loading but have no rides, show "No rides found"
+  if (!loading && rides.length === 0) {
     return <div>No rides found</div>;
   }
 
+  // 3) Otherwise, display the ride history
   return (
     <div className={styles.app}>
       <header className={styles.header}>
@@ -112,7 +197,6 @@ export default function RidesHistory() {
         {Object.keys(groupedRides).map((month) => (
           <section key={month} className={styles.day_section}>
             <h2 className={styles.h2}>{formatMonth(month)}</h2>
-
             {groupedRides[month].map((ride, index) => (
               <div
                 key={index}
@@ -133,7 +217,6 @@ export default function RidesHistory() {
                       hour12: true,
                     })}
                   </div>
-
                   <div className={styles.ride_location}>
                     {ride.userAddress} to {ride.destAddress}
                   </div>
@@ -148,6 +231,7 @@ export default function RidesHistory() {
           </section>
         ))}
       </main>
+
       {selectedRide && (
         <RideDetailsModal
           ride={selectedRide}

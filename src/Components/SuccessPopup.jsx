@@ -87,7 +87,7 @@ const styles = {
     marginTop: '15px',
     fontSize: '1em',
     color: '#fff',
-    backgroundColor: '#00D46A', // Green for success
+    backgroundColor: '#00c763', // Green for success
     border: 'none',
     borderRadius: '4px',
     cursor: 'pointer',

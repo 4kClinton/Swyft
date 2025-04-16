@@ -163,7 +163,7 @@ const TripTracker = () => {
         alt="Company Logo"
         style={{ width: '150px', marginBottom: '20px' }}
       />
-      <h2 style={{ color: '#00D46A', fontSize: '2rem' }}>COMING SOON!</h2>
+      <h2 style={{ color: '#00c763', fontSize: '2rem' }}>COMING SOON!</h2>
     </section>
   );
 };
