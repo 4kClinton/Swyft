@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import PropTypes from 'prop-types';
 import '../Styles/findDriver.css';
 import { useDispatch, useSelector } from 'react-redux';
-import { deleteOrder } from '../Redux/Reducers/CurrentOrderSlice';
+// import { deleteOrder } from '../Redux/Reducers/CurrentOrderSlice';
 import { removeDriver } from '../Redux/Reducers/DriverDetailsSlice';
 import Cookies from 'js-cookie';
 ``;
@@ -16,6 +16,8 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   const order = useSelector((state) => state.currentOrder.value);
   const dispatch = useDispatch();
 
+  const driverTimerRef = useRef(null);
+  const noDriverTimerRef = useRef(null);
   // const orderId = localStorage.getItem('order_id');
   console.log('Retrieved ID '.orderId);
   const driverId = localStorage.getItem('driver_id');
@@ -23,6 +25,7 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
   console.log(order);
   console.log(driver);
 
+  // Inside the useEffect that checks for driverId
   useEffect(() => {
     // Check if driverId is not undefined (meaning it exists)
     if (driverId !== undefined && driverId !== null) {
@@ -34,12 +37,9 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
       // Call onDriverFound if the driverId is valid
       onDriverFound();
     }
-  }, [driverId]);
+  }, [driverId, onDriverFound]);
 
-  // Refs to store timers so they can be cleared if needed.
-  const driverTimerRef = useRef(null);
-  const noDriverTimerRef = useRef(null);
-  const nearest_driver = localStorage.getItem('driver_id');
+  // Inside the startSearch function
   const startSearch = useCallback(() => {
     // Clear any existing timers.
     if (driverTimerRef.current) clearTimeout(driverTimerRef.current);
@@ -51,46 +51,51 @@ const FindDriver = ({ onDriverFound, onDriverNotFound }) => {
 
     // After 30 seconds, assume no driver is found.
     noDriverTimerRef.current = setTimeout(() => {
-      const token = Cookies.get('authTokencl1');
+      // Ensure the order is only canceled if no driver is found
+      if (!driverId) {
+        const token = Cookies.get('authTokencl1');
 
-      fetch(`https://swyft-backend-client-nine.vercel.app/orders/${order.id}`, {
-        method: 'PUT',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        },
-        body: JSON.stringify({
-          status: 'cancelled',
-          cancellation_reason: 'Took too long',
-        }),
-      })
-        .then((response) => {
-          if (response.ok) {
-            dispatch(deleteOrder());
-            dispatch(removeDriver());
-            setNoDriverFound(true);
-            setShowPopup(true);
-            Cookies.remove('NavigateToDriverDetails');
-            if (onDriverNotFound) {
-              onDriverNotFound('No drivers available. Please try again later.');
-            }
+        fetch(
+          `https://swyft-backend-client-nine.vercel.app/orders/${order.id}`,
+          {
+            method: 'PUT',
+            headers: {
+              'Content-Type': 'application/json',
+              Authorization: `Bearer ${token}`,
+            },
+            body: JSON.stringify({
+              status: 'cancelled',
+              cancellation_reason: 'Took too long',
+            }),
           }
-        })
-        .catch((error) => {
-          console.error('Error canceling order:', error);
-        });
-    }, 3000);
-  }, [noDriverFound, onDriverFound, onDriverNotFound]);
+        )
+          .then((response) => {
+            if (response.ok) {
+              dispatch(removeDriver());
+              setNoDriverFound(true);
+              setShowPopup(true);
+              Cookies.remove('NavigateToDriverDetails');
+              if (onDriverNotFound) {
+                onDriverNotFound(
+                  'No drivers available. Please try again later.'
+                );
+              }
+            }
+          })
+          .catch((error) => {
+            console.error('Error canceling order:', error);
+          });
+      }
+    }, 30000); // 30 seconds
+  }, [driverId, order.id, onDriverNotFound, dispatch]);
 
   useEffect(() => {
     startSearch();
     return () => {
-      if (driverTimerRef.current || nearest_driver)
-        clearTimeout(driverTimerRef.current);
-      if (noDriverTimerRef.current || nearest_driver)
-        clearTimeout(noDriverTimerRef.current);
+      if (driverTimerRef.current) clearTimeout(driverTimerRef.current);
+      if (noDriverTimerRef.current) clearTimeout(noDriverTimerRef.current);
     };
-  }, [startSearch, nearest_driver]);
+  }, [startSearch]);
 
   const handleGoHome = () => {
     navigate('/dash');

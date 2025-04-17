@@ -272,7 +272,7 @@ function App() {
     dispatch(removeDriver());
     setUpdateOrders((prev) => !prev);
     Cookies.remove('NavigateToDriverDetails');
-    navigate('/rate-driver');
+    navigate('/dash');
     alert('The ride is completed! Thank you for using our service.');
   };
 
