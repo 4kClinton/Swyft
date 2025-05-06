@@ -21,6 +21,7 @@ import nduthiElectric from '../assets/Electric.png';
 import FindDriver from './FindDriver';
 
 // Material UI components for dialogs and icons
+import ScheduleIcon from '@mui/icons-material/Schedule';
 import Dialog from '@mui/material/Dialog';
 import DialogTitle from '@mui/material/DialogTitle';
 import DialogContent from '@mui/material/DialogContent';
@@ -29,6 +30,35 @@ import Button from '@mui/material/Button';
 import ErrorIcon from '@mui/icons-material/ErrorOutline';
 import { useDispatch, useSelector } from 'react-redux';
 import { deleteOrder, saveOrder } from '../Redux/Reducers/CurrentOrderSlice';
+
+/**
+ * ResponsePopup
+ * - open: boolean
+ * - message: string
+ * - onCancel: fn
+ * - onSchedule: fn
+ */
+function ResponsePopup({ open, message, onCancel, onSchedule }) {
+  return (
+    <Dialog open={open} onClose={onCancel}>
+      <DialogTitle style={{ display: 'flex', alignItems: 'center' }}>
+        <ErrorIcon style={{ marginRight: 8, color: '#ff9500' }} />
+        Sorry
+      </DialogTitle>
+      <DialogContent>
+        <p>{message}</p>
+      </DialogContent>
+      <DialogActions>
+        <Button onClick={onCancel} color="primary">
+          Cancel
+        </Button>
+        <Button onClick={onSchedule} color="secondary">
+          Schedule
+        </Button>
+      </DialogActions>
+    </Dialog>
+  );
+}
 
 export default function OrderConfirmation() {
   const dispatch = useDispatch();
@@ -113,7 +143,6 @@ export default function OrderConfirmation() {
     lorry10Tonne: TenTonne,
     car: moti,
     SwyftBodaElectric: nduthiElectric,
-    // 'Lorry': TenTonne,
     Tipper: Tipper,
   };
   const vehicleImage = vehicleImages[orderData.vehicle] || Pickup;
@@ -178,30 +207,6 @@ export default function OrderConfirmation() {
 
       const data = await response.json();
 
-      // const order_id = data.order.id;
-      // const driver_id = data.order.driver_id;
-      // const nearest_driver_car = data.nearest_driver.car_type;
-      // const nearest_driver_name = data.nearest_driver.first_name;
-      // const nearest_driver_phone = data.nearest_driver.phone;
-      // const order_status = data.order.status;
-      // const license = data.nearest_driver.license_plate;
-
-      // console.log("Order ID: " + order_id);
-      // console.log("Driver ID: " + driver_id);
-      // console.log("Nearest Driver Car: " + nearest_driver_car);
-      // console.log("Nearest Driver Name: " + nearest_driver_name);
-      // console.log("Nearest Driver Phone: " + nearest_driver_phone);
-      // console.log("Order Status: " + order_status);
-      // console.log("License: " + license);
-
-      // localStorage.setItem('order_id', order_id);
-      // localStorage.setItem('driver_id', driver_id);
-      // localStorage.setItem('car', nearest_driver_car);
-      // localStorage.setItem('name', nearest_driver_name);
-      // localStorage.setItem('phone', nearest_driver_phone);
-      // localStorage.setItem('status', order_status);
-      // localStorage.setItem('license', license);
-
       dispatch(saveOrder(data.order));
       localStorage.setItem('currentOrder', JSON.stringify(finalOrderData));
 
@@ -214,9 +219,55 @@ export default function OrderConfirmation() {
     }
   };
 
-  // console.log(response.order.id);
-  // const order_id = response.order.id;
-  // console.log(order_id);
+  // Schedule action: open WhatsApp chat with order details
+const handleSchedule = () => {
+   if (!packageType) {
+     setErrorMessage(
+       'Please select a package type before scheduling the order.'
+     );
+     return;
+   }
+
+  const phone = import.meta.env.VITE_PHONE;
+
+  const currentTime = new Date().toLocaleString('en-US', {
+    hour12: true,
+    timeZone: 'Africa/Nairobi',
+  });
+
+  const paymentDetails =
+    selectedPayment === 'sender'
+      ? `Payment: By Sender\nDescription: To be Sorted by Client`
+      : `Payment: By Receiver\nReceiver: ${receiverName} | ${receiverPhone}\nDescription: To be Sorted by ${receiverName} (Phone: ${receiverPhone})`;
+
+  const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
+    userLocationAddress || ''
+  )}&destination=${encodeURIComponent(destinationAddress || '')}`;
+
+  const msg = `
+*SWYFT ORDER*
+
+Vehicle: ${orderData.vehicle}
+Distance: ${orderData.distance} KM
+Loaders: ${orderData.loaderCount || 0} (Cost: Ksh ${orderData.loaderCost || 0})
+Package: ${packageType || 'N/A'}
+Total Cost: Ksh ${orderData.totalCost}
+
+Pickup: ${userLocationAddress || 'N/A'}
+Dropoff: ${destinationAddress || 'N/A'}
+
+Time: ${currentTime}
+
+${paymentDetails}
+
+Directions: ${mapUrl}
+  `.trim();
+
+  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+  window.open(url, '_blank');
+  setErrorMessage('');
+};
+
 
   const packageOptions = [
     'Furniture',
@@ -229,7 +280,7 @@ export default function OrderConfirmation() {
     'Other',
   ];
 
-  // Render the FindDriver component if in the "Finding Driver" phase.
+  // Render FindDriver during search phase
   if (isFindingDriver) {
     return (
       <FindDriver
@@ -245,6 +296,12 @@ export default function OrderConfirmation() {
     );
   }
 
+  // Detect exactly the “no driver” server message
+  const DRIVER_NOT_FOUND_TEXT =
+    'no available driver with the requested vehicle type';
+  const isDriverNotFoundError =
+    errorMessage.toLowerCase() === DRIVER_NOT_FOUND_TEXT;
+
   return (
     <div className="Top-Container">
       <div className="Sec-container">
@@ -259,23 +316,27 @@ export default function OrderConfirmation() {
             className="vehicle-icon"
           />
           <div className="vehicle-details">
-            <h3>{orderData.vehicle}</h3>
+            <h3 style={{ textTransform: 'capitalize' }}>{orderData.vehicle}</h3>
             <div
               className="Journey"
-              style={{ display: 'flex', flexDirection: 'column', gap: '5px' }}
+              style={{ display: 'flex', flexDirection: 'column', gap: 5 }}
             >
               <div
-                style={{ display: 'flex', alignItems: 'center', gap: '8px' }}
+                style={{
+                  display: 'flex',
+                  alignItems: 'center',
+                  gap: 8,
+                }}
               >
                 <span
                   style={{
-                    width: '12px',
-                    height: '12px',
+                    width: 12,
+                    height: 12,
                     backgroundColor: '#00c763',
                     borderRadius: '50%',
                     display: 'inline-block',
                   }}
-                ></span>
+                />
                 {userLocationAddress ? (
                   <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
                     {userLocationAddress.split(' ').slice(0, 7).join(' ')}
@@ -293,29 +354,29 @@ export default function OrderConfirmation() {
               >
                 <div
                   style={{
-                    width: '2px',
-                    height: '15px',
+                    width: 2,
+                    height: 15,
                     backgroundColor: '#ccc',
                   }}
-                ></div>
+                />
               </div>
               <div
                 style={{
                   display: 'flex',
                   flexDirection: 'column',
                   alignItems: 'center',
-                  gap: '8px',
+                  gap: 8,
                 }}
               >
                 <span
                   style={{
-                    width: '12px',
-                    height: '12px',
+                    width: 12,
+                    height: 12,
                     backgroundColor: '#ff9500',
                     borderRadius: '50%',
                     display: 'inline-block',
                   }}
-                ></span>
+                />
                 {destinationAddress ? (
                   <p style={{ margin: 0, fontWeight: 'bold', color: '#333' }}>
                     {destinationAddress.split(' ').slice(0, 6).join(' ')}
@@ -330,7 +391,10 @@ export default function OrderConfirmation() {
 
         {/* Charges Card */}
         <div className="charges-card">
-          <h3 className="charges-title">{orderData.vehicle}</h3>
+          <h3 className="charges-title">
+            {orderData.vehicle?.charAt(0).toUpperCase() +
+              orderData.vehicle?.slice(1) || 'Unknown Vehicle'}
+          </h3>
           <div className="charge-row">
             <span>Fare ({orderData.distance} Kms)</span>
             <span className="Price">KSh {distanceCost}</span>
@@ -475,7 +539,7 @@ export default function OrderConfirmation() {
           </div>
         )}
 
-        {/* Buttons */}
+        {/* Bottom Buttons */}
         <div className="buttons" style={{ marginTop: '1rem' }}>
           <button
             onClick={() => {
@@ -488,7 +552,6 @@ export default function OrderConfirmation() {
           >
             Cancel
           </button>
-
           <button
             onClick={handleConfirmOrder}
             disabled={isLoading}
@@ -497,23 +560,42 @@ export default function OrderConfirmation() {
             BOOK NOW
           </button>
         </div>
+        <button
+          onClick={handleSchedule}
+          disabled={isLoading}
+          className="schedule-button"
+        >
+          <ScheduleIcon className="schedule-icon"  />
+          SCHEDULE ORDER
+        </button>
       </div>
 
-      {/* Error Popup Dialog */}
-      <Dialog open={Boolean(errorMessage)} onClose={() => setErrorMessage('')}>
-        <DialogTitle>
-          <ErrorIcon style={{ marginRight: '8px', color: 'red' }} />
-          Error
-        </DialogTitle>
-        <DialogContent>
-          <p>{errorMessage}</p>
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={() => setErrorMessage('')} color="primary">
-            OK
-          </Button>
-        </DialogActions>
-      </Dialog>
+      {isDriverNotFoundError ? (
+        <ResponsePopup
+          open={Boolean(errorMessage)}
+          message={errorMessage}
+          onCancel={() => setErrorMessage('')}
+          onSchedule={handleSchedule}
+        />
+      ) : (
+        <Dialog
+          open={Boolean(errorMessage)}
+          onClose={() => setErrorMessage('')}
+        >
+          <DialogTitle style={{ display: 'flex', alignItems: 'center' }}>
+            <ErrorIcon style={{ marginRight: 8, color: 'red' }} />
+            Error
+          </DialogTitle>
+          <DialogContent>
+            <p>{errorMessage}</p>
+          </DialogContent>
+          <DialogActions>
+            <Button onClick={() => setErrorMessage('')} color="primary">
+              OK
+            </Button>
+          </DialogActions>
+        </Dialog>
+      )}
     </div>
   );
 }
