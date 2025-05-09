@@ -299,7 +299,7 @@ function App() {
       {showErrorPopup && (
         <div className="popup-overlay">
           <div className="popup">
-            <p>No driver found for your order. Please try again later.</p>
+            <p>No driver found for your order. Please Schedule Order.</p>
             <button onClick={handleCloseErrorPopup}>Close</button>
           </div>
         </div>
