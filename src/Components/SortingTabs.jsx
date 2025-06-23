@@ -19,7 +19,7 @@ function SortingTabs({ onTabChange }) {
           className={`sorting-tab ${activeTab === 'Cargo' ? 'active' : ''}`}
           onClick={() => handleTabClick('Cargo')}
         >
-          Cargo
+          Transport
         </button>
         <button
           className={`sorting-tab ${activeTab === 'Parcels' ? 'active' : ''}`}
