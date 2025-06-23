@@ -107,12 +107,18 @@ const Map = () => {
         />
       )}
 
-      <GoogleMap
+       <GoogleMap
         mapContainerClassName="google-map"
         center={
           destination || currentLocation || { lat: -1.286389, lng: 36.817223 }
         }
         zoom={12}
+        options={{
+          mapTypeControl: false, // Hides Map/Satellite toggle
+          rotateControl: false, // Hides rotate control
+          panControl: false, // Hides pan control (not always shown)
+          
+        }}
       >
         {directionsResponse && (
           <DirectionsRenderer directions={directionsResponse} />
