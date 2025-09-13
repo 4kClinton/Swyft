@@ -1,0 +1,36 @@
+import React, { useMemo } from 'react';
+import { useDispatch } from 'react-redux';
+
+const Dash = () => {
+	const dispatch = useDispatch();
+	const packingDefaults = {
+		fiveBedroom: 0,
+		fourBedroom: 0,
+		oneBedroom: 0,
+		studio: 0,
+		threeBedroom: 0,
+		twoBedroom: 0,
+	};
+
+	const calculatePackingCost = () => {
+		// Calculation logic here
+	};
+
+	const memoizedValue = useMemo(() => calculatePackingCost(), [
+		calculatePackingCost,
+		packingDefaults.fiveBedroom,
+		packingDefaults.fourBedroom,
+		packingDefaults.oneBedroom,
+		packingDefaults.studio,
+		packingDefaults.threeBedroom,
+		packingDefaults.twoBedroom,
+	]);
+
+	return (
+		<div>
+			{/* Render logic here */}
+		</div>
+	);
+};
+
+export default Dash;
