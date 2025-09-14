@@ -213,7 +213,7 @@ const Dash = ({ distance = 0, userLocation = '', destination = '' }) => {
         const labourCost = config.loaders * 600;
         const subTotal = config.transport + labourCost + config.packingCost;
         const serviceFee = Math.round(subTotal * 0.1);
-        acc[homeKey] = subTotal + serviceFee + 5000; // <-- add 5000 to each moving cost
+        acc[homeKey] = subTotal + serviceFee + 3000; // <-- add 5000 to each moving cost
         return acc;
       },
       {}
