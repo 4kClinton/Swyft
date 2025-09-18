@@ -15,6 +15,7 @@ import {
   Lightbulb,
   X,
   Share2,
+  Layers2,
   MapPin,
   CalendarSync,
 } from 'lucide-react';
@@ -118,10 +119,10 @@ export default function FindHouseDetail() {
     return cleaned;
   };
 
-  const handleWhatsApp = () => {
-    const phone = formatPhoneNumber(property.contact_info);
-    window.open(`https://wa.me/${phone}`, '_blank');
-  };
+  // const handleWhatsApp = () => {
+  //   const phone = formatPhoneNumber(property.contact_info);
+  //   window.open(`https://wa.me/${phone}`, '_blank');
+  // };
 
   const closeSchedulePopup = () => {
     setShowSchedulePopup(false);
@@ -153,6 +154,9 @@ Link: ${url}`;
     )}`;
     window.open(whatsappLink, '_blank');
     setShowSchedulePopup(false);
+  };
+  const handlePlanMove = () => {
+    navigate('/dash');
   };
 
   const handleShareWhatsApp = () => {
@@ -224,6 +228,23 @@ Link: ${url}`;
         <p className="location">
           <MapPin size={16} /> {property.city}, {property.state}
         </p>
+        <p className="location">
+          <Wallet size={16} /> Deposit: KES{' '}
+          {property.deposit_amount?.toLocaleString()}
+        </p>
+        {/* Frequency message */}
+        <p className="frequencyInfo">
+          <Layers2 size={16} />{' '}
+          {property.frequency === 0 ? (
+            <>This is the only listing in this building</>
+          ) : (
+            <>
+              There {property.frequency === 1 ? 'is' : 'are'}{' '}
+              {property.frequency} similar unit
+              {property.frequency > 1 && 's'}
+            </>
+          )}
+        </p>
         <p className="viewingFee">
           <Eye size={16} /> Viewing Fee: KES{' '}
           {property.viewing_fee?.toLocaleString()}
@@ -261,10 +282,6 @@ Link: ${url}`;
           )}
           <p>
             <PawPrint size={16} /> Pets: {property.pet_policy}
-          </p>
-          <p>
-            <Wallet size={16} /> Deposit: KES{' '}
-            {property.deposit_amount?.toLocaleString()}
           </p>
         </div>
         {/* About */}
@@ -307,8 +324,8 @@ Link: ${url}`;
             <button className="btn call" onClick={handleCall}>
               Call Agent
             </button>
-            <button className="btn whatsapp" onClick={handleWhatsApp}>
-              WhatsApp
+            <button className="btn whatsapp" onClick={handlePlanMove}>
+              Plan My Move
             </button>
           </div>
           <button

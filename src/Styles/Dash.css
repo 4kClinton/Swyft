@@ -528,15 +528,16 @@ position: relative;
   padding-right: 15px;
 }
 .viewingFee{
-text-align: left;
-  margin-left: 5px;
-  margin-top: 5px;
-  font-size: 14px;
-  border: 3px solid #00c763;
-  border-radius: 150px;
-  width: fit-content;
-  padding-left: 15px;
-  padding-right: 15px;
+    text-align: left;
+      /* margin-left: 5px; */
+      margin-top: 15px;
+      font-size: 14px;
+      border: 3px solid #00c763;
+      border-radius: 150px;
+      font-weight: bold;
+      width: fit-content;
+      padding-left: 15px;
+      padding-right: 15px;
 }
 
 .viewingFeeIcon{
@@ -584,6 +585,15 @@ text-align: left;
   animation: popupFadeIn 0.3s ease;
 }
 
+.frequencyInfo{
+  text-align: left;
+  font-weight: bold;
+  color: #00c763;
+}
+
+.frequencyInfo svg{
+  color: #00c763;
+}
 /* Close button (X) */
 .modal-close {
   position: absolute;
