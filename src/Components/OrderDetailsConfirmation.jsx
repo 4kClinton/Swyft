@@ -2,6 +2,7 @@ import '../Styles/OrderDetailsConfirmation.css';
 import { useState, useEffect } from 'react';
 import { CircularProgress } from '@mui/material';
 import { useLocation, useNavigate } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Cookies from 'js-cookie';
 
 // Import vehicle images
@@ -59,6 +60,14 @@ function ResponsePopup({ open, message, onCancel, onSchedule }) {
     </Dialog>
   );
 }
+
+// Add PropTypes validation
+ResponsePopup.propTypes = {
+  open: PropTypes.bool.isRequired,
+  message: PropTypes.string.isRequired,
+  onCancel: PropTypes.func.isRequired,
+  onSchedule: PropTypes.func.isRequired,
+};
 
 export default function OrderConfirmation() {
   const dispatch = useDispatch();
@@ -220,31 +229,31 @@ export default function OrderConfirmation() {
   };
 
   // Schedule action: open WhatsApp chat with order details
-const handleSchedule = () => {
-   if (!packageType) {
-     setErrorMessage(
-       'Please select a package type before scheduling the order.'
-     );
-     return;
-   }
+  const handleSchedule = () => {
+    if (!packageType) {
+      setErrorMessage(
+        'Please select a package type before scheduling the order.'
+      );
+      return;
+    }
 
-  const phone = import.meta.env.VITE_PHONE;
+    const phone = import.meta.env.VITE_PHONE;
 
-  const currentTime = new Date().toLocaleString('en-US', {
-    hour12: true,
-    timeZone: 'Africa/Nairobi',
-  });
+    const currentTime = new Date().toLocaleString('en-US', {
+      hour12: true,
+      timeZone: 'Africa/Nairobi',
+    });
 
-  const paymentDetails =
-    selectedPayment === 'sender'
-      ? `Payment: By Sender\nDescription: To be Sorted by Client`
-      : `Payment: By Receiver\nReceiver: ${receiverName} | ${receiverPhone}\nDescription: To be Sorted by ${receiverName} (Phone: ${receiverPhone})`;
+    const paymentDetails =
+      selectedPayment === 'sender'
+        ? `Payment: By Sender\nDescription: To be Sorted by Client`
+        : `Payment: By Receiver\nReceiver: ${receiverName} | ${receiverPhone}\nDescription: To be Sorted by ${receiverName} (Phone: ${receiverPhone})`;
 
-  const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
-    userLocationAddress || ''
-  )}&destination=${encodeURIComponent(destinationAddress || '')}`;
+    const mapUrl = `https://www.google.com/maps/dir/?api=1&origin=${encodeURIComponent(
+      userLocationAddress || ''
+    )}&destination=${encodeURIComponent(destinationAddress || '')}`;
 
-  const msg = `
+    const msg = `
 *SWYFT ORDER*
 
 Vehicle: ${orderData.vehicle}
@@ -263,11 +272,10 @@ ${paymentDetails}
 Directions: ${mapUrl}
   `.trim();
 
-  const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
-  window.open(url, '_blank');
-  setErrorMessage('');
-};
-
+    const url = `https://wa.me/${phone}?text=${encodeURIComponent(msg)}`;
+    window.open(url, '_blank');
+    setErrorMessage('');
+  };
 
   const packageOptions = [
     'Furniture',
@@ -565,7 +573,7 @@ Directions: ${mapUrl}
           disabled={isLoading}
           className="schedule-button"
         >
-          <ScheduleIcon className="schedule-icon"  />
+          <ScheduleIcon className="schedule-icon" />
           SCHEDULE ORDER
         </button>
       </div>

@@ -3,6 +3,7 @@ import {
   GoogleMap,
   useLoadScript,
   DirectionsRenderer,
+  Marker,
 } from '@react-google-maps/api';
 import CircularProgress from '@mui/material/CircularProgress'; // For loader
 import '../Styles/Map.css';
@@ -91,6 +92,26 @@ const Map = () => {
     }
   };
 
+  // Custom polyline and marker styles
+  const customPolylineOptions = {
+    polylineOptions: {
+      strokeColor: '#00c763', // Emerald green for directions
+      strokeWeight: 6,
+      strokeOpacity: 1,
+    },
+    suppressMarkers: true, // Hide default markers so we can use custom ones
+  };
+
+  // Custom marker icon (dark gray)
+  // const customMarkerIcon = {
+  //   path: window.google?.maps.SymbolPath.CIRCLE,
+  //   scale: 8,
+  //   fillColor: '#212121',
+  //   fillOpacity: 1,
+  //   strokeWeight: 2,
+  //   strokeColor: '#fff',
+  // };
+
   if (!isLoaded)
     return (
       <div>
@@ -113,15 +134,26 @@ const Map = () => {
           destination || currentLocation || { lat: -1.286389, lng: 36.817223 }
         }
         zoom={12}
+        options={{
+          mapTypeControl: false, // Hides Map/Satellite toggle
+          rotateControl: false, // Hides rotate control
+          panControl: false, // Hides pan control (not always shown)
+        }}
       >
+        {/* Use default marker */}
+        {currentLocation && <Marker position={currentLocation} />}
+        {destination && <Marker position={destination} />}
+
+        {/* Custom Directions Polyline */}
         {directionsResponse && (
-          <DirectionsRenderer directions={directionsResponse} />
+          <DirectionsRenderer
+            directions={directionsResponse}
+            options={customPolylineOptions}
+          />
         )}
       </GoogleMap>
-
       {/* Display distance */}
       {/* <div className="distance-info">{distance.toFixed(2)} km</div> */}
-
       {/* Pass distance, userLocation, and destination as props to the Dash component */}
       <Dash
         distance={Number(distance)}

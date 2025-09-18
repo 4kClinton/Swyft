@@ -1,106 +1,72 @@
 {
   "orders": [
     {
-      "id": "4cbf",
+      "id": "9c2c",
       "vehicle": "pickup",
-      "distance": 15.151,
-      "loaders": 2,
-      "loaderCost": 600,
-      "totalCost": 3024,
+      "distance": "20.957",
+      "loaders": 0,
+      "loaderCost": 0,
+      "totalCost": 4152,
       "userLocation": {
-        "lat": -1.333764075905483,
-        "lng": 36.673439753215945
+        "lat": -1.3066238,
+        "lng": 36.8015995
       },
       "destination": {
-        "lat": -1.2892786,
-        "lng": 36.7869311
+        "lat": -1.3562118,
+        "lng": 36.6687545
       },
-      "time": "12/12/2024, 6:44:11 PM"
+      "time": "4/30/2025, 10:56:12 PM",
+      "packageType": "Perishable goods",
+      "paymentInfo": {
+        "payBy": "sender",
+        "description": "To be Sorted by Unknown User"
+      }
     },
     {
-      "id": "7457d48b-6237-47d8-83ed-81a66a2d2299",
+      "id": "a0e8",
       "vehicle": "pickup",
-      "distance": 15.072,
-      "loaders": 1,
-      "loaderCost": 300,
-      "totalCost": 2712,
+      "distance": "20.957",
+      "loaders": 0,
+      "loaderCost": 0,
+      "totalCost": 4152,
       "userLocation": {
-        "lat": -1.3333783557939913,
-        "lng": 36.675597815879826
+        "lat": -1.3066238,
+        "lng": 36.8015995
       },
       "destination": {
-        "lat": -1.2892786,
-        "lng": 36.7869311
+        "lat": -1.3562118,
+        "lng": 36.6687545
       },
-      "time": "12/24/2024, 6:38:48 AM"
+      "time": "4/30/2025, 10:56:12 PM",
+      "packageType": "Perishable goods",
+      "paymentInfo": {
+        "payBy": "sender",
+        "description": "To be Sorted by Unknown User"
+      }
     },
     {
-      "id": "7457d48b-6237-47d8-83ed-81a66a2d2299",
+      "id": "6ca5",
       "vehicle": "pickup",
-      "distance": 15.072,
-      "loaders": 1,
-      "loaderCost": 300,
-      "totalCost": 2712,
+      "distance": "20.957",
+      "loaders": 0,
+      "loaderCost": 0,
+      "totalCost": 4152,
       "userLocation": {
-        "lat": -1.3333783557939913,
-        "lng": 36.675597815879826
+        "lat": -1.3066238,
+        "lng": 36.8015995
       },
       "destination": {
-        "lat": -1.2892786,
-        "lng": 36.7869311
+        "lat": -1.3562118,
+        "lng": 36.6687545
       },
-      "time": "12/24/2024, 6:40:03 AM"
-    },
-    {
-      "id": "7457d48b-6237-47d8-83ed-81a66a2d2299",
-      "vehicle": "pickup",
-      "distance": 31.539,
-      "loaders": 1,
-      "loaderCost": 300,
-      "totalCost": 5346,
-      "userLocation": {
-        "lat": -1.3335339923364655,
-        "lng": 36.67584677374327
-      },
-      "destination": {
-        "lat": -1.3161977,
-        "lng": 36.899007
-      },
-      "time": "12/24/2024, 6:46:39 AM"
-    },
-    {
-      "id": "7457d48b-6237-47d8-83ed-81a66a2d2299",
-      "vehicle": "pickup",
-      "distance": 33.537,
-      "loaders": 1,
-      "loaderCost": 300,
-      "totalCost": 5666,
-      "userLocation": {
-        "lat": -1.3333950119702502,
-        "lng": 36.67562823656741
-      },
-      "destination": {
-        "lat": -1.2583406,
-        "lng": 36.8774933
-      },
-      "time": "12/24/2024, 6:58:11 AM"
-    },
-    {
-      "id": "7457d48b-6237-47d8-83ed-81a66a2d2299",
-      "vehicle": "miniTruck",
-      "distance": 33.596,
-      "loaders": 1,
-      "loaderCost": 300,
-      "totalCost": 8027,
-      "userLocation": {
-        "lat": -1.3333950119702502,
-        "lng": 36.67562823656741
-      },
-      "destination": {
-        "lat": -1.2064151,
-        "lng": 36.913794
-      },
-      "time": "12/24/2024, 7:05:39 AM"
+      "time": "4/30/2025, 10:56:12 PM",
+      "packageType": "Crates or boxes",
+      "paymentInfo": {
+        "payBy": "receiver",
+        "name": "Jasper",
+        "phone": "01120302020",
+        "description": "To be Sorted by Jasper (Phone: 01120302020)"
+      }
     }
   ],
   "vehicles": [

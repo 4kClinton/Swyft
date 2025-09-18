@@ -39,7 +39,7 @@ const OrderCompletion = () => {
 
     // Retrieve driver ID from local storage
     const storedDriverId = localStorage.getItem('driver_id');
-    console.log('Driver ID from local storage:', storedDriverId);
+    // console.log('Driver ID from local storage:', storedDriverId);
     if (!storedDriverId || storedDriverId === 'null') {
       alert('Unable to submit rating because driver details are missing.');
       return;

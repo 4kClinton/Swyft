@@ -5,7 +5,7 @@
   align-items: center;
   height: 100vh;
   width: 100vw;
-  background-color: #00c763;
+  background-color: #08d56e;
 
   /* Adjust as per your theme */
   position: fixed;
@@ -43,7 +43,7 @@
 }
 
 .MuiCircularProgress-root {
-  color: #00c763 !important;
+  color: #08d56e !important;
 
   /* Ensure high specificity */
 }

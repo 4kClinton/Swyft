@@ -3,7 +3,6 @@ import { Link } from 'react-router-dom';
 import MenuIcon from '@mui/icons-material/Menu';
 import NearMeIcon from '@mui/icons-material/NearMe';
 import CloseIcon from '@mui/icons-material/Close';
-
 import HistoryIcon from '@mui/icons-material/History';
 import ApartmentIcon from '@mui/icons-material/Apartment';
 import SettingsIcon from '@mui/icons-material/Settings';
@@ -244,7 +243,9 @@ const Navbar = () => {
                 textDecoration: 'none',
                 color: 'inherit',
                 display: 'flex',
-                margin: '2vh',
+                marginRight: '12vh',
+                paddingTop: '3vh',
+                paddingBottom: '3vh',
                 alignItems: 'center',
                 justifyContent: 'center',
                 fontSize: 'larger',

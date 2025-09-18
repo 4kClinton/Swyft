@@ -1,7 +1,7 @@
 import { Provider } from 'react-redux';
 import ReactDOM from 'react-dom/client';
 import { store } from './Redux/Store';
-
+import 'swiper/css';
 import './index.css';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import { routes } from './routes';

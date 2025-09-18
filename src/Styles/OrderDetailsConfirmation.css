@@ -22,6 +22,38 @@
 .package-type-container {
   display: flex;
 }
+.schedule-button {
+  display: inline-flex;
+  /* enable flex layout */
+  align-items: center;
+  /* vertically center icon + text */
+  justify-content: center;
+  /* horizontally center content */
+  gap: 8px;
+  /* space between icon and text */
+  background: #fba421;
+  margin-top: inherit;
+  width: 100%;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 45px;
+  height: 6vh;
+  font-weight: bold;
+  cursor: pointer;
+  transition: background .2s;
+}
+
+.schedule-button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Optional: tweak the icon size */
+.schedule-icon {
+  font-size: 1.2em;
+  color: #fff;
+}
 
 .senderInput {
   width: 80%;
@@ -60,38 +92,7 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
   margin-bottom: 10px;
 }
-.schedule-button {
-  display: inline-flex;
-  /* enable flex layout */
-  align-items: center;
-  /* vertically center icon + text */
-  justify-content: center;
-  /* horizontally center content */
-  gap: 8px;
-  /* space between icon and text */
-  background: #fba421;
-  margin-top: inherit;
-  width: 100%;
-  color: #fff;
-  padding: 10px;
-  border: none;
-  border-radius: 45px;
-  height: 6vh;
-  font-weight: bold;
-  cursor: pointer;
-  transition: background .2s;
-}
 
-.schedule-button:disabled {
-  opacity: 0.6;
-  cursor: not-allowed;
-}
-
-/* Optional: tweak the icon size */
-.schedule-icon {
-  font-size: 1.2em;
-  color: #fff;
-}
 .vehicle-info {
   display: flex;
   align-items: center;

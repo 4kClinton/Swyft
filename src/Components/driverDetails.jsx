@@ -66,7 +66,7 @@ const DriverDetails = () => {
           console.error('Error fetching driver data:', error);
         });
     }
-  }, [orders, nearest_driver, status]);
+  }, [orders, nearest_driver, status, dispatch]);
 
   const handleGoHome = () => {
     navigate('/dash'); // Navigate to the home page
@@ -123,11 +123,7 @@ const DriverDetails = () => {
   return (
     <div className="containerDriverDetails">
       <div className="driverInfo">
-        <img
-          src={nearest_driver.profilePicture || profilePic}
-          alt="Driver"
-          className="driverImage"
-        />
+        <img src={profilePic} alt="Driver" className="driverImage" />
         <div className="textContainer">
           <h2 className="name">Name: {name}</h2>
           <p className="numberPlate">
