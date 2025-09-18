@@ -10,6 +10,7 @@ import Settings from './Components/Settings';
 import DriverDetails from './Components/driverDetails';
 import TripTracker from './Components/TripTracker';
 import FindHouse from './Components/FindHouse';
+import FindHouseDetail from './Components/FindHouseDetail'; // ⬅️ create this
 import OrderCompletion from './Components/OrderCompletion';
 
 const routes = [
@@ -17,9 +18,7 @@ const routes = [
     path: '/',
     element: <App />,
     children: [
-      // This makes `/` show <Login />
       { index: true, element: <Login /> },
-
       { path: 'dash', element: <Map /> },
       { path: 'signup', element: <Signup /> },
       { path: 'scheduled-rides', element: <ScheduledRides /> },
@@ -28,7 +27,10 @@ const routes = [
       { path: 'settings', element: <Settings /> },
       { path: 'driverDetails', element: <DriverDetails /> },
       { path: 'track', element: <TripTracker /> },
+
       { path: 'findhouse', element: <FindHouse /> },
+      { path: 'findhouse/:id', element: <FindHouseDetail /> }, // ⬅️ add this
+
       { path: 'rate-driver', element: <OrderCompletion /> },
       { path: 'confirmOrder', element: <OrderConfirmation /> },
     ],

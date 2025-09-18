@@ -15,4 +15,15 @@ export default defineConfig({
       'hoist-non-react-statics',
     ],
   },
+  server: {
+    proxy: {
+      // Any request starting with /api will be forwarded
+      "/api": {
+        target: "https://swyft-agent-01.vercel.app",
+        changeOrigin: true,
+        secure: true,
+        rewrite: (path) => path.replace(/^\/api/, ""),
+      },
+    },
+  },
 });

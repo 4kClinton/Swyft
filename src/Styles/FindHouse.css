@@ -1,0 +1,127 @@
+/* Masonry Grid (from react-masonry-css OR manual columns) */
+.my-masonry-grid {
+    display: flex;
+    margin-left: -16px;
+    width: auto;
+}
+
+.my-masonry-grid_column {
+    padding-left: 16px;
+    background-clip: padding-box;
+}
+
+/* Fallback for column-based grid (when using `columns-2`) */
+.columns-2 {
+    column-count: 2;
+    column-gap: 12px;
+}
+
+.break-inside-avoid {
+    break-inside: avoid;
+    margin-bottom: 12px;
+}
+
+/* Grid Items */
+.property-card,
+.columns-2 div {
+    margin-bottom: 16px;
+    cursor: pointer;
+}
+
+.property-card img,
+.columns-2 img {
+    width: 100%;
+    border-radius: 8px;
+    object-fit: cover;
+    display: block;
+}
+
+/* Feed Background Blur */
+.blur-lg {
+    filter: blur(20px);
+    transform: scale(1.2);
+    opacity: 0.7;
+}
+
+/* Swiper container fix */
+.swiper {
+    height: 100%;
+    width: 100%;
+}
+
+/* Pull-up Sheet */
+.pullup-sheet,
+.bg-white {
+    position: absolute;
+    bottom: 0;
+    width: 100%;
+    background: #fff;
+    border-top-left-radius: 16px;
+    border-top-right-radius: 16px;
+    box-shadow: 0 -2px 12px rgba(0, 0, 0, 0.15);
+    transition: transform 0.3s ease-out;
+    z-index: 20;
+}
+
+/* Close Button in Feed */
+button.text-white {
+    background: rgba(0, 0, 0, 0.4);
+    border: none;
+    padding: 8px 12px;
+    font-size: 20px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+
+/* Text Utilities */
+.text-sm {
+    font-size: 14px;
+}
+
+.text-lg {
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.text-gray-600 {
+    color: #666;
+}
+
+.text-gray-700 {
+    color: #444;
+}
+
+.text-green-600 {
+    color: #00b36b;
+    font-weight: bold;
+}
+
+.text-blue-600 {
+    color: #1e90ff;
+    font-weight: 500;
+}
+
+/* Action Buttons */
+button.bg-green-600 {
+    background: #00b36b;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    font-weight: bold;
+    cursor: pointer;
+}
+
+button.bg-green-600:hover {
+    background: #009a5c;
+}
+
+button.bg-gray-200 {
+    background: #f0f0f0;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 14px;
+    cursor: pointer;
+}

@@ -16,6 +16,7 @@ import {
 } from './Redux/Reducers/DriverDetailsSlice.js';
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
 import Cookies from 'js-cookie';
+import 'swiper/css';
 
 // MUI components for the custom popup
 import { Box, Typography, Button, IconButton } from '@mui/material';
