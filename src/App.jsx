@@ -16,6 +16,7 @@ import {
 } from './Redux/Reducers/DriverDetailsSlice.js';
 import { saveOrders } from './Redux/Reducers/ordersHistorySlice.js';
 import Cookies from 'js-cookie';
+import 'swiper/css';
 
 // MUI components for the custom popup
 import { Box, Typography, Button, IconButton } from '@mui/material';
@@ -299,7 +300,7 @@ function App() {
       {showErrorPopup && (
         <div className="popup-overlay">
           <div className="popup">
-            <p>No driver found for your order. Please try again later.</p>
+            <p>No driver found for your order. Please Schedule Order.</p>
             <button onClick={handleCloseErrorPopup}>Close</button>
           </div>
         </div>
